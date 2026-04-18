@@ -1,0 +1,23 @@
+# magazine.abovethehook.com — Netlify config
+# Same team as harbor + blog. Static site, no functions in Phase 1.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--prefer-offline --no-audit"
+
+# Drafts never render on production deploys. See spec §3 / CLAUDE.md
+# "status: draft in frontmatter means don't render publicly."
+# The article rendering code reads this env var to decide.
+[context.production.environment]
+  PUBLIC_INCLUDE_DRAFTS = "false"
+
+# Preview deploys (any branch PR) render drafts so Eric can review them.
+[context.deploy-preview.environment]
+  PUBLIC_INCLUDE_DRAFTS = "true"
+
+[context.branch-deploy.environment]
+  PUBLIC_INCLUDE_DRAFTS = "true"

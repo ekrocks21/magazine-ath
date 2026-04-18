@@ -1,17 +1,32 @@
 ---
-
+import '../styles/global.css';
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>The Local Lookout — magazine.abovethehook.com</title>
+    <meta
+      name="description"
+      content="The quarterly print magazine of Above the Hook. Coastal New Jersey, observed."
+    />
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-8">
+    <main class="max-w-prose text-center space-y-6">
+      <p class="text-xs tracking-[0.25em] uppercase text-[var(--color-taupe)]">
+        Above the Hook
+      </p>
+      <h1 class="text-4xl md:text-5xl font-serif text-[var(--color-navy)]">
+        The Local Lookout
+      </h1>
+      <hr class="w-20 h-[2px] border-0 bg-[var(--color-rust)] mx-auto" />
+      <p class="text-base leading-relaxed text-[var(--color-taupe)]">
+        Scaffold in place. Design tokens, typography, and page templates land in
+        the next steps.
+      </p>
+    </main>
+  </body>
 </html>

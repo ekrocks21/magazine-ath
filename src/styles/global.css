@@ -1,0 +1,35 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ──────────────────────────────────────────────────────────────
+   The Local Lookout — global design tokens
+   Palette per spec §12. Typography tokens wire in Step 2
+   once font families are approved.
+   ────────────────────────────────────────────────────────────── */
+
+@theme {
+  --color-navy: #1C2E4A;
+  --color-cream: #F5EFE4;
+  --color-rust: #C14D2E;
+  --color-ink: #1A1A1A;
+  --color-taupe: #6B655C;
+
+  /* Typography variables — placeholder values until Step 2 approval.
+     Do NOT use these in components yet; they will change. */
+  --font-display: "Georgia", serif;
+  --font-body: "Georgia", serif;
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+
+  /* Editorial measure for article body */
+  --measure: 65ch;
+}
+
+/* Base body reset — safe to keep; font families swap in Step 2 */
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
