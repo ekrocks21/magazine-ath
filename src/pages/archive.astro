@@ -48,7 +48,7 @@ const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
       </h1>
       <hr class="rust-rule w-24 h-[2px] mt-6 mb-8 mx-auto" />
       <p
-        class="text-base md:text-lg leading-relaxed text-[var(--color-taupe)] max-w-xl mx-auto"
+        class="text-base md:text-lg leading-relaxed text-[var(--color-muted)] max-w-xl mx-auto"
         style="font-family: var(--font-body);"
       >
         The magazine, in reverse chronological order. Filter below to narrow.
@@ -66,13 +66,13 @@ const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
     >
       <label class="flex flex-col gap-1.5">
         <span
-          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-taupe)]"
-          style="font-family: var(--font-sans);">Year</span
+          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-muted)]"
+          style="font-family: var(--font-mono);">Year</span
         >
         <select
           name="year"
           class="bg-transparent border border-[var(--color-ink)]/20 px-3 py-2 text-sm tracking-wide uppercase focus:outline-2 focus:outline-[var(--color-rust)]"
-          style="font-family: var(--font-sans);"
+          style="font-family: var(--font-mono);"
         >
           <option value="">All years</option>
           {years.map((y) => <option value={y}>{y}</option>)}
@@ -81,13 +81,13 @@ const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
 
       <label class="flex flex-col gap-1.5">
         <span
-          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-taupe)]"
-          style="font-family: var(--font-sans);">Season</span
+          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-muted)]"
+          style="font-family: var(--font-mono);">Season</span
         >
         <select
           name="season"
           class="bg-transparent border border-[var(--color-ink)]/20 px-3 py-2 text-sm tracking-wide uppercase focus:outline-2 focus:outline-[var(--color-rust)]"
-          style="font-family: var(--font-sans);"
+          style="font-family: var(--font-mono);"
         >
           <option value="">All seasons</option>
           {seasons.map((s) => (
@@ -98,13 +98,13 @@ const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
 
       <label class="flex flex-col gap-1.5">
         <span
-          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-taupe)]"
-          style="font-family: var(--font-sans);">Pillar (articles)</span
+          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-muted)]"
+          style="font-family: var(--font-mono);">Pillar (articles)</span
         >
         <select
           name="pillar"
           class="bg-transparent border border-[var(--color-ink)]/20 px-3 py-2 text-sm tracking-wide uppercase focus:outline-2 focus:outline-[var(--color-rust)]"
-          style="font-family: var(--font-sans);"
+          style="font-family: var(--font-mono);"
         >
           <option value="">All pillars</option>
           {pillars.map((p) => (
@@ -122,7 +122,7 @@ const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
         type="button"
         data-reset
         class="text-[0.7rem] tracking-[0.25em] uppercase text-[var(--color-rust)] hover:text-[var(--color-navy)] px-3 py-2"
-        style="font-family: var(--font-sans);"
+        style="font-family: var(--font-mono);"
       >
         Reset
       </button>
@@ -163,7 +163,7 @@ const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
                   >
                     <p
                       class="text-[0.55rem] tracking-[0.3em] uppercase text-[var(--color-cream)]/55"
-                      style="font-family: var(--font-sans);"
+                      style="font-family: var(--font-mono);"
                     >
                       No. {number}
                     </p>
@@ -176,14 +176,14 @@ const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
                     <hr class="w-10 h-[1px] border-0 bg-[var(--color-rust)]" />
                     <p
                       class="text-[0.6rem] tracking-[0.25em] uppercase text-[var(--color-cream)]/70"
-                      style="font-family: var(--font-sans);"
+                      style="font-family: var(--font-mono);"
                     >
                       {season} {i.data.year}
                     </p>
                     {i.data.status === 'in_production' && (
                       <p
                         class="text-[0.55rem] tracking-[0.3em] uppercase text-[var(--color-rust)]"
-                        style="font-family: var(--font-sans);"
+                        style="font-family: var(--font-mono);"
                       >
                         In Production
                       </p>
@@ -198,7 +198,7 @@ const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
 
       <p
         id="archive-empty"
-        class="hidden mt-12 text-center text-[var(--color-taupe)] italic"
+        class="hidden mt-12 text-center text-[var(--color-muted)] italic"
         style="font-family: var(--font-body);"
       >
         No issues match those filters.
@@ -208,7 +208,7 @@ const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
       <div class="mt-16 max-w-md mx-auto text-center">
         <SmallCapsLabel tone="rust" items={['Future Issues']} />
         <p
-          class="mt-4 text-base text-[var(--color-taupe)] italic"
+          class="mt-4 text-base text-[var(--color-muted)] italic"
           style="font-family: var(--font-body);"
         >
           Summer 2026 and onward arrive with their seasons.

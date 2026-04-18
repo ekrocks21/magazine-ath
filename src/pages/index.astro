@@ -2,20 +2,24 @@
 /**
  * Landing — /
  *
- * Spec §4.1. Eight sections: masthead (via layout), hero, editor's letter
- * excerpt, In This Issue, notify-me (disabled in Phase 1 per decisions.md),
- * archive strip, coming-in-summer teaser, footer (via layout).
+ * Eight sections after the masthead (injected via BaseLayout):
+ *   1. Story-forward hero (dual-color headline, info strip, tilted cover)
+ *   2. Editor's letter excerpt, centered, 2-column with drop cap
+ *   3. "In this issue" — 4-col editorial card grid with illustrations
+ *   4. Subscribe tiers (visual-only in Phase 1)
+ *   5. 5-col archive strip
+ *   6. Coming Next card
+ *   7. Footer (injected via BaseLayout)
  */
 
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SmallCapsLabel from '../components/SmallCapsLabel.astro';
+import CardIllustration from '../components/CardIllustration.astro';
 
 const includeDrafts =
   import.meta.env.PUBLIC_INCLUDE_DRAFTS === 'true' ||
   import.meta.env.DEV === true;
 
-// Current issue: prefer the newest in_production or published issue.
 const issues = (await getCollection('issues')).sort((a, b) => {
   const da = a.data.publish_date?.valueOf() ?? 0;
   const db = b.data.publish_date?.valueOf() ?? 0;
@@ -26,7 +30,6 @@ const current = issues[0];
 const currentSlug = current.id.replace(/\.md$/, '');
 const currentData = current.data;
 
-// Articles for this issue
 const allArticles = await getCollection('articles', ({ data }) =>
   includeDrafts ? true : data.status !== 'draft',
 );
@@ -35,348 +38,617 @@ const currentArticles = allArticles.filter((a) =>
   a.id.startsWith(`${currentSlug}/`),
 );
 
-const editorsLetter =
-  currentArticles.find((a) => a.data.type === 'editors_letter') ??
-  (currentData.editors_letter
-    ? currentArticles.find(
-        (a) =>
-          a.id === `${currentSlug}/${currentData.editors_letter}.md` ||
-          a.id.replace(/\.md$/, '') ===
-            `${currentSlug}/${currentData.editors_letter}`,
-      )
-    : undefined);
+const editorsLetter = currentArticles.find((a) => a.data.type === 'editors_letter');
 
-// First 4 non-editor's-letter articles
 const featured = currentArticles
   .filter((a) => a.id !== editorsLetter?.id)
   .slice(0, 4);
 
-// Render first 2 paragraphs of editor's letter (approximate)
-let letterExcerpt: string[] = [];
+// First article drives the hero headline (split on last period for em).
+const heroArticle = featured[0] ?? editorsLetter;
+const heroTitle = heroArticle?.data.title ?? currentData.theme ?? currentData.title;
+const heroSlug = heroArticle ? heroArticle.id.split('/')[1].replace(/\.md$/, '') : '';
+
+// Split hero title into two chunks for dual-color treatment.
+function splitHeroTitle(t: string): { head: string; tail: string } {
+  // Prefer splitting on " to " (as in "A very good land to fall with").
+  const idx = t.toLowerCase().lastIndexOf(' to ');
+  if (idx > 0) return { head: t.slice(0, idx + 1), tail: t.slice(idx + 1) + '.' };
+  const words = t.split(/\s+/);
+  if (words.length > 4) {
+    const pivot = Math.ceil(words.length * 0.6);
+    return { head: words.slice(0, pivot).join(' ') + ' ', tail: words.slice(pivot).join(' ') + '.' };
+  }
+  return { head: t + ' ', tail: '' };
+}
+const heroSplit = splitHeroTitle(heroTitle);
+
+// Editor's letter excerpt — 2 body paragraphs
+let letterParagraphs: string[] = [];
 if (editorsLetter) {
-  // Extract body paragraphs from raw Markdown, ignoring frontmatter and the H1.
   const raw = editorsLetter.body ?? '';
   const withoutHeading = raw.replace(/^#\s.*$/m, '').trim();
-  letterExcerpt = withoutHeading
+  letterParagraphs = withoutHeading
     .split(/\n\s*\n/)
     .map((p) => p.trim())
-    .filter((p) => p && !p.startsWith('#'))
+    .filter((p) => p && !p.startsWith('#') && !p.startsWith('*—'))
     .slice(0, 2);
 }
 
-// Past issues: everything except the current one
-const pastIssues = issues
-  .slice(1)
-  .slice(0, 4);
+const editorsLetterSlug = editorsLetter
+  ? editorsLetter.id.split('/')[1].replace(/\.md$/, '')
+  : '';
 
-const seasonLabel =
-  currentData.season.charAt(0).toUpperCase() + currentData.season.slice(1);
+const authorsLabel = editorsLetter?.data.byline
+  ? editorsLetter.data.byline.replace(/^Eric,.*$/, 'Eric')
+  : editorsLetter?.data.author ?? 'Eric';
+
+const editorsLetterDate = editorsLetter?.data.publication_date
+  ? new Date(editorsLetter.data.publication_date).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+    })
+  : 'April 1';
+
+// Past issues (skip current)
+const pastIssues = issues.slice(1);
 const currentNumber = String(currentData.issue_number).padStart(2, '0');
-const statusLabel = {
-  planning: 'In Planning',
-  in_production: 'In Production',
+
+// Pillar → kicker label
+function pillarLabel(p: string): string {
+  return p.replace(/_/g, ' ').toUpperCase();
+}
+
+// Status → meta word
+const statusWord = {
+  planning: 'In planning',
+  in_production: 'In production',
   published: 'Published',
   archived: 'Archived',
-}[currentData.status];
+}[currentData.status] ?? 'Spring 2026';
 ---
 
 <BaseLayout
   title="The Local Lookout"
-  description="The quarterly print magazine of Above the Hook. Coastal New Jersey, observed."
+  description="The quarterly print magazine of Above the Hook. Coastal New Jersey, observed slowly."
 >
-  <!-- ── Hero ─────────────────────────────────────────────────────── -->
-  <section class="bg-[var(--color-navy)] text-[var(--color-cream)]">
-    <div class="max-w-6xl mx-auto px-6 md:px-10 py-20 md:py-32">
-      <div class="grid md:grid-cols-[auto_1fr] gap-12 md:gap-20 items-center">
-        <!-- Cover art -->
-        <a
-          href={`/issues/${currentSlug}`}
-          class="block w-full max-w-[320px] mx-auto md:mx-0 no-underline group"
+  <!-- ── 1. Story-forward hero ───────────────────────────────────── -->
+  <section style="padding: 72px 0 96px;">
+    <div class="mag-container hero-grid">
+      <div>
+        <div class="meta-dotted" style="margin-bottom: 28px;">
+          Issue No. {currentNumber}<span class="dot">·</span>Spring 2026<span class="dot">·</span>
+          <span class="rust">{statusWord}</span>
+        </div>
+
+        <h1
+          style="font-family: var(--font-display); font-weight: 700; font-size: clamp(3rem, 6.4vw, 5.2rem); line-height: 1.02; letter-spacing: -0.025em; color: var(--ink); margin-bottom: 28px;"
         >
-          {
-            currentData.cover_image ? (
-              <img
-                src={currentData.cover_image}
-                alt={`${currentData.title} cover`}
-                class="w-full h-auto shadow-2xl transition-transform group-hover:-translate-y-1"
-                loading="eager"
-                decoding="async"
-              />
-            ) : (
-              <div
-                class="aspect-[5/7] w-full flex flex-col items-center justify-center gap-4 shadow-2xl p-8 text-center transition-transform group-hover:-translate-y-1"
-                style="background: linear-gradient(135deg, #243e66 0%, var(--color-navy) 100%); border: 1px solid color-mix(in srgb, var(--color-cream) 20%, transparent);"
-              >
-                <p
-                  class="text-[0.6rem] tracking-[0.3em] uppercase text-[var(--color-cream)]/55"
-                  style="font-family: var(--font-sans);"
-                >
-                  Issue No. {currentNumber}
-                </p>
-                <p
-                  class="text-4xl leading-none"
-                  style="font-family: var(--font-display); font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;"
-                >
-                  {currentData.theme ?? seasonLabel}
-                </p>
-                <hr class="w-16 h-[1px] border-0 bg-[var(--color-rust)]" />
-                <p
-                  class="text-xs tracking-[0.25em] uppercase text-[var(--color-cream)]/70"
-                  style="font-family: var(--font-sans);"
-                >
-                  {seasonLabel} {currentData.year}
-                </p>
-                <p
-                  class="mt-2 text-sm italic text-[var(--color-cream)]/55"
-                  style="font-family: var(--font-body);"
-                >
-                  The Local Lookout
-                </p>
-              </div>
-            )
-          }
-        </a>
+          {heroSplit.head}
+          <em style="font-weight: 400; color: var(--rust);">{heroSplit.tail}</em>
+        </h1>
 
-        <!-- Theme + CTA -->
-        <div>
-          <SmallCapsLabel
-            tone="cream"
-            items={[
-              `Issue No. ${currentNumber}`,
-              `${seasonLabel} ${currentData.year}`,
-              statusLabel,
-            ]}
-          />
+        <p
+          style="font-family: var(--font-display); font-style: italic; font-size: 20px; line-height: 1.5; color: var(--ink-soft); max-width: 520px; margin-bottom: 40px;"
+        >
+          The return of the ospreys. Thirteen shillings paid to the Lenape in
+          1680. The house that stayed. A humpback at Gunnison Beach. The second
+          issue of The Local Lookout.
+        </p>
 
-          <h1
-            class="mt-6 text-6xl md:text-8xl leading-[0.98] text-[var(--color-cream)]"
-            style="font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;"
-          >
-            {currentData.theme ?? currentData.title}
-          </h1>
-
-          <p
-            class="mt-6 text-lg md:text-xl text-[var(--color-cream)]/70 max-w-md leading-relaxed"
-            style="font-family: var(--font-body);"
-          >
-            The {currentData.title} issue of The Local Lookout.
-          </p>
-
-          <p class="mt-10">
-            <a
-              href={`/issues/${currentSlug}`}
-              class="inline-block px-8 py-3 bg-[var(--color-rust)] text-[var(--color-cream)] text-xs tracking-[0.25em] uppercase no-underline hover:bg-[var(--color-cream)] hover:text-[var(--color-navy)] transition-colors"
-              style="font-family: var(--font-sans);"
-            >
-              Read the Issue
+        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+          <a href={`/issues/${currentSlug}`} class="btn-primary">
+            Read the issue <span class="arrow">→</span>
+          </a>
+          {heroSlug && (
+            <a href={`/issues/${currentSlug}/${heroSlug}`} class="btn-ghost">
+              Preview the feature
             </a>
-          </p>
+          )}
+        </div>
+
+        <div
+          style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--sand); display: flex; gap: 48px; flex-wrap: wrap;"
+        >
+          <div>
+            <div
+              style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;"
+            >
+              Publishing
+            </div>
+            <div
+              style="font-family: var(--font-display); font-size: 18px; color: var(--ink); letter-spacing: -0.01em;"
+            >
+              Quarterly
+            </div>
+          </div>
+          <div>
+            <div
+              style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;"
+            >
+              From
+            </div>
+            <div
+              style="font-family: var(--font-display); font-size: 18px; color: var(--ink); letter-spacing: -0.01em;"
+            >
+              Highlands, NJ
+            </div>
+          </div>
+          <div>
+            <div
+              style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;"
+            >
+              Founded
+            </div>
+            <div
+              style="font-family: var(--font-display); font-size: 18px; color: var(--ink); letter-spacing: -0.01em;"
+            >
+              Winter 2026
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="position: relative; padding-left: 24px;" class="hero-cover">
+        <div
+          class="issue-cover"
+          style="width: 100%; max-width: 420px; margin-left: auto; transform: rotate(-1.2deg);"
+        >
+          {currentData.cover_image ? (
+            <img src={currentData.cover_image} alt="Spring 2026 cover" />
+          ) : (
+            <svg viewBox="0 0 420 560" role="img" aria-label="Spring 2026 cover" style="display:block; width:100%; height:auto; background: var(--paper);">
+              <rect width="420" height="560" fill="#FDFAF5" />
+              <path d="M0 330 L70 304 L160 292 L260 286 L340 292 L420 302 L420 410 L0 410 Z" fill="#8B3A2A" opacity="0.12" />
+              <circle cx="330" cy="180" r="28" fill="#C4583E" opacity="0.35" />
+              <text x="210" y="110" text-anchor="middle" font-family="'DM Mono', monospace" font-size="11" letter-spacing="4" fill="#7A6F5F">ABOVE THE HOOK · QUARTERLY</text>
+              <text x="210" y="250" text-anchor="middle" font-family="'Playfair Display', serif" font-size="46" font-weight="700" fill="#1A1208">The Local</text>
+              <text x="210" y="310" text-anchor="middle" font-family="'Playfair Display', serif" font-size="46" font-weight="400" font-style="italic" fill="#8B3A2A">Lookout</text>
+              <rect x="170" y="330" width="80" height="2" fill="#8B3A2A" />
+              <text x="210" y="390" text-anchor="middle" font-family="'DM Mono', monospace" font-size="11" letter-spacing="3" fill="#7A6F5F">ISSUE NO. 02 · SPRING 2026</text>
+              <text x="210" y="490" text-anchor="middle" font-family="'Playfair Display', serif" font-size="22" font-style="italic" fill="#3D3020">{currentData.theme ?? 'Return'}</text>
+            </svg>
+          )}
+        </div>
+        <div
+          style="position: absolute; right: -20px; top: -14px; background: var(--rust); color: #fff; padding: 8px 14px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; transform: rotate(2deg); box-shadow: 0 6px 16px rgba(139,58,42,0.3);"
+        >
+          {statusWord}
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── Editor's letter excerpt ──────────────────────────────────── -->
-  {
-    editorsLetter && letterExcerpt.length > 0 && (
-      <section class="py-20 md:py-28 px-6 md:px-10">
-        <div class="max-w-3xl mx-auto">
-          <SmallCapsLabel tone="rust" items={['From the Editor']} />
-          <h2
-            class="mt-4 text-4xl md:text-5xl leading-tight"
-            style="font-variation-settings: 'opsz' 120, 'SOFT' 50, 'WONK' 0;"
-          >
-            {editorsLetter.data.title}
-          </h2>
-          <hr class="rust-rule w-20 h-[2px] mt-6 mb-10" />
-
-          <div class="article-prose">
-            {letterExcerpt.map((para) => <p>{para}</p>)}
-          </div>
-
-          <p class="mt-10">
-            <a
-              href={`/issues/${currentSlug}/${editorsLetter.id.split('/')[1].replace(/\.md$/, '')}`}
-              class="text-sm tracking-[0.2em] uppercase text-[var(--color-rust)] no-underline hover:text-[var(--color-navy)]"
-              style="font-family: var(--font-sans);"
+  <!-- ── 2. Editor's letter ──────────────────────────────────────── -->
+  {editorsLetter && letterParagraphs.length > 0 && (
+    <section
+      style="background: var(--cream-dark); padding: 88px 0; border-top: 1px solid var(--sand-light); border-bottom: 1px solid var(--sand-light);"
+    >
+      <div class="mag-container-narrow">
+        <div class="meta-dotted" style="margin-bottom: 20px; text-align: center;">
+          Letter from the Hilltop<span class="dot">·</span>Spring 2026<span class="dot">·</span>Free to read
+        </div>
+        <h2
+          style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); text-align: center; letter-spacing: -0.02em; color: var(--ink); font-weight: 700; margin-bottom: 8px;"
+        >
+          {editorsLetter.data.title}
+        </h2>
+        <div
+          style="text-align: center; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 48px;"
+        >
+          By {authorsLabel}<span style="margin: 0 0.5em; color: var(--sand);">·</span>{editorsLetterDate}
+        </div>
+        <div class="letter-grid">
+          {letterParagraphs.map((p, i) => (
+            <p
+              style={`font-family: var(--font-body); font-size: 17px; line-height: 1.75; color: ${i === 0 ? 'var(--ink)' : 'var(--ink-soft)'};`}
             >
-              Continue reading &rarr;
-            </a>
-          </p>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ── In This Issue ────────────────────────────────────────────── -->
-  {
-    featured.length > 0 && (
-      <section class="py-20 md:py-28 px-6 md:px-10 bg-[color-mix(in_srgb,var(--color-cream)_60%,white)]">
-        <div class="max-w-5xl mx-auto">
-          <SmallCapsLabel tone="rust" items={['In This Issue']} />
-          <h2
-            class="mt-4 text-4xl md:text-5xl"
-            style="font-variation-settings: 'opsz' 120, 'SOFT' 40, 'WONK' 0;"
-          >
-            Four pieces from {currentData.title}
-          </h2>
-          <hr class="rust-rule w-20 h-[2px] mt-6 mb-12" />
-
-          <div class="grid md:grid-cols-2 gap-10 md:gap-14">
-            {featured.map((a) => {
-              const articleSlug = a.id.split('/')[1].replace(/\.md$/, '');
-              const pillarLabel = a.data.pillar
-                .split('_')
-                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(' ');
-              return (
-                <a
-                  href={`/issues/${currentSlug}/${articleSlug}`}
-                  class="block group no-underline"
+              {i === 0 && (
+                <span
+                  style="font-family: var(--font-display); font-size: 58px; font-weight: 700; float: left; line-height: 0.8; margin: 8px 10px 0 0; color: var(--rust);"
                 >
-                  <span class="tag-pill">{pillarLabel}</span>
-                  <h3
-                    class="mt-4 text-2xl md:text-3xl leading-tight text-[var(--color-navy)] group-hover:text-[var(--color-rust)] transition-colors"
-                    style="font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 0;"
-                  >
-                    {a.data.title}
-                  </h3>
-                  {a.data.dek && (
-                    <p
-                      class="mt-3 text-base leading-snug text-[var(--color-taupe)] italic"
-                      style="font-family: var(--font-body);"
-                    >
-                      {a.data.dek}
-                    </p>
+                  {p.charAt(0)}
+                </span>
+              )}
+              {i === 0 ? p.slice(1) : p}
+            </p>
+          ))}
+        </div>
+        <div style="text-align: center; margin-top: 36px;">
+          <a
+            href={`/issues/${currentSlug}/${editorsLetterSlug}`}
+            class="btn-link"
+          >
+            Continue reading — free
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M4 10h12M11 5l5 5-5 5" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ── 3. In this issue — 4-col ed-card grid ────────────────────── -->
+  {featured.length > 0 && (
+    <section style="padding: 96px 0 72px;">
+      <div class="mag-container">
+        <div
+          style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 48px; border-bottom: 1px solid var(--sand); padding-bottom: 20px; gap: 24px; flex-wrap: wrap;"
+        >
+          <div>
+            <div class="meta-dotted" style="margin-bottom: 8px;">In this issue</div>
+            <h2
+              style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -0.02em; font-weight: 700;"
+            >
+              {featured.length === 1 ? 'One story to start.' : `${['','One','Two','Three','Four','Five','Six','Seven'][featured.length] || featured.length} stories, one free.`}
+            </h2>
+          </div>
+          <a href={`/issues/${currentSlug}`} class="btn-link">
+            Full table of contents
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M4 10h12M11 5l5 5-5 5" />
+            </svg>
+          </a>
+        </div>
+
+        <div class="ed-card-grid">
+          {featured.map((a, i) => {
+            const articleSlug = a.id.split('/')[1].replace(/\.md$/, '');
+            const isFree = a.data.access === 'free' || i === 0;
+            const readingMin = Math.max(1, Math.round((a.data.word_count ?? 0) / 220));
+            return (
+              <a href={`/issues/${currentSlug}/${articleSlug}`} class="ed-card">
+                <div class="ed-card-img">
+                  {isFree ? (
+                    <div class="free-chip">Free</div>
+                  ) : (
+                    <div class="lock-chip">
+                      <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M4 7V5a4 4 0 0 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z" />
+                      </svg>
+                      Subscriber
+                    </div>
                   )}
-                  <p
-                    class="mt-3 text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-taupe)]"
-                    style="font-family: var(--font-sans);"
-                  >
-                    By {a.data.byline ?? a.data.author}
-                  </p>
-                </a>
-              );
-            })}
+                  <CardIllustration slug={articleSlug} title={a.data.title} />
+                </div>
+                <div class="ed-card-kicker">{pillarLabel(a.data.pillar)}</div>
+                <div class="ed-card-title">{a.data.title}</div>
+                {a.data.dek && <div class="ed-card-dek">{a.data.dek}</div>}
+                <div class="ed-card-byline">
+                  By {a.data.byline ?? a.data.author}
+                  {readingMin > 0 && (
+                    <>
+                      <span style="color: var(--sand); margin: 0 0.5em;">·</span>
+                      {readingMin} min
+                    </>
+                  )}
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ── 4. Subscribe tiers (visual, no functional flow in Phase 1) ─ -->
+  <section style="background: var(--navy); color: var(--on-dark-1); padding: 96px 0;">
+    <div class="mag-container">
+      <div class="subscribe-grid">
+        <div>
+          <div
+            style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand-light); margin-bottom: 24px;"
+          >
+            <span style="color: var(--rust-light);">—</span>&nbsp;&nbsp;Subscribe
+          </div>
+          <h2
+            style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); color: #fff; line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 24px;"
+          >
+            Four issues a year, and the whole archive, for less than a tank of gas.
+          </h2>
+          <p
+            style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--on-dark-3); max-width: 420px; margin-bottom: 28px;"
+          >
+            The Lookout publishes four times a year. Subscriptions open later in 2026 — until then, everything here is free to read.
+          </p>
+          <a href="/subscribe" class="btn-primary">See the tiers <span class="arrow">→</span></a>
+        </div>
+
+        <div class="tier-grid">
+          <div class="tier-col">
+            <div
+              style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--sand); margin-bottom: 12px;"
+            >
+              Free
+            </div>
+            <div
+              style="font-family: var(--font-display); font-size: 32px; color: #fff; letter-spacing: -0.02em; font-weight: 600; margin-bottom: 4px;"
+            >
+              $0
+            </div>
+            <div
+              style="font-family: var(--font-body); font-size: 13px; color: var(--on-dark-3); line-height: 1.4;"
+            >
+              For readers new to The Lookout.
+            </div>
+          </div>
+          <div class="tier-col">
+            <div
+              style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--rust-light); margin-bottom: 12px;"
+            >
+              Digital
+            </div>
+            <div
+              style="font-family: var(--font-display); font-size: 32px; color: #fff; letter-spacing: -0.02em; font-weight: 600; margin-bottom: 4px;"
+            >
+              $48<span
+                style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; color: var(--sand); margin-left: 4px; font-weight: 400;"
+              > / year</span>
+            </div>
+            <div
+              style="font-family: var(--font-body); font-size: 13px; color: var(--on-dark-3); line-height: 1.4;"
+            >
+              Everything we publish online.
+            </div>
+          </div>
+          <div class="tier-col tier-col--last">
+            <div
+              style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--sand); margin-bottom: 12px;"
+            >
+              Print + Digital
+            </div>
+            <div
+              style="font-family: var(--font-display); font-size: 32px; color: #fff; letter-spacing: -0.02em; font-weight: 600; margin-bottom: 4px;"
+            >
+              $96<span
+                style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; color: var(--sand); margin-left: 4px; font-weight: 400;"
+              > / year</span>
+            </div>
+            <div
+              style="font-family: var(--font-body); font-size: 13px; color: var(--on-dark-3); line-height: 1.4;"
+            >
+              Four issues by mail. Everything else online.
+            </div>
           </div>
         </div>
-      </section>
-    )
-  }
-
-  <!-- ── Notify-me (disabled per Phase 1 decision) ────────────────── -->
-  <section class="py-20 md:py-28 px-6 md:px-10 bg-[var(--color-navy)] text-[var(--color-cream)]">
-    <div class="max-w-2xl mx-auto text-center">
-      <SmallCapsLabel tone="cream" items={['Correspondence']} />
-      <h2
-        class="mt-4 text-4xl md:text-5xl text-[var(--color-cream)]"
-        style="font-variation-settings: 'opsz' 120, 'SOFT' 50, 'WONK' 0;"
-      >
-        Subscriptions open this summer
-      </h2>
-      <hr class="rust-rule w-20 h-[2px] mt-6 mb-10 mx-auto" />
-      <p
-        class="text-lg leading-relaxed text-[var(--color-cream)]/75 max-w-xl mx-auto"
-        style="font-family: var(--font-body);"
-      >
-        The email list opens with them. Until then, everything here is free to
-        read, and you can write to us at
-        <a
-          href="mailto:hello@abovethehook.com"
-          class="underline decoration-[var(--color-rust)] underline-offset-[3px] text-[var(--color-cream)] hover:text-[var(--color-rust)]"
-          >hello@abovethehook.com</a
-        >.
-      </p>
+      </div>
     </div>
   </section>
 
-  <!-- ── Archive strip ────────────────────────────────────────────── -->
-  {
-    pastIssues.length > 0 && (
-      <section class="py-20 md:py-24 px-6 md:px-10">
-        <div class="max-w-5xl mx-auto">
-          <div class="flex flex-wrap items-baseline justify-between gap-4 mb-10">
-            <div>
-              <SmallCapsLabel tone="rust" items={['The Archive']} />
-              <h2
-                class="mt-3 text-3xl md:text-4xl"
-                style="font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 0;"
+  <!-- ── 5. Archive strip ─────────────────────────────────────────── -->
+  <section style="padding: 96px 0 48px;">
+    <div class="mag-container">
+      <div
+        style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 40px; border-bottom: 1px solid var(--sand); padding-bottom: 20px; gap: 24px; flex-wrap: wrap;"
+      >
+        <div>
+          <div class="meta-dotted" style="margin-bottom: 8px;">The Archive</div>
+          <h2
+            style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -0.02em; font-weight: 700;"
+          >
+            Every issue, from the first forward.
+          </h2>
+        </div>
+        <a href="/archive" class="btn-link">
+          See the full archive
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M4 10h12M11 5l5 5-5 5" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="archive-grid">
+        <!-- Current issue (full color) -->
+        <a href={`/issues/${currentSlug}`} class="archive-card">
+          <div class="issue-cover issue-cover-small" style="opacity: 1;">
+            <svg viewBox="0 0 300 400" role="img" aria-label={`${currentData.title} cover`}>
+              <rect width="300" height="400" fill="#FDFAF5" />
+              <circle cx="230" cy="130" r="22" fill="#C4583E" opacity="0.35" />
+              <path d="M0 240 L60 218 L140 210 L220 214 L300 222 L300 290 L0 290 Z" fill="#8B3A2A" opacity="0.14" />
+              <text x="150" y="80" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">ABOVE THE HOOK</text>
+              <text x="150" y="180" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-weight="700" fill="#1A1208">The Local</text>
+              <text x="150" y="220" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-style="italic" fill="#8B3A2A">Lookout</text>
+              <text x="150" y="350" text-anchor="middle" font-family="'Playfair Display', serif" font-size="16" font-style="italic" fill="#3D3020">{currentData.theme ?? 'Return'}</text>
+              <text x="150" y="378" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">NO. {currentNumber} · SPRING 2026</text>
+            </svg>
+          </div>
+          <div class="archive-meta">
+            No. {currentNumber}<span style="margin: 0 0.5em; color: var(--sand);">·</span>Spring 2026
+          </div>
+          <div class="archive-theme">{currentData.theme ?? currentData.title}</div>
+        </a>
+
+        {pastIssues.slice(0, 4).map((i) => {
+          const iSlug = i.id.replace(/\.md$/, '');
+          const iSeason = i.data.season.charAt(0).toUpperCase() + i.data.season.slice(1);
+          const iNumber = String(i.data.issue_number).padStart(2, '0');
+          const isPublished = i.data.status === 'published' || i.data.status === 'archived';
+          return (
+            <a href={`/issues/${iSlug}`} class="archive-card">
+              <div
+                class="issue-cover issue-cover-small"
+                style={isPublished ? 'opacity: 1;' : 'opacity: 0.38; filter: grayscale(0.6);'}
               >
-                Previous issues
-              </h2>
+                <svg viewBox="0 0 300 400" role="img" aria-label={`${i.data.title} cover`}>
+                  <rect width="300" height="400" fill="#FDFAF5" />
+                  <text x="150" y="80" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">ABOVE THE HOOK</text>
+                  <text x="150" y="180" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-weight="700" fill="#1A1208">The Local</text>
+                  <text x="150" y="220" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-style="italic" fill="#8B3A2A">Lookout</text>
+                  <text x="150" y="360" text-anchor="middle" font-family="'Playfair Display', serif" font-size="14" font-style="italic" fill="#3D3020">{i.data.theme ?? '—'}</text>
+                </svg>
+              </div>
+              <div class="archive-meta">
+                No. {iNumber}<span style="margin: 0 0.5em; color: var(--sand);">·</span>{iSeason} {i.data.year}
+              </div>
+              <div class="archive-theme">{i.data.theme ?? '—'}</div>
+            </a>
+          );
+        })}
+
+        {/* Pad to 5 cols with placeholders if fewer than 4 past issues */}
+        {Array.from({ length: Math.max(0, 4 - pastIssues.length) }).map((_, idx) => (
+          <div class="archive-card" style="pointer-events: none;">
+            <div class="issue-cover issue-cover-small" style="opacity: 0.24; filter: grayscale(0.8);">
+              <svg viewBox="0 0 300 400" role="img" aria-label="Future issue">
+                <rect width="300" height="400" fill="#EDE7D9" />
+                <text x="150" y="210" text-anchor="middle" font-family="'Playfair Display', serif" font-size="60" fill="#C9B99A">—</text>
+              </svg>
             </div>
-            <a
-              href="/archive"
-              class="text-xs tracking-[0.2em] uppercase text-[var(--color-rust)] no-underline hover:text-[var(--color-navy)]"
-              style="font-family: var(--font-sans);"
+            <div class="archive-meta">Future issue</div>
+            <div class="archive-theme">—</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 6. Coming Next ──────────────────────────────────────────── -->
+  <section style="padding: 72px 0 96px;">
+    <div class="mag-container">
+      <div class="next-card">
+        <div
+          style="position: absolute; top: 0; left: 0; height: 2px; width: 80px; background: var(--rust);"
+        ></div>
+        <div class="issue-cover" style="max-width: 280px;">
+          <svg viewBox="0 0 280 400" role="img" aria-label="Summer 2026 cover">
+            <rect width="280" height="400" fill="#FDFAF5" />
+            <circle cx="210" cy="150" r="30" fill="#C4583E" opacity="0.4" />
+            <path d="M0 260 Q 70 240 140 248 Q 210 256 280 242 L 280 320 L 0 320 Z" fill="#2A4470" opacity="0.18" />
+            <text x="140" y="72" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">ABOVE THE HOOK</text>
+            <text x="140" y="184" text-anchor="middle" font-family="'Playfair Display', serif" font-size="32" font-weight="700" fill="#1A1208">The Local</text>
+            <text x="140" y="222" text-anchor="middle" font-family="'Playfair Display', serif" font-size="32" font-style="italic" fill="#8B3A2A">Lookout</text>
+            <text x="140" y="360" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-style="italic" fill="#3D3020">Summer on the coast</text>
+            <text x="140" y="384" text-anchor="middle" font-family="'DM Mono', monospace" font-size="7" letter-spacing="3" fill="#7A6F5F">NO. 03 · SUMMER 2026</text>
+          </svg>
+        </div>
+        <div>
+          <div class="meta-dotted" style="margin-bottom: 14px;">
+            Coming next<span class="dot">·</span>Issue No. 03<span class="dot">·</span>
+            <span class="rust">Summer 2026</span>
+          </div>
+          <h3
+            style="font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.02em; color: var(--navy); margin-bottom: 20px; line-height: 1.1;"
+          >
+            Summer on the coast.
+          </h3>
+          <p
+            style="font-family: var(--font-body); font-size: 16px; line-height: 1.65; color: var(--ink-soft); margin-bottom: 24px; max-width: 520px;"
+          >
+            The bluefish run returns to Sea Bright. Inside the Twin Lights
+            summer keeper logs. A day on the Navesink with the last pound-net
+            crew. What the dunes remember about 1944.
+          </p>
+          <div
+            style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;"
+          >
+            <div
+              style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px;"
             >
-              See the full archive &rarr;
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M4 7V5a4 4 0 0 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z" />
+              </svg>
+              Subscriber preview
+            </div>
+            <a href="/subscribe" class="btn-dark">
+              Subscribe to preview <span class="arrow">→</span>
             </a>
           </div>
-
-          <ul class="list-none m-0 p-0 grid grid-cols-2 md:grid-cols-4 gap-6">
-            {pastIssues.map((i) => {
-              const iSlug = i.id.replace(/\.md$/, '');
-              const iSeason =
-                i.data.season.charAt(0).toUpperCase() +
-                i.data.season.slice(1);
-              const iNumber = String(i.data.issue_number).padStart(2, '0');
-              return (
-                <li>
-                  <a href={`/issues/${iSlug}`} class="block group no-underline">
-                    <div
-                      class="aspect-[5/7] w-full flex flex-col items-center justify-center gap-2 shadow p-4 text-center transition-transform group-hover:-translate-y-1"
-                      style="background: linear-gradient(135deg, var(--color-navy) 0%, #243e66 100%); color: var(--color-cream); border: 1px solid color-mix(in srgb, var(--color-cream) 15%, transparent);"
-                    >
-                      <p
-                        class="text-[0.55rem] tracking-[0.3em] uppercase text-[var(--color-cream)]/55"
-                        style="font-family: var(--font-sans);"
-                      >
-                        No. {iNumber}
-                      </p>
-                      <p
-                        class="text-2xl leading-none"
-                        style="font-family: var(--font-display); font-variation-settings: 'opsz' 120, 'SOFT' 50, 'WONK' 0;"
-                      >
-                        {i.data.theme ?? iSeason}
-                      </p>
-                      <hr class="w-10 h-[1px] border-0 bg-[var(--color-rust)]" />
-                      <p
-                        class="text-[0.6rem] tracking-[0.25em] uppercase text-[var(--color-cream)]/70"
-                        style="font-family: var(--font-sans);"
-                      >
-                        {iSeason} {i.data.year}
-                      </p>
-                    </div>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+          <div
+            style="margin-top: 24px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand);"
+          >
+            Publishing July 2026
+          </div>
         </div>
-      </section>
-    )
-  }
-
-  <!-- ── Coming next ──────────────────────────────────────────────── -->
-  <section class="py-20 md:py-24 px-6 md:px-10 bg-[color-mix(in_srgb,var(--color-cream)_60%,white)]">
-    <div class="max-w-3xl mx-auto text-center">
-      <SmallCapsLabel tone="rust" items={['Coming Next']} />
-      <h2
-        class="mt-4 text-3xl md:text-4xl"
-        style="font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 0;"
-      >
-        Summer 2026
-      </h2>
-      <hr class="rust-rule w-16 h-[2px] mt-6 mb-8 mx-auto" />
-      <p
-        class="text-base md:text-lg leading-relaxed text-[var(--color-taupe)] italic max-w-xl mx-auto"
-        style="font-family: var(--font-body);"
-      >
-        The third issue arrives with the summer season. Harbor pilots, the
-        Fort Hancock radar towers, and a long conversation with one of the
-        last Raritan Bay clammers.
-      </p>
+      </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 88px;
+    align-items: center;
+  }
+  .letter-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .ed-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+  .subscribe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .tier-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid rgba(255,255,255,0.12);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .tier-col {
+    padding: 28px 24px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .tier-col--last { border-right: 0; }
+
+  .archive-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 28px;
+  }
+  .archive-card { text-decoration: none; color: inherit; display: block; }
+  .archive-meta {
+    margin-top: 14px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .archive-theme {
+    font-family: var(--font-display);
+    font-size: 15px;
+    color: var(--ink);
+    margin-top: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .next-card {
+    background: var(--paper);
+    border: 1px solid var(--sand);
+    padding: 56px 64px;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 64px;
+    align-items: center;
+    position: relative;
+  }
+
+  @media (max-width: 1000px) {
+    .archive-grid { grid-template-columns: repeat(3, 1fr); }
+    .ed-card-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-cover { padding-left: 0 !important; }
+    .letter-grid { grid-template-columns: 1fr; gap: 24px; }
+    .subscribe-grid { grid-template-columns: 1fr; gap: 40px; }
+    .tier-grid { grid-template-columns: 1fr; }
+    .tier-col { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .tier-col--last { border-bottom: 0; }
+    .next-card { grid-template-columns: 1fr; gap: 32px; padding: 40px 28px; }
+  }
+  @media (max-width: 640px) {
+    .ed-card-grid { grid-template-columns: 1fr; }
+    .archive-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

@@ -12,16 +12,16 @@
 interface Props {
   items: string[];
   /** Color tone. Defaults to taupe; use "rust" for pillar tags, "navy" on cream backgrounds. */
-  tone?: 'taupe' | 'rust' | 'navy' | 'cream';
+  tone?: 'muted' | 'rust' | 'navy' | 'cream';
   /** Override the HTML tag (default <p>). */
   as?: 'p' | 'span' | 'div';
   class?: string;
 }
 
-const { items, tone = 'taupe', as: Tag = 'p', class: className = '' } = Astro.props;
+const { items, tone = 'muted', as: Tag = 'p', class: className = '' } = Astro.props;
 
 const toneClass = {
-  taupe: 'text-[var(--color-taupe)]',
+  muted: 'text-[var(--color-muted)]',
   rust: 'text-[var(--color-rust)]',
   navy: 'text-[var(--color-navy)]',
   cream: 'text-[var(--color-cream)]',

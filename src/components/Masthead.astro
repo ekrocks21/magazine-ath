@@ -1,9 +1,8 @@
 ---
 /**
- * Navy masthead with wordmark left, navigation right, thin rust divider beneath.
- * Spec §4.1 / §5 / §12.
- *
- * Used on every page via BaseLayout.
+ * Navy masthead with two-line wordmark (Above the Hook · Quarterly /
+ * The Local <em>Lookout</em>), primary nav, subscribe chip, thin rust
+ * divider beneath. Matches the prototype `.mag-masthead`.
  */
 
 interface NavItem {
@@ -14,85 +13,37 @@ interface NavItem {
 const nav: NavItem[] = [
   { label: 'Current Issue', href: '/issues/spring-2026' },
   { label: 'Archive', href: '/archive' },
+  { label: 'Next Issue', href: '/next' },
   { label: 'About', href: '/about' },
 ];
 
 const currentPath = Astro.url.pathname;
+
+function isActiveFor(href: string): boolean {
+  if (href === '/') return currentPath === '/';
+  return currentPath === href || currentPath.startsWith(href + '/');
+}
 ---
 
-<header class="bg-[var(--color-navy)] text-[var(--color-cream)]">
-  <div
-    class="max-w-6xl mx-auto px-6 md:px-10 py-6 md:py-8 flex items-center justify-between gap-6"
-  >
-    <!-- Wordmark -->
-    <a
-      href="/"
-      class="group flex flex-col gap-0.5 no-underline"
-      aria-label="The Local Lookout — home"
-    >
-      <span
-        class="text-xs tracking-[0.25em] uppercase font-[var(--font-sans)] text-[var(--color-cream)]/70"
-      >
-        Above the Hook
-      </span>
-      <span
-        class="font-[var(--font-display)] text-2xl md:text-3xl leading-none text-[var(--color-cream)]"
-        style="font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;"
-      >
-        The Local Lookout
-      </span>
+<header class="mag-masthead">
+  <div class="mag-masthead-inner">
+    <a href="/" class="mag-wordmark" aria-label="The Local Lookout — home">
+      <span class="mag-wordmark-sup">Above the Hook · Quarterly</span>
+      <span class="mag-wordmark-main">The Local <em>Lookout</em></span>
     </a>
 
-    <!-- Desktop nav -->
-    <nav aria-label="Primary" class="hidden md:block">
-      <ul class="flex items-center gap-8 list-none m-0 p-0">
-        {
-          nav.map((item) => {
-            const isActive =
-              item.href === '/'
-                ? currentPath === '/'
-                : currentPath.startsWith(item.href);
-            return (
-              <li>
-                <a
-                  href={item.href}
-                  aria-current={isActive ? 'page' : undefined}
-                  class={`text-xs tracking-[0.25em] uppercase no-underline transition-opacity hover:opacity-100 ${
-                    isActive
-                      ? 'text-[var(--color-cream)] opacity-100'
-                      : 'text-[var(--color-cream)]/75 hover:text-[var(--color-cream)]'
-                  }`}
-                  style="font-family: var(--font-sans);"
-                >
-                  {item.label}
-                </a>
-              </li>
-            );
-          })
-        }
-      </ul>
-    </nav>
-
-    <!-- Mobile nav — compact inline labels, same content -->
-    <nav aria-label="Primary" class="md:hidden">
-      <ul class="flex items-center gap-4 list-none m-0 p-0">
-        {
-          nav.map((item) => (
-            <li>
-              <a
-                href={item.href}
-                class="text-[0.65rem] tracking-[0.2em] uppercase text-[var(--color-cream)]/85 no-underline"
-                style="font-family: var(--font-sans);"
-              >
-                {item.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+    <nav class="mag-nav" aria-label="Primary">
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          class={isActiveFor(item.href) ? 'is-active' : ''}
+          aria-current={isActiveFor(item.href) ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))}
+      <a href="/subscribe" class="mag-subscribe-btn">Subscribe</a>
     </nav>
   </div>
-
-  <!-- Thin rust divider per spec §12 -->
-  <hr class="rust-rule" />
+  <div class="mag-rust-rule"></div>
 </header>

@@ -33,7 +33,7 @@ const { src, alt, caption, credit } = Astro.props;
         <figcaption class="max-w-3xl mx-auto px-6 md:px-10 mt-4 flex flex-col md:flex-row md:items-baseline gap-2 md:gap-6">
           {caption && (
             <span
-              class="text-sm leading-snug text-[var(--color-taupe)] italic flex-1"
+              class="text-sm leading-snug text-[var(--color-muted)] italic flex-1"
               style="font-family: var(--font-body);"
             >
               {caption}
@@ -41,8 +41,8 @@ const { src, alt, caption, credit } = Astro.props;
           )}
           {credit && (
             <span
-              class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-taupe)]"
-              style="font-family: var(--font-sans);"
+              class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-muted)]"
+              style="font-family: var(--font-mono);"
             >
               {credit}
             </span>

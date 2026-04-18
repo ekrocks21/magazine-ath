@@ -1,9 +1,8 @@
 ---
 /**
- * Article page header — pillar tag, display headline, dek, byline.
- * Spec §4.4.
- *
- * Rendered above the hero image and body.
+ * Article page header — pillar tag, dual-color display headline, dek, byline.
+ * Matches the editorial prototype: final clause of the title tips into
+ * italic rust, making the headline an object.
  */
 
 interface Props {
@@ -20,7 +19,6 @@ interface Props {
 const { title, dek, author, byline, pillar, publishDate, readingTime } =
   Astro.props;
 
-// Turn snake_case pillar key into display label: "Historical Storytelling"
 const pillarLabel = pillar
   .split('_')
   .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
@@ -33,43 +31,90 @@ const dateLabel = publishDate
       day: 'numeric',
     })
   : undefined;
+
+// Dual-color headline: split on " to " when present, else on a trailing clause.
+function splitTitle(t: string): { head: string; tail: string } {
+  const lower = t.toLowerCase();
+  const to = lower.lastIndexOf(' to ');
+  if (to > 4) return { head: t.slice(0, to + 1), tail: t.slice(to + 1) };
+  const words = t.split(/\s+/);
+  if (words.length >= 5) {
+    const pivot = Math.ceil(words.length * 0.65);
+    return { head: words.slice(0, pivot).join(' ') + ' ', tail: words.slice(pivot).join(' ') };
+  }
+  return { head: t, tail: '' };
+}
+const split = splitTitle(title);
 ---
 
-<header class="max-w-3xl mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-10">
-  <!-- Pillar tag -->
-  <div class="mb-8">
-    <span class="tag-pill">{pillarLabel}</span>
-  </div>
+<header class="article-header">
+  <div class="article-header-inner">
+    <div style="margin-bottom: 28px;">
+      <span class="tag-pill">{pillarLabel}</span>
+    </div>
 
-  <!-- Headline -->
-  <h1
-    class="text-4xl md:text-6xl lg:text-7xl leading-[1.04] text-balance"
-    style="font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;"
-  >
-    {title}
-  </h1>
+    <h1 class="article-h1">
+      {split.head}
+      {split.tail && (
+        <em style="font-weight: 400; font-style: italic; color: var(--rust);">{split.tail}</em>
+      )}
+    </h1>
 
-  <!-- Dek -->
-  {
-    dek && (
+    {dek && (
       <p
-        class="mt-6 md:mt-8 text-xl md:text-2xl leading-snug text-[var(--color-taupe)] italic max-w-2xl"
-        style="font-family: var(--font-body);"
+        style="margin-top: 28px; font-family: var(--font-display); font-style: italic; font-size: clamp(1.1rem, 1.8vw, 1.35rem); line-height: 1.5; color: var(--ink-soft); max-width: 640px;"
       >
         {dek}
       </p>
-    )
-  }
+    )}
 
-  <!-- Byline + date + read time -->
-  <div
-    class="mt-10 md:mt-12 pt-6 border-t border-[var(--color-ink)]/10 flex flex-wrap items-baseline gap-x-4 gap-y-2 text-xs tracking-[0.2em] uppercase text-[var(--color-taupe)]"
-    style="font-family: var(--font-sans);"
-  >
-    <span>By {byline ?? author}</span>
-    {dateLabel && <span aria-hidden="true">·</span>}
-    {dateLabel && <span>{dateLabel}</span>}
-    {readingTime && <span aria-hidden="true">·</span>}
-    {readingTime && <span>{readingTime}</span>}
+    <div class="article-byline">
+      <span>By {byline ?? author}</span>
+      {dateLabel && <span aria-hidden="true" class="bullet">·</span>}
+      {dateLabel && <span>{dateLabel}</span>}
+      {readingTime && <span aria-hidden="true" class="bullet">·</span>}
+      {readingTime && <span>{readingTime}</span>}
+    </div>
   </div>
 </header>
+
+<style>
+  .article-header {
+    padding: 64px 0 40px;
+  }
+  .article-header-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  .article-h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.4rem, 5.4vw, 4.4rem);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .article-byline {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--sand);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .article-byline .bullet {
+    color: var(--sand);
+  }
+  @media (max-width: 640px) {
+    .article-header { padding: 40px 0 24px; }
+    .article-header-inner { padding: 0 24px; }
+  }
+</style>

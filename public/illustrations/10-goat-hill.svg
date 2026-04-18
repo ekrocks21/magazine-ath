@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
+  <defs>
+    <linearGradient id="gh-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8c890"/><stop offset="1" stop-color="#b88870"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#gh-sky)"/>
+  <path d="M 0 180 L 80 140 L 180 160 L 280 130 L 400 150 L 400 300 L 0 300 Z" fill="#2a3028"/>
+  <g fill="#1a1a12">
+    <rect x="60" y="200" width="14" height="18"/>
+    <rect x="82" y="198" width="12" height="20"/>
+    <rect x="140" y="210" width="16" height="16"/>
+    <rect x="220" y="196" width="14" height="20"/>
+    <rect x="300" y="204" width="12" height="18"/>
+  </g>
+  <path d="M 0 240 L 400 234 L 400 300 L 0 300 Z" fill="#1a2228"/>
+</svg>

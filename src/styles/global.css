@@ -1,91 +1,254 @@
 /* ──────────────────────────────────────────────────────────────
    The Local Lookout — global stylesheet
-   Palette per spec §12. Typography approved 2026-04-18:
-   Fraunces (display) / Source Serif 4 (body) / Inter (small caps + UI).
-   All three are variable fonts self-hosted via @fontsource-variable.
+   Ported from the design prototype (Above the Hook Design System).
+   Typography: Playfair Display (display) / Source Serif 4 (body) /
+   DM Mono (small-caps UI, nav, datelines). Palette matches prototype
+   :root tokens verbatim. See decisions.md 2026-04-18 entry.
    ────────────────────────────────────────────────────────────── */
 
-/* Variable font imports. 'full' includes the wght + opsz + SOFT + WONK axes
-   for Fraunces so display can use the chunky inked setting and body can
-   use quieter values. */
-@import "@fontsource-variable/fraunces/index.css";
+@import "@fontsource-variable/playfair-display/index.css";
 @import "@fontsource-variable/source-serif-4/index.css";
-@import "@fontsource-variable/inter/index.css";
+@import "@fontsource/dm-mono/300.css";
+@import "@fontsource/dm-mono/400.css";
+@import "@fontsource/dm-mono/500.css";
 
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
 @theme {
-  /* Palette (spec §12) */
-  --color-navy: #1C2E4A;
-  --color-cream: #F5EFE4;
-  --color-rust: #C14D2E;
-  --color-ink: #1A1A1A;
-  --color-taupe: #6B655C;
+  /* Core palette (prototype :root) */
+  --color-navy: #1B2E4B;
+  --color-navy-light: #2A4470;
+  --color-navy-dark: #10192B;
 
-  /* Typography */
-  --font-display: "Fraunces Variable", "Fraunces", Georgia, serif;
-  --font-body: "Source Serif 4 Variable", "Source Serif 4", Georgia, serif;
-  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-rust: #8B3A2A;
+  --color-rust-light: #C4583E;
+  --color-rust-dark: #6B2A1D;
+
+  --color-cream: #F5F0E8;
+  --color-cream-dark: #EDE7D9;
+  --color-paper: #FDFAF5;
+
+  --color-ink: #1A1208;
+  --color-ink-soft: #3D3020;
+
+  --color-sand: #C9B99A;
+  --color-sand-light: #E0D5C0;
+  --color-muted: #7A6F5F;
+
+  /* On-dark (navy surfaces) */
+  --color-on-dark-1: #FFFFFF;
+  --color-on-dark-2: #F5F0E8;
+  --color-on-dark-3: #E0D5C0;
+  --color-on-dark-4: #C9B99A;
+
+  /* Typography stacks */
+  --font-display: "Playfair Display Variable", "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-body: "Source Serif 4 Variable", "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono: "DM Mono", "IBM Plex Mono", "Courier New", monospace;
 
   /* Editorial measure for article body */
   --measure: 65ch;
+
+  /* Layout */
+  --max-wide: 1200px;
+  --max-content: 760px;
 }
 
-/* Base body reset */
+/* Runtime CSS vars so inline styles from the prototype pattern work. */
+:root {
+  --navy: #1B2E4B;
+  --navy-light: #2A4470;
+  --navy-dark: #10192B;
+  --rust: #8B3A2A;
+  --rust-light: #C4583E;
+  --rust-dark: #6B2A1D;
+  --cream: #F5F0E8;
+  --cream-dark: #EDE7D9;
+  --paper: #FDFAF5;
+  --ink: #1A1208;
+  --ink-soft: #3D3020;
+  --sand: #C9B99A;
+  --sand-light: #E0D5C0;
+  --muted: #7A6F5F;
+  --on-dark-1: #FFFFFF;
+  --on-dark-2: #F5F0E8;
+  --on-dark-3: #E0D5C0;
+  --on-dark-4: #C9B99A;
+
+  --font-display: "Playfair Display Variable", "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-body: "Source Serif 4 Variable", "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono: "DM Mono", "IBM Plex Mono", "Courier New", monospace;
+
+  --dur-fast: 0.15s;
+  --dur-base: 0.2s;
+  --dur-slow: 0.4s;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Baseline
+   ────────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
 body {
-  background: var(--color-cream);
-  color: var(--color-ink);
+  background: var(--cream);
+  color: var(--ink);
   font-family: var(--font-body);
+  line-height: 1.75;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
-/* Headings default to display serif. Individual templates can override. */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  color: var(--color-navy);
-  /* Let Fraunces breathe: tighter tracking, slightly denser leading. */
-  letter-spacing: -0.01em;
-  line-height: 1.1;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+  line-height: 1.15;
 }
 
-/* Small-caps metadata treatment — pervasive across the site per spec §12.
-   Used for issue number · season · year, pillar tags, section labels. */
-.small-caps {
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 500;
+a { color: var(--navy); text-decoration: none; transition: color var(--dur-base); }
+a:hover { color: var(--rust); }
+
+img { max-width: 100%; height: auto; display: block; }
+
+::selection { background: var(--rust); color: var(--cream); }
+
+/* ──────────────────────────────────────────────────────────────
+   Masthead
+   ────────────────────────────────────────────────────────────── */
+.mag-masthead {
+  background: var(--navy);
+  color: var(--on-dark-1);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+.mag-masthead-inner {
+  max-width: var(--max-wide);
+  margin: 0 auto;
+  padding: 18px 40px 16px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+.mag-wordmark {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  text-decoration: none;
+}
+.mag-wordmark-sup {
+  font-family: var(--font-mono);
+  font-size: 9px;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--color-taupe);
+  color: var(--sand);
+  margin-bottom: 6px;
+}
+.mag-wordmark-main {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.015em;
+  color: var(--on-dark-1);
+}
+.mag-wordmark-main em { font-style: italic; font-weight: 400; color: var(--sand-light); }
+
+.mag-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.mag-nav a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--on-dark-3);
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur-base), border-color var(--dur-base);
+}
+.mag-nav a:hover { color: var(--on-dark-1); border-bottom-color: var(--rust-light); }
+.mag-nav a.is-active { color: var(--on-dark-1); border-bottom-color: var(--rust-light); }
+
+.mag-subscribe-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: var(--rust);
+  color: var(--on-dark-1) !important;
+  padding: 10px 18px;
+  border: 0;
+  cursor: pointer;
+  transition: background var(--dur-base);
+}
+.mag-subscribe-btn:hover { background: var(--rust-light); border-bottom-color: transparent !important; }
+
+.mag-rust-rule { height: 3px; background: var(--rust); }
+
+/* ──────────────────────────────────────────────────────────────
+   Containers
+   ────────────────────────────────────────────────────────────── */
+.mag-page { min-height: 100vh; }
+.mag-container {
+  max-width: var(--max-wide);
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.mag-container-narrow {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.mag-container-reading {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 40px;
 }
 
-/* Interpunct separator between small-caps items, e.g.
-   SANDY HOOK · HIGHLANDS · THE NEW JERSEY COAST */
+/* ──────────────────────────────────────────────────────────────
+   Meta / dividers
+   ────────────────────────────────────────────────────────────── */
+.meta-dotted {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.meta-dotted .dot { margin: 0 0.55em; color: var(--sand); }
+.meta-dotted .rust { color: var(--rust); }
+
+.hair-rule { border: 0; border-top: 1px solid var(--sand); margin: 0; }
+
+/* Small-caps label (legacy name kept for existing components) */
+.small-caps {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 .small-caps > * + *::before {
   content: " · ";
   margin: 0 0.25em;
-  color: var(--color-taupe);
+  color: var(--sand);
 }
 
-/* Thin rust divider rule — used under mastheads and as section flourishes. */
-.rust-rule {
-  display: block;
-  width: 100%;
-  height: 1px;
-  background: var(--color-rust);
-  border: 0;
-}
+.rust-rule { display: block; width: 100%; height: 1px; background: var(--rust); border: 0; }
 
-/* Tag pill: thin stroke, never filled (spec §12 typographic rules). */
 .tag-pill {
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  border: 1px solid var(--color-rust);
-  color: var(--color-rust);
-  font-family: var(--font-sans);
+  border: 1px solid var(--rust);
+  color: var(--rust);
+  font-family: var(--font-mono);
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.2em;
@@ -94,127 +257,296 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1;
 }
 
-/* Measured editorial body: ~65ch line length for article text. */
-.prose-measure {
-  max-width: var(--measure);
+/* ──────────────────────────────────────────────────────────────
+   Buttons
+   ────────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--rust);
+  color: var(--on-dark-1);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  border: 0;
+  cursor: pointer;
+  transition: background var(--dur-base);
+}
+.btn-primary:hover { background: var(--rust-light); color: var(--on-dark-1); }
+.btn-primary .arrow { font-size: 14px; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--navy);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  border: 1px solid var(--navy);
+  cursor: pointer;
+  transition: background var(--dur-base), color var(--dur-base);
+}
+.btn-ghost:hover { background: var(--navy); color: var(--on-dark-1); }
+
+.btn-dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--navy);
+  color: var(--on-dark-1);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  border: 0;
+  cursor: pointer;
+  transition: background var(--dur-base);
+}
+.btn-dark:hover { background: var(--navy-light); }
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--navy);
+  padding: 4px 0;
+  border-bottom: 1px solid var(--rust);
+  cursor: pointer;
+  background: transparent;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+}
+.btn-link:hover { color: var(--rust); }
+
+/* ──────────────────────────────────────────────────────────────
+   Issue cover frame
+   ────────────────────────────────────────────────────────────── */
+.issue-cover {
+  position: relative;
+  background: var(--paper);
+  box-shadow: 0 30px 60px rgba(26,18,8,0.18), 0 10px 20px rgba(26,18,8,0.08);
+  line-height: 0;
+  overflow: hidden;
+}
+.issue-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px rgba(26,18,8,0.08);
+  pointer-events: none;
+}
+.issue-cover img, .issue-cover svg { display: block; width: 100%; height: auto; }
+.issue-cover-small {
+  box-shadow: 0 12px 28px rgba(26,18,8,0.14), 0 4px 10px rgba(26,18,8,0.06);
 }
 
 /* ──────────────────────────────────────────────────────────────
-   Article body typography — spec §4.4: this is the point.
-   Applied to the wrapper div around Markdown-rendered content.
+   Editorial card
    ────────────────────────────────────────────────────────────── */
+.ed-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+}
+.ed-card-img {
+  background: var(--sand-light);
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  position: relative;
+}
+.ed-card-img > svg, .ed-card-img > img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform var(--dur-slow);
+}
+.ed-card:hover .ed-card-img > svg, .ed-card:hover .ed-card-img > img {
+  transform: scale(1.03);
+}
+.ed-card-kicker {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rust);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ed-card-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.ed-card-dek {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.ed-card-byline {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.free-chip {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: var(--rust);
+  color: var(--on-dark-1);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 5px 9px;
+  z-index: 2;
+}
+.lock-chip {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: rgba(27,46,75,0.9);
+  color: var(--on-dark-1);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 5px 9px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Pull quote
+   ────────────────────────────────────────────────────────────── */
+.pullquote {
+  margin: 48px 0;
+  padding: 24px 0 24px 40px;
+  border-left: 3px solid var(--rust);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 28px;
+  line-height: 1.3;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+.pullquote-attr {
+  display: block;
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Article body typography
+   ────────────────────────────────────────────────────────────── */
+.prose-measure { max-width: var(--measure); }
 
 .article-prose {
   font-family: var(--font-body);
-  font-size: 1.125rem; /* 18px desktop */
-  line-height: 1.7;
-  color: var(--color-ink);
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--ink);
   max-width: var(--measure);
   margin-inline: auto;
 }
-
 @media (min-width: 768px) {
-  .article-prose {
-    font-size: 1.1875rem; /* 19px desktop */
-    line-height: 1.75;
-  }
+  .article-prose { font-size: 1.1875rem; line-height: 1.8; }
 }
+.article-prose > * + * { margin-top: 1.5em; }
 
-.article-prose > * + * {
-  margin-top: 1.5em;
-}
-
-/* Section breaks via horizontal rule in Markdown become a center flourish. */
 .article-prose hr {
   border: 0;
   width: 8rem;
   height: 1px;
-  background: var(--color-rust);
+  background: var(--rust);
   opacity: 0.55;
   margin: 3rem auto;
 }
 
 .article-prose h2 {
   font-family: var(--font-display);
-  color: var(--color-navy);
+  color: var(--navy);
   font-size: 1.75rem;
   line-height: 1.2;
   margin-top: 2.5em;
   margin-bottom: 0.3em;
-  font-variation-settings: 'opsz' 72, 'SOFT' 40, 'WONK' 0;
 }
-
 .article-prose h3 {
   font-family: var(--font-display);
-  color: var(--color-navy);
+  color: var(--navy);
   font-size: 1.375rem;
   line-height: 1.25;
   margin-top: 2em;
   margin-bottom: 0.2em;
 }
-
 .article-prose a {
-  color: var(--color-rust);
+  color: var(--rust);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
 }
-
-.article-prose a:hover {
-  color: var(--color-navy);
-}
-
-.article-prose strong {
-  color: var(--color-navy);
-  font-weight: 600;
-}
-
-.article-prose em {
-  font-style: italic;
-}
-
+.article-prose a:hover { color: var(--navy); }
+.article-prose strong { color: var(--navy); font-weight: 600; }
+.article-prose em { font-style: italic; }
 .article-prose blockquote {
-  border-left: 2px solid var(--color-rust);
-  padding-left: 1.5rem;
+  border-left: 3px solid var(--rust);
+  padding: 12px 0 12px 24px;
   margin-left: 0;
   font-style: italic;
-  color: var(--color-navy);
+  font-family: var(--font-display);
+  color: var(--navy);
+  background: var(--cream-dark);
 }
-
-.article-prose ul,
-.article-prose ol {
-  padding-left: 1.5rem;
-}
-
+.article-prose ul, .article-prose ol { padding-left: 1.5rem; }
 .article-prose ul li { list-style-type: disc; }
 .article-prose ol li { list-style-type: decimal; }
+.article-prose li + li { margin-top: 0.5em; }
+.article-prose img { margin-inline: auto; max-width: 100%; height: auto; }
 
-.article-prose li + li {
-  margin-top: 0.5em;
-}
-
-.article-prose code {
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.9em;
-  background: color-mix(in srgb, var(--color-rust) 8%, transparent);
-  padding: 0.1em 0.35em;
-  border-radius: 3px;
-}
-
-.article-prose img {
-  margin-inline: auto;
-  max-width: 100%;
-  height: auto;
-}
-
-/* Drop cap — opt-in by adding .article-prose--drop-cap to the wrapper */
+/* Drop cap — opt-in via .article-prose--drop-cap */
 .article-prose--drop-cap > p:first-of-type::first-letter {
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;
   float: left;
-  font-size: 4.75em;
+  font-size: 4.25em;
   line-height: 0.85;
   padding-right: 0.08em;
-  padding-top: 0.08em;
-  color: var(--color-navy);
+  padding-top: 0.05em;
+  color: var(--rust);
+  font-weight: 700;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Responsive
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .mag-masthead-inner { padding: 14px 24px; gap: 16px; }
+  .mag-nav { gap: 16px; }
+  .mag-nav a:not(.mag-subscribe-btn) { display: none; }
+  .mag-container, .mag-container-narrow, .mag-container-reading { padding: 0 24px; }
+  .pullquote { margin: 32px 0; font-size: 22px; }
 }

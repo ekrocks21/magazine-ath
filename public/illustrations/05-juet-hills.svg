@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
+  <defs>
+    <linearGradient id="ca-juet-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d8b880"/><stop offset="1" stop-color="#5a4a50"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#ca-juet-sky)"/>
+  <circle cx="310" cy="100" r="20" fill="#f0d098" opacity="0.9"/>
+  <path d="M0 170 L60 148 L140 138 L220 132 L300 136 L380 146 L400 152 L400 210 L0 210 Z" fill="#2a2530"/>
+  <rect y="210" width="400" height="90" fill="#1a1820"/>
+  <g stroke="#4a4250" stroke-width="0.4" fill="none" opacity="0.5">
+    <path d="M 0 240 Q 100 248 200 244 Q 300 240 400 248"/>
+    <path d="M 0 270 Q 100 278 200 274 Q 300 270 400 278"/>
+  </g>
+</svg>

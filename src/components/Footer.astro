@@ -1,162 +1,153 @@
 ---
 /**
- * Site footer — links to ATH family, colophon, mailing address.
- * Spec §4.1 / §5.
+ * Site footer — 4-column grid: masthead + P.O. Box, magazine nav, ATH family,
+ * colophon. Bottom rule with copyright + printer note + current issue badge.
+ * Matches the prototype footer.
  */
 
 const year = new Date().getFullYear();
 
-const athLinks = [
-  { label: 'abovethehook.com', href: 'https://abovethehook.com' },
-  { label: 'harbor.abovethehook.com', href: 'https://harbor.abovethehook.com' },
-  { label: 'blog.abovethehook.com', href: 'https://blog.abovethehook.com' },
-];
-
-const socialLinks = [
-  { label: 'Instagram', href: 'https://instagram.com/abovethehook' },
-  { label: 'YouTube', href: 'https://youtube.com/@abovethehookstudios' },
-  { label: 'Facebook', href: 'https://facebook.com/abovethehook' },
-];
-
 const magazineLinks = [
   { label: 'Current Issue', href: '/issues/spring-2026' },
-  { label: 'Archive', href: '/archive' },
-  { label: 'About', href: '/about' },
-  { label: 'RSS', href: '/rss.xml' },
+  { label: 'The Archive', href: '/archive' },
+  { label: 'Subscribe', href: '/subscribe' },
+  { label: 'Next Issue', href: '/next' },
+];
+
+const athLinks = [
+  { label: 'abovethehook.com', href: 'https://abovethehook.com' },
+  { label: 'ATH View — Live cams', href: 'https://harbor.abovethehook.com' },
+  { label: 'The Blog', href: 'https://blog.abovethehook.com' },
+  { label: 'YouTube · Instagram · Facebook', href: 'https://instagram.com/abovethehook' },
+];
+
+const colophonLinks = [
+  { label: 'About the Lookout', href: '/about' },
+  { label: 'Masthead & contributors', href: '/about#masthead' },
+  { label: 'Typography & printing', href: '/about#colophon' },
+  { label: 'Corrections', href: '/about#corrections' },
 ];
 ---
 
-<footer class="bg-[var(--color-navy)] text-[var(--color-cream)] mt-24">
-  <hr class="rust-rule" />
-
-  <div class="max-w-6xl mx-auto px-6 md:px-10 py-16 md:py-20">
-    <div class="grid gap-12 md:grid-cols-4">
+<footer style="background: var(--navy-dark); color: var(--on-dark-2); margin-top: 96px;">
+  <div class="mag-rust-rule"></div>
+  <div style="max-width: var(--max-wide); margin: 0 auto; padding: 56px 40px 40px;">
+    <div class="footer-grid">
       <!-- Masthead column -->
-      <div class="md:col-span-2">
-        <p
-          class="text-xs tracking-[0.25em] uppercase text-[var(--color-cream)]/60"
-          style="font-family: var(--font-sans);"
+      <div>
+        <div
+          style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--sand); margin-bottom: 8px;"
         >
-          Above the Hook
-        </p>
-        <p
-          class="mt-2 text-2xl md:text-3xl leading-tight text-[var(--color-cream)]"
-          style="font-family: var(--font-display); font-variation-settings: 'opsz' 144, 'SOFT' 30, 'WONK' 0;"
+          Above the Hook · Quarterly
+        </div>
+        <div
+          style="font-family: var(--font-display); font-size: 28px; line-height: 1; color: #fff; letter-spacing: -0.015em; margin-bottom: 18px;"
         >
-          The Local Lookout
-        </p>
+          The Local <em style="font-weight: 400; color: var(--sand-light);">Lookout</em>
+        </div>
         <p
-          class="mt-4 text-sm leading-relaxed text-[var(--color-cream)]/70 max-w-sm"
-          style="font-family: var(--font-body);"
+          style="font-family: var(--font-body); font-size: 14px; line-height: 1.6; color: var(--on-dark-3); max-width: 320px; margin-bottom: 18px;"
         >
-          The quarterly print magazine of Above the Hook. Coastal New Jersey,
-          observed slowly.
+          A quarterly magazine of Sandy Hook, New York Harbor, Highlands, and the Monmouth
+          County coast. Published four times a year by Above the Hook.
         </p>
-        <p
-          class="mt-6 text-xs text-[var(--color-cream)]/55 not-italic"
-          style="font-family: var(--font-sans);"
+        <div
+          style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand);"
         >
-          Atlantic Highlands, New Jersey<br />
-          <a
-            href="mailto:hello@abovethehook.com"
-            class="underline underline-offset-2 decoration-[var(--color-rust)]/60 hover:text-[var(--color-cream)]"
-            >hello@abovethehook.com</a
-          >
-        </p>
+          P.O. Box 36 · Highlands, NJ 07732
+        </div>
       </div>
 
       <!-- Magazine nav -->
       <div>
-        <p
-          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-cream)]/60 mb-4"
-          style="font-family: var(--font-sans);"
+        <div
+          style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand); margin-bottom: 18px;"
         >
           The Magazine
-        </p>
-        <ul class="list-none m-0 p-0 space-y-2">
-          {
-            magazineLinks.map((l) => (
-              <li>
-                <a
-                  href={l.href}
-                  class="text-sm text-[var(--color-cream)]/80 hover:text-[var(--color-cream)] no-underline"
-                  style="font-family: var(--font-sans);"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))
-          }
+        </div>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+          {magazineLinks.map((l) => (
+            <li>
+              <a
+                href={l.href}
+                style="font-family: var(--font-body); font-size: 14px; color: var(--on-dark-2); text-decoration: none;"
+              >
+                {l.label}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
 
-      <!-- ATH family links + social -->
+      <!-- ATH family -->
       <div>
-        <p
-          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-cream)]/60 mb-4"
-          style="font-family: var(--font-sans);"
+        <div
+          style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand); margin-bottom: 18px;"
         >
           Above the Hook
-        </p>
-        <ul class="list-none m-0 p-0 space-y-2">
-          {
-            athLinks.map((l) => (
-              <li>
-                <a
-                  href={l.href}
-                  class="text-sm text-[var(--color-cream)]/80 hover:text-[var(--color-cream)] no-underline"
-                  style="font-family: var(--font-sans);"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))
-          }
+        </div>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+          {athLinks.map((l) => (
+            <li>
+              <a
+                href={l.href}
+                style="font-family: var(--font-body); font-size: 14px; color: var(--on-dark-2); text-decoration: none;"
+              >
+                {l.label}
+              </a>
+            </li>
+          ))}
         </ul>
+      </div>
 
-        <p
-          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-cream)]/60 mt-8 mb-4"
-          style="font-family: var(--font-sans);"
+      <!-- Colophon -->
+      <div>
+        <div
+          style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand); margin-bottom: 18px;"
         >
-          Follow
-        </p>
-        <ul class="list-none m-0 p-0 space-y-2">
-          {
-            socialLinks.map((l) => (
-              <li>
-                <a
-                  href={l.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-sm text-[var(--color-cream)]/80 hover:text-[var(--color-cream)] no-underline"
-                  style="font-family: var(--font-sans);"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))
-          }
+          Colophon
+        </div>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+          {colophonLinks.map((l) => (
+            <li>
+              <a
+                href={l.href}
+                style="font-family: var(--font-body); font-size: 14px; color: var(--on-dark-2); text-decoration: none;"
+              >
+                {l.label}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
 
-    <!-- Colophon -->
+    <!-- Bottom rule -->
     <div
-      class="mt-16 pt-8 border-t border-[var(--color-cream)]/10 flex flex-col md:flex-row md:items-end md:justify-between gap-4"
+      style="margin-top: 56px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;"
     >
-      <p
-        class="text-[0.65rem] tracking-[0.2em] uppercase text-[var(--color-cream)]/45 leading-relaxed"
-        style="font-family: var(--font-sans);"
+      <div
+        style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sand);"
       >
-        Set in Fraunces, Source Serif 4, and Inter.<br />
-        Published quarterly.
-      </p>
-      <p
-        class="text-[0.65rem] tracking-[0.2em] uppercase text-[var(--color-cream)]/45"
-        style="font-family: var(--font-sans);"
+        &copy; {year} Above the Hook · Printed in Red Bank, New Jersey
+      </div>
+      <div
+        style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sand);"
       >
-        &copy; {year} Above the Hook
-      </p>
+        Issue No. 02 · Spring 2026
+      </div>
     </div>
   </div>
 </footer>
+
+<style>
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+</style>
