@@ -72,7 +72,7 @@ const issueTitle = issue?.data.title ?? data.issue;
   title={data.title}
   description={data.dek || undefined}
   ogType="article"
-  ogImage={data.hero_image}
+  ogImage={data.hero_image?.src}
   publishedTime={data.publish_date?.toISOString()}
   author={data.author}
   noindex={data.status === 'draft'}
@@ -100,7 +100,7 @@ const issueTitle = issue?.data.title ?? data.issue;
 
     <ArticleHeroImage
       src={data.hero_image}
-      alt={data.hero_image_caption}
+      alt={data.hero_image_alt ?? data.hero_image_caption}
       caption={data.hero_image_caption}
       credit={data.hero_image_credit}
     />

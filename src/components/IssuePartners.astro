@@ -1,0 +1,206 @@
+---
+/**
+ * Partners & Products — a single aggregated section used on issue pages
+ * in place of the Canva print piece's standalone brand spreads.
+ *
+ * Takes a handful of pre-imported ImageMetadata entries (each with caption
+ * + credit) and a list of partner brands. Renders as a 2-column gallery
+ * on wide screens over a paper card, with partner-credit lines below.
+ *
+ * Spec-winter-2026.md §6.
+ */
+
+import { Image, type ImageMetadata } from 'astro:assets';
+
+interface GalleryItem {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  credit?: string;
+}
+
+interface Partner {
+  name: string;
+  description?: string;
+  href?: string;
+}
+
+interface Props {
+  title?: string;
+  eyebrow?: string;
+  intro?: string;
+  gallery?: GalleryItem[];
+  partners?: Partner[];
+}
+
+const {
+  title = 'Partners & Products',
+  eyebrow = 'Wear the Hook',
+  intro,
+  gallery = [],
+  partners = [],
+} = Astro.props;
+---
+
+<section class="issue-partners">
+  <div class="mag-container">
+    <div class="issue-partners-card">
+      <div class="issue-partners-rule"></div>
+
+      <div class="issue-partners-head">
+        <div class="meta-dotted">{eyebrow}</div>
+        <h2 class="issue-partners-title">{title}</h2>
+        {intro && <p class="issue-partners-intro">{intro}</p>}
+      </div>
+
+      {gallery.length > 0 && (
+        <div class="issue-partners-gallery">
+          {gallery.map((item) => (
+            <figure class="issue-partners-frame">
+              <Image
+                src={item.src}
+                alt={item.alt}
+                widths={[480, 720, 960, 1440]}
+                sizes="(min-width: 900px) 45vw, 100vw"
+                loading="lazy"
+                decoding="async"
+                class="issue-partners-img"
+              />
+              {(item.caption || item.credit) && (
+                <figcaption class="issue-partners-cap">
+                  {item.caption && <span class="cap-text">{item.caption}</span>}
+                  {item.credit && <span class="cap-credit">{item.credit}</span>}
+                </figcaption>
+              )}
+            </figure>
+          ))}
+        </div>
+      )}
+
+      {partners.length > 0 && (
+        <div class="issue-partners-list">
+          <div class="meta-dotted" style="margin-bottom: 16px;">With thanks to</div>
+          <ul>
+            {partners.map((p) => (
+              <li>
+                <span class="partner-name">
+                  {p.href ? <a href={p.href}>{p.name}</a> : p.name}
+                </span>
+                {p.description && <span class="partner-desc"> — {p.description}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .issue-partners {
+    padding: 72px 0 48px;
+  }
+  .issue-partners-card {
+    background: var(--paper);
+    border: 1px solid var(--sand);
+    padding: 56px 40px;
+    position: relative;
+  }
+  .issue-partners-rule {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 80px;
+    background: var(--rust);
+  }
+  .issue-partners-head {
+    max-width: 640px;
+    margin-bottom: 36px;
+  }
+  .issue-partners-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-top: 10px;
+    margin-bottom: 16px;
+  }
+  .issue-partners-intro {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .issue-partners-gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  .issue-partners-frame {
+    margin: 0;
+  }
+  .issue-partners-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 3/2;
+    object-fit: cover;
+  }
+  .issue-partners-cap {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .cap-text {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .cap-credit {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .issue-partners-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .issue-partners-list li {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .partner-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .partner-name a {
+    color: inherit;
+    border-bottom: 1px solid var(--rust);
+  }
+  .partner-name a:hover { color: var(--rust); }
+  .partner-desc {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  @media (max-width: 900px) {
+    .issue-partners-card { padding: 40px 24px; }
+    .issue-partners-gallery { grid-template-columns: 1fr; }
+  }
+</style>

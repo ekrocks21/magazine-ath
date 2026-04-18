@@ -1,0 +1,129 @@
+---
+/**
+ * Small-caps colophon rendered at the foot of /issues/[slug]. Echoes
+ * the back page of each print edition. Spec-winter-2026.md §7.
+ */
+
+interface Props {
+  issueLabel: string;
+  publishDate?: Date;
+  contributors?: string[];
+  photographers?: string[];
+  editors?: string[];
+  specialThanks?: string[];
+}
+
+const {
+  issueLabel,
+  publishDate,
+  contributors = [],
+  photographers = [],
+  editors = [],
+  specialThanks = [],
+} = Astro.props;
+
+const publishedLine = publishDate
+  ? publishDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : undefined;
+
+interface Row {
+  label: string;
+  items: string[];
+}
+const rows: Row[] = [
+  { label: 'Contributors', items: contributors },
+  { label: 'Photography', items: photographers },
+  { label: 'Editors', items: editors },
+  { label: 'Special thanks', items: specialThanks },
+].filter((r) => r.items.length > 0) as Row[];
+---
+
+<aside class="colophon">
+  <div class="mag-container-narrow">
+    <div class="colophon-head">{issueLabel} · The Local Lookout</div>
+    <dl class="colophon-rows">
+      {rows.map((r) => (
+        <div class="colophon-row">
+          <dt>{r.label}</dt>
+          <dd>
+            {r.items.map((it, i) => (
+              <>
+                <span class="colophon-item">{it}</span>
+                {i < r.items.length - 1 && <span class="colophon-sep">·</span>}
+              </>
+            ))}
+          </dd>
+        </div>
+      ))}
+      {publishedLine && (
+        <div class="colophon-row">
+          <dt>Published</dt>
+          <dd>{publishedLine}</dd>
+        </div>
+      )}
+      <div class="colophon-row">
+        <dt>Origin</dt>
+        <dd>Highlands · Way up North · abovethehook.com</dd>
+      </div>
+    </dl>
+  </div>
+</aside>
+
+<style>
+  .colophon {
+    border-top: 1px solid var(--sand);
+    padding: 56px 0 72px;
+    background: var(--cream-dark);
+  }
+  .colophon-head {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 28px;
+  }
+  .colophon-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 0;
+  }
+  .colophon-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 16px;
+    align-items: baseline;
+    border-top: 1px solid var(--sand-light);
+    padding-top: 12px;
+  }
+  .colophon-row dt {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .colophon-row dd {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .colophon-item { }
+  .colophon-sep {
+    margin: 0 0.4em;
+    color: var(--sand);
+  }
+  @media (max-width: 640px) {
+    .colophon-row {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+</style>

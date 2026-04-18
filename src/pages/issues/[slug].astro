@@ -2,13 +2,21 @@
 /**
  * Issue page — /issues/[slug]
  *
- * Cover, metadata, editor's letter, table of contents.
- * Spec §4.3.
+ * Cover, issue theme, editor's letter inline, ordered table of contents,
+ * partners & products section, colophon.
  */
 
 import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SmallCapsLabel from '../../components/SmallCapsLabel.astro';
+import IssuePartners from '../../components/IssuePartners.astro';
+import IssueColophon from '../../components/IssueColophon.astro';
+
+// Partner-pool images (Winter 2026 only right now; add future issues as needed)
+import winterBayside from '../../assets/issues/winter-2026/bayside-sunset.jpg';
+import winterNycBuoy from '../../assets/issues/winter-2026/nyc-buoy.jpg';
+import winterGoldie from '../../assets/issues/winter-2026/goldie-sunset.jpg';
 
 export async function getStaticPaths() {
   const issues = await getCollection('issues');
@@ -27,8 +35,7 @@ const { Content: IssueBody } = await render(issue);
 const slug = issue.id.replace(/\.md$/, '');
 const data = issue.data;
 
-// ── Articles in this issue ─────────────────────────────────────────────
-
+// Articles in this issue
 const includeDrafts =
   import.meta.env.PUBLIC_INCLUDE_DRAFTS === 'true' ||
   import.meta.env.DEV === true;
@@ -41,27 +48,37 @@ const issueArticles = allArticles.filter((a) =>
   a.id.startsWith(`${slug}/`),
 );
 
-// Editor's letter resolved by configured slug, falling back to type === 'editors_letter'
+// Editor's letter
 const editorsLetterEntry =
   (data.editors_letter
     ? issueArticles.find(
-        (a) => a.id === `${slug}/${data.editors_letter}.md` ||
-               a.id.replace(/\.md$/, '') === `${slug}/${data.editors_letter}`,
+        (a) =>
+          a.id === `${slug}/${data.editors_letter}.md` ||
+          a.id.replace(/\.md$/, '') === `${slug}/${data.editors_letter}`,
       )
     : undefined) ??
   issueArticles.find((a) => a.data.type === 'editors_letter');
 
-const tocArticles = issueArticles.filter(
-  (a) => a.id !== editorsLetterEntry?.id,
-);
+// TOC articles, honoring frontmatter.order when present
+function compareArticles(
+  a: CollectionEntry<'articles'>,
+  b: CollectionEntry<'articles'>,
+): number {
+  const ao = a.data.order ?? Number.POSITIVE_INFINITY;
+  const bo = b.data.order ?? Number.POSITIVE_INFINITY;
+  if (ao !== bo) return ao - bo;
+  return a.id.localeCompare(b.id);
+}
 
-// Render editor's letter body inline
+const tocArticles = issueArticles
+  .filter((a) => a.id !== editorsLetterEntry?.id)
+  .sort(compareArticles);
+
 const { Content: LetterBody } = editorsLetterEntry
   ? await render(editorsLetterEntry)
   : { Content: null };
 
-// ── Metadata strings ──────────────────────────────────────────────────
-
+// Metadata strings
 const seasonLabel = data.season.charAt(0).toUpperCase() + data.season.slice(1);
 const statusLabel = {
   planning: 'In Planning',
@@ -79,258 +96,462 @@ const dateLabel = data.publish_date
       day: 'numeric',
     })
   : undefined;
+
+// Winter 2026 gets the partner gallery; add mappings here when future
+// issues include one.
+type PartnerProps = Parameters<typeof IssuePartners>[0];
+const partnerGalleryByIssue: Record<string, PartnerProps> = {
+  'winter-2026': {
+    eyebrow: 'Wear the Hook',
+    title: 'Partners & Products',
+    intro:
+      'A few people we leaned on to make this first issue, and a few frames we took along the way.',
+    gallery: [
+      {
+        src: winterBayside,
+        alt: 'Park visitors silhouetted on the bayside at golden hour.',
+        caption: 'Park visitors observing golden hour on the bayside.',
+        credit: 'Eric / Above the Hook',
+      },
+      {
+        src: winterNycBuoy,
+        alt: 'Green channel buoy with a fishing skiff and the Manhattan skyline beyond.',
+        caption: 'Buoy 13, a Trophy boat, and the skyline across the bay.',
+        credit: 'Eric / Above the Hook',
+      },
+      {
+        src: winterGoldie,
+        alt: 'Sun setting on the bay through bare winter branches.',
+        caption: 'Sunset on the bay, framed by the last of the bare branches.',
+        credit: 'Eric / Above the Hook',
+      },
+    ],
+    partners: [
+      {
+        name: 'The Tackle Box',
+        description: 'the corner of the bay where half this issue started',
+      },
+      {
+        name: 'Goldie Gifted',
+        description: 'partners in the sunrise walks',
+      },
+      {
+        name: 'Above the Hook',
+        description:
+          'apparel and the Hook Pendant Necklace at abovethehook.com',
+        href: 'https://abovethehook.com',
+      },
+    ],
+  },
+};
+
+const partnerProps = partnerGalleryByIssue[slug];
+const issueLabel = `${seasonLabel} ${data.year}`;
 ---
 
 <BaseLayout
   title={`${data.title}: ${data.theme ?? 'Current Issue'}`}
-  description={`The ${data.title} issue of The Local Lookout${data.theme ? ` — ${data.theme}.` : '.'}`}
-  ogImage={data.cover_image}
+  description={
+    data.tagline ??
+    `The ${data.title} issue of The Local Lookout${data.theme ? ` — ${data.theme}.` : '.'}`
+  }
+  ogImage={data.cover_image?.src}
 >
-  <!-- Cover treatment. Falls back to a stylized placeholder block when
-       no cover image is uploaded yet. -->
-  <section
-    class="bg-[var(--color-navy)] text-[var(--color-cream)] overflow-hidden"
-  >
-    <div class="max-w-5xl mx-auto px-6 md:px-10 py-16 md:py-24">
-      <div class="grid md:grid-cols-[auto_1fr] gap-10 md:gap-16 items-center">
-        <!-- Cover art (or placeholder) -->
-        <div class="w-full max-w-[280px] md:max-w-[320px] mx-auto md:mx-0">
-          {
-            data.cover_image ? (
-              <img
-                src={data.cover_image}
-                alt={`${data.title} cover`}
-                class="w-full h-auto shadow-2xl"
-                loading="eager"
-                decoding="async"
-              />
-            ) : (
-              <div
-                class="aspect-[5/7] w-full flex flex-col items-center justify-center gap-4 shadow-2xl p-8 text-center"
-                style="background: linear-gradient(135deg, var(--color-navy) 0%, #243e66 100%); border: 1px solid color-mix(in srgb, var(--color-cream) 20%, transparent);"
-              >
-                <p
-                  class="text-[0.6rem] tracking-[0.3em] uppercase text-[var(--color-cream)]/50"
-                  style="font-family: var(--font-mono);"
-                >
-                  Issue No. {issueNumber}
-                </p>
-                <p
-                  class="text-4xl leading-none"
-                  style="font-family: var(--font-display); font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;"
-                >
-                  {data.theme ?? seasonLabel}
-                </p>
-                <hr class="w-16 h-[1px] border-0 bg-[var(--color-rust)]" />
-                <p
-                  class="text-xs tracking-[0.25em] uppercase text-[var(--color-cream)]/70"
-                  style="font-family: var(--font-mono);"
-                >
-                  {seasonLabel} {data.year}
-                </p>
-                <p
-                  class="mt-2 text-sm italic text-[var(--color-cream)]/55"
-                  style="font-family: var(--font-body);"
-                >
-                  The Local Lookout
-                </p>
-              </div>
-            )
-          }
-        </div>
+  <!-- Issue hero: navy, cover left, metadata right -->
+  <section class="issue-hero">
+    <div class="mag-container issue-hero-grid">
+      <div class="issue-hero-cover">
+        {data.cover_image ? (
+          <div class="issue-cover">
+            <Image
+              src={data.cover_image}
+              alt={data.cover_image_alt ?? `${data.title} cover`}
+              widths={[360, 560, 720, 960]}
+              sizes="(min-width: 900px) 360px, 80vw"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+        ) : (
+          <div class="issue-cover issue-cover--placeholder">
+            <div class="cover-placeholder">
+              <p class="cover-sup">Issue No. {issueNumber}</p>
+              <p class="cover-theme">{data.theme ?? seasonLabel}</p>
+              <hr />
+              <p class="cover-bottom">{seasonLabel} {data.year}</p>
+              <p class="cover-brand">The Local Lookout</p>
+            </div>
+          </div>
+        )}
+      </div>
 
-        <!-- Issue metadata + title -->
-        <div>
-          <SmallCapsLabel
-            tone="cream"
-            items={[
-              `Issue No. ${issueNumber}`,
-              `${seasonLabel} ${data.year}`,
-              statusLabel,
-            ]}
-          />
+      <div class="issue-hero-meta">
+        <SmallCapsLabel
+          tone="cream"
+          items={[`Issue No. ${issueNumber}`, `${seasonLabel} ${data.year}`, statusLabel]}
+        />
 
-          <h1
-            class="mt-6 text-5xl md:text-7xl leading-[1.05] text-[var(--color-cream)]"
-            style="font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;"
-          >
-            {data.theme ?? data.title}
-          </h1>
+        <h1 class="issue-hero-title">{data.theme ?? data.title}</h1>
 
-          {
-            data.theme && (
-              <p
-                class="mt-4 text-lg md:text-xl text-[var(--color-cream)]/75"
-                style="font-family: var(--font-mono);"
-              >
-                {data.title}
-              </p>
-            )
-          }
+        {data.tagline && (
+          <p class="issue-hero-tagline">{data.tagline}</p>
+        )}
 
-          {
-            dateLabel && (
-              <p
-                class="mt-8 text-xs tracking-[0.25em] uppercase text-[var(--color-cream)]/60"
-                style="font-family: var(--font-mono);"
-              >
-                Published {dateLabel}
-              </p>
-            )
-          }
-        </div>
+        {dateLabel && (
+          <p class="issue-hero-date">Published {dateLabel}</p>
+        )}
       </div>
     </div>
   </section>
 
-  <!-- Issue body (frontmatter-level prose for the issue page) -->
-  <section class="py-16 md:py-24 px-6 md:px-10">
-    <div class="article-prose text-[var(--color-ink)]">
+  <!-- Issue body (frontmatter-level prose) -->
+  <section class="issue-body-section">
+    <div class="article-prose">
       <IssueBody />
     </div>
   </section>
 
-  <!-- Editor's letter, inline -->
-  {
-    editorsLetterEntry && LetterBody && (
-      <section class="bg-[var(--color-cream)] border-y border-[var(--color-rust)]/20">
-        <div class="max-w-3xl mx-auto px-6 md:px-10 py-16 md:py-24">
-          <SmallCapsLabel
-            tone="rust"
-            items={['From the Editor', editorsLetterEntry.data.author]}
-          />
-          <h2
-            class="mt-5 text-4xl md:text-5xl leading-tight"
-            style="font-variation-settings: 'opsz' 120, 'SOFT' 50, 'WONK' 0;"
-          >
-            {editorsLetterEntry.data.title}
-          </h2>
-          <hr class="rust-rule w-20 h-[2px] mt-6 mb-10" />
-          <div class="article-prose">
-            <LetterBody />
-          </div>
-          <p class="mt-10">
-            <a
-              href={`/issues/${slug}/${editorsLetterEntry.id.split('/')[1].replace(/\.md$/, '')}`}
-              class="text-sm tracking-[0.2em] uppercase text-[var(--color-rust)] no-underline hover:text-[var(--color-navy)]"
-              style="font-family: var(--font-mono);"
-            >
-              Read the letter on its own page &rarr;
-            </a>
-          </p>
+  <!-- Editor's letter inline -->
+  {editorsLetterEntry && LetterBody && (
+    <section class="issue-letter">
+      <div class="mag-container-narrow">
+        <SmallCapsLabel
+          tone="rust"
+          items={['From the Editor', editorsLetterEntry.data.byline ?? editorsLetterEntry.data.author]}
+        />
+        <h2 class="issue-letter-title">{editorsLetterEntry.data.title}</h2>
+        <hr class="rust-rule issue-letter-rule" />
+        <div class="article-prose">
+          <LetterBody />
         </div>
-      </section>
-    )
-  }
+        <p class="issue-letter-more">
+          <a
+            href={`/issues/${slug}/${editorsLetterEntry.id.split('/')[1].replace(/\.md$/, '')}`}
+            class="btn-link"
+          >
+            Read the letter on its own page
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M4 10h12M11 5l5 5-5 5" />
+            </svg>
+          </a>
+        </p>
+      </div>
+    </section>
+  )}
 
   <!-- Table of Contents -->
-  {
-    tocArticles.length > 0 && (
-      <section class="py-16 md:py-24 px-6 md:px-10">
-        <div class="max-w-4xl mx-auto">
-          <SmallCapsLabel tone="rust" items={['Table of Contents']} />
-          <h2
-            class="mt-4 text-3xl md:text-4xl"
-            style="font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 0;"
-          >
-            In this issue
-          </h2>
-          <hr class="rust-rule w-20 h-[2px] mt-6 mb-10" />
+  {tocArticles.length > 0 && (
+    <section class="issue-toc">
+      <div class="mag-container">
+        <div class="issue-toc-head">
+          <div class="meta-dotted" style="margin-bottom: 8px;">Table of contents</div>
+          <h2 class="issue-toc-title">In this issue</h2>
+        </div>
 
-          <ul class="list-none m-0 p-0 divide-y divide-[var(--color-ink)]/10">
-            {tocArticles.map((a) => {
-              const articleSlug = a.id.split('/')[1].replace(/\.md$/, '');
-              const pillarLabel = a.data.pillar
-                .split('_')
-                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(' ');
-              return (
-                <li class="py-6 md:py-8">
-                  <a
-                    href={`/issues/${slug}/${articleSlug}`}
-                    class="block group no-underline"
-                  >
-                    <div class="flex items-baseline gap-4 mb-2">
-                      <span class="tag-pill">{pillarLabel}</span>
-                      {a.data.word_count && (
-                        <span
-                          class="text-[0.65rem] tracking-[0.2em] uppercase text-[var(--color-muted)]"
-                          style="font-family: var(--font-mono);"
-                        >
-                          {Math.max(1, Math.round(a.data.word_count / 220))} min
-                        </span>
-                      )}
-                    </div>
-                    <h3
-                      class="text-2xl md:text-3xl leading-tight text-[var(--color-navy)] group-hover:text-[var(--color-rust)] transition-colors"
-                      style="font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 0;"
-                    >
-                      {a.data.title}
-                    </h3>
-                    {a.data.dek && (
-                      <p
-                        class="mt-3 text-base md:text-lg leading-snug text-[var(--color-muted)] italic max-w-2xl"
-                        style="font-family: var(--font-body);"
-                      >
-                        {a.data.dek}
-                      </p>
+        <ul class="issue-toc-list">
+          {tocArticles.map((a) => {
+            const articleSlug = a.id.split('/')[1].replace(/\.md$/, '');
+            const pillarLabel = a.data.pillar
+              .split('_')
+              .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+              .join(' ');
+            const readingMin = a.data.word_count
+              ? Math.max(1, Math.round(a.data.word_count / 220))
+              : undefined;
+            return (
+              <li class="issue-toc-item">
+                <a href={`/issues/${slug}/${articleSlug}`} class="issue-toc-link">
+                  <div class="issue-toc-meta">
+                    <span class="tag-pill">{pillarLabel}</span>
+                    {readingMin && (
+                      <span class="issue-toc-reading">{readingMin} min</span>
                     )}
-                    <p
-                      class="mt-3 text-xs tracking-[0.2em] uppercase text-[var(--color-muted)]"
-                      style="font-family: var(--font-mono);"
-                    >
-                      By {a.data.byline ?? a.data.author}
-                    </p>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+                  </div>
+                  <h3 class="issue-toc-article-title">{a.data.title}</h3>
+                  {a.data.dek && <p class="issue-toc-dek">{a.data.dek}</p>}
+                  <p class="issue-toc-byline">By {a.data.byline ?? a.data.author}</p>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- Partners & Products -->
+  {partnerProps && <IssuePartners {...partnerProps} />}
+
+  <!-- Order print card -->
+  {data.order_print && (
+    <section class="order-print">
+      <div class="mag-container-narrow">
+        <div class="order-print-card">
+          <SmallCapsLabel tone="rust" items={['The Print Edition']} />
+          <h3 class="order-print-title">Order the printed issue</h3>
+          <p class="order-print-body">
+            Eighty pages, uncoated stock, shipped in time with the season it covers.
+            {data.print_price_cents && ` $${(data.print_price_cents / 100).toFixed(0)} plus shipping.`}
+          </p>
+          <p class="order-print-cta">
+            <a
+              href={`mailto:hello@abovethehook.com?subject=Order ${data.title} print`}
+              class="btn-primary"
+            >
+              Write to us <span class="arrow">→</span>
+            </a>
+          </p>
+          <p class="order-print-note">Online checkout opens Phase Two</p>
         </div>
-      </section>
-    )
+      </div>
+    </section>
+  )}
+
+  <!-- Colophon -->
+  <IssueColophon
+    issueLabel={issueLabel}
+    publishDate={data.publish_date}
+    contributors={data.contributors}
+    photographers={data.photographers}
+    editors={data.editors}
+    specialThanks={data.special_thanks}
+  />
+</BaseLayout>
+
+<style>
+  .issue-hero {
+    background: var(--navy);
+    color: var(--on-dark-1);
+    padding: 88px 0 96px;
+    overflow: hidden;
+  }
+  .issue-hero-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 72px;
+    align-items: center;
+  }
+  .issue-hero-cover {
+    width: 100%;
+    max-width: 360px;
+  }
+  .issue-hero-title {
+    margin-top: 20px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.6rem, 6vw, 4.8rem);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--on-dark-1);
+  }
+  .issue-hero-tagline {
+    margin-top: 16px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+    line-height: 1.5;
+    color: var(--on-dark-3);
+    max-width: 520px;
+  }
+  .issue-hero-date {
+    margin-top: 36px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--on-dark-4);
   }
 
-  <!-- Order the print edition card -->
-  {
-    data.order_print && (
-      <section class="py-16 md:py-20 px-6 md:px-10">
-        <div class="max-w-3xl mx-auto">
-          <div class="border border-[var(--color-rust)]/40 bg-[var(--color-cream)] p-8 md:p-12 text-center">
-            <SmallCapsLabel tone="rust" items={['The Print Edition']} />
-            <h3
-              class="mt-4 text-3xl md:text-4xl"
-              style="font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 0;"
-            >
-              Order the printed issue
-            </h3>
-            <p
-              class="mt-4 text-base md:text-lg text-[var(--color-muted)] max-w-lg mx-auto"
-              style="font-family: var(--font-body);"
-            >
-              Eighty pages, uncoated stock, shipped in time with the season it
-              covers.
-              {data.print_price_cents &&
-                ` $${(data.print_price_cents / 100).toFixed(0)} plus shipping.`}
-            </p>
-            <p class="mt-8">
-              <a
-                href="mailto:hello@abovethehook.com?subject=Order the printed issue"
-                class="inline-block px-8 py-3 bg-[var(--color-navy)] text-[var(--color-cream)] text-xs tracking-[0.25em] uppercase no-underline hover:bg-[var(--color-rust)] transition-colors"
-                style="font-family: var(--font-mono);"
-              >
-                Write to us
-              </a>
-            </p>
-            <p
-              class="mt-4 text-[0.65rem] tracking-[0.2em] uppercase text-[var(--color-muted)]/80"
-              style="font-family: var(--font-mono);"
-            >
-              Online checkout opens Phase Two
-            </p>
-          </div>
-        </div>
-      </section>
-    )
+  .issue-cover--placeholder {
+    aspect-ratio: 5/7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border: 1px solid rgba(255,255,255,0.18);
   }
-</BaseLayout>
+  .cover-placeholder {
+    padding: 28px;
+    text-align: center;
+    color: var(--on-dark-2);
+  }
+  .cover-sup {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--on-dark-4);
+    margin-bottom: 10px;
+  }
+  .cover-theme {
+    font-family: var(--font-display);
+    font-size: 2.4rem;
+    line-height: 1.05;
+    color: var(--on-dark-1);
+  }
+  .cover-placeholder hr {
+    border: 0;
+    width: 48px;
+    height: 1px;
+    background: var(--rust);
+    margin: 16px auto;
+  }
+  .cover-bottom {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--on-dark-3);
+  }
+  .cover-brand {
+    margin-top: 10px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--sand-light);
+  }
+
+  .issue-body-section {
+    padding: 72px 40px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .issue-letter {
+    background: var(--cream-dark);
+    border-top: 1px solid var(--sand-light);
+    border-bottom: 1px solid var(--sand-light);
+    padding: 80px 0;
+  }
+  .issue-letter-title {
+    margin-top: 16px;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .issue-letter-rule {
+    width: 80px;
+    height: 2px;
+    margin: 20px 0 32px;
+  }
+  .issue-letter-more {
+    margin-top: 28px;
+  }
+
+  .issue-toc {
+    padding: 96px 0 48px;
+  }
+  .issue-toc-head {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--sand);
+  }
+  .issue-toc-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  .issue-toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .issue-toc-item {
+    border-top: 1px solid var(--sand-light);
+  }
+  .issue-toc-item:last-child {
+    border-bottom: 1px solid var(--sand-light);
+  }
+  .issue-toc-link {
+    display: block;
+    padding: 28px 0;
+    color: inherit;
+    text-decoration: none;
+  }
+  .issue-toc-link:hover .issue-toc-article-title { color: var(--rust); }
+  .issue-toc-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .issue-toc-reading {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .issue-toc-article-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: var(--navy);
+    transition: color var(--dur-base);
+  }
+  .issue-toc-dek {
+    margin-top: 10px;
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 640px;
+  }
+  .issue-toc-byline {
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .order-print {
+    padding: 56px 0 72px;
+  }
+  .order-print-card {
+    border: 1px solid var(--rust);
+    border-top-width: 3px;
+    background: var(--paper);
+    padding: 48px 40px;
+    text-align: center;
+  }
+  .order-print-title {
+    margin-top: 16px;
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .order-print-body {
+    margin: 16px auto 0;
+    max-width: 520px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .order-print-cta { margin-top: 28px; display: flex; justify-content: center; }
+  .order-print-note {
+    margin-top: 14px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  @media (max-width: 900px) {
+    .issue-hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .issue-hero-cover { max-width: 280px; margin: 0 auto; }
+    .issue-body-section { padding: 48px 24px; }
+  }
+</style>

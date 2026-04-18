@@ -13,6 +13,7 @@
  */
 
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CardIllustration from '../components/CardIllustration.astro';
 
@@ -195,7 +196,14 @@ const statusWord = {
           style="width: 100%; max-width: 420px; margin-left: auto; transform: rotate(-1.2deg);"
         >
           {currentData.cover_image ? (
-            <img src={currentData.cover_image} alt="Spring 2026 cover" />
+            <Image
+              src={currentData.cover_image}
+              alt={currentData.cover_image_alt ?? `${currentData.title} cover`}
+              widths={[360, 560, 720, 960]}
+              sizes="(min-width: 900px) 420px, 80vw"
+              loading="eager"
+              decoding="async"
+            />
           ) : (
             <svg viewBox="0 0 420 560" role="img" aria-label="Spring 2026 cover" style="display:block; width:100%; height:auto; background: var(--paper);">
               <rect width="420" height="560" fill="#FDFAF5" />
@@ -310,7 +318,18 @@ const statusWord = {
                       Subscriber
                     </div>
                   )}
-                  <CardIllustration slug={articleSlug} title={a.data.title} />
+                  {a.data.hero_image ? (
+                    <Image
+                      src={a.data.hero_image}
+                      alt={a.data.hero_image_alt ?? a.data.title}
+                      widths={[320, 480, 640, 800]}
+                      sizes="(min-width: 1200px) 300px, (min-width: 900px) 22vw, (min-width: 640px) 45vw, 90vw"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <CardIllustration slug={articleSlug} title={a.data.title} />
+                  )}
                 </div>
                 <div class="ed-card-kicker">{pillarLabel(a.data.pillar)}</div>
                 <div class="ed-card-title">{a.data.title}</div>
@@ -439,19 +458,30 @@ const statusWord = {
       </div>
 
       <div class="archive-grid">
-        <!-- Current issue (full color) -->
+        <!-- Current issue -->
         <a href={`/issues/${currentSlug}`} class="archive-card">
           <div class="issue-cover issue-cover-small" style="opacity: 1;">
-            <svg viewBox="0 0 300 400" role="img" aria-label={`${currentData.title} cover`}>
-              <rect width="300" height="400" fill="#FDFAF5" />
-              <circle cx="230" cy="130" r="22" fill="#C4583E" opacity="0.35" />
-              <path d="M0 240 L60 218 L140 210 L220 214 L300 222 L300 290 L0 290 Z" fill="#8B3A2A" opacity="0.14" />
-              <text x="150" y="80" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">ABOVE THE HOOK</text>
-              <text x="150" y="180" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-weight="700" fill="#1A1208">The Local</text>
-              <text x="150" y="220" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-style="italic" fill="#8B3A2A">Lookout</text>
-              <text x="150" y="350" text-anchor="middle" font-family="'Playfair Display', serif" font-size="16" font-style="italic" fill="#3D3020">{currentData.theme ?? 'Return'}</text>
-              <text x="150" y="378" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">NO. {currentNumber} · SPRING 2026</text>
-            </svg>
+            {currentData.cover_image ? (
+              <Image
+                src={currentData.cover_image}
+                alt={currentData.cover_image_alt ?? `${currentData.title} cover`}
+                widths={[240, 360, 480]}
+                sizes="(min-width: 1200px) 220px, (min-width: 640px) 22vw, 40vw"
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <svg viewBox="0 0 300 400" role="img" aria-label={`${currentData.title} cover`}>
+                <rect width="300" height="400" fill="#FDFAF5" />
+                <circle cx="230" cy="130" r="22" fill="#C4583E" opacity="0.35" />
+                <path d="M0 240 L60 218 L140 210 L220 214 L300 222 L300 290 L0 290 Z" fill="#8B3A2A" opacity="0.14" />
+                <text x="150" y="80" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">ABOVE THE HOOK</text>
+                <text x="150" y="180" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-weight="700" fill="#1A1208">The Local</text>
+                <text x="150" y="220" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-style="italic" fill="#8B3A2A">Lookout</text>
+                <text x="150" y="350" text-anchor="middle" font-family="'Playfair Display', serif" font-size="16" font-style="italic" fill="#3D3020">{currentData.theme ?? 'Return'}</text>
+                <text x="150" y="378" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">NO. {currentNumber} · SPRING 2026</text>
+              </svg>
+            )}
           </div>
           <div class="archive-meta">
             No. {currentNumber}<span style="margin: 0 0.5em; color: var(--sand);">·</span>Spring 2026
@@ -470,13 +500,24 @@ const statusWord = {
                 class="issue-cover issue-cover-small"
                 style={isPublished ? 'opacity: 1;' : 'opacity: 0.38; filter: grayscale(0.6);'}
               >
-                <svg viewBox="0 0 300 400" role="img" aria-label={`${i.data.title} cover`}>
-                  <rect width="300" height="400" fill="#FDFAF5" />
-                  <text x="150" y="80" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">ABOVE THE HOOK</text>
-                  <text x="150" y="180" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-weight="700" fill="#1A1208">The Local</text>
-                  <text x="150" y="220" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-style="italic" fill="#8B3A2A">Lookout</text>
-                  <text x="150" y="360" text-anchor="middle" font-family="'Playfair Display', serif" font-size="14" font-style="italic" fill="#3D3020">{i.data.theme ?? '—'}</text>
-                </svg>
+                {i.data.cover_image ? (
+                  <Image
+                    src={i.data.cover_image}
+                    alt={i.data.cover_image_alt ?? `${i.data.title} cover`}
+                    widths={[240, 360, 480]}
+                    sizes="(min-width: 1200px) 220px, (min-width: 640px) 22vw, 40vw"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <svg viewBox="0 0 300 400" role="img" aria-label={`${i.data.title} cover`}>
+                    <rect width="300" height="400" fill="#FDFAF5" />
+                    <text x="150" y="80" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">ABOVE THE HOOK</text>
+                    <text x="150" y="180" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-weight="700" fill="#1A1208">The Local</text>
+                    <text x="150" y="220" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-style="italic" fill="#8B3A2A">Lookout</text>
+                    <text x="150" y="360" text-anchor="middle" font-family="'Playfair Display', serif" font-size="14" font-style="italic" fill="#3D3020">{i.data.theme ?? '—'}</text>
+                  </svg>
+                )}
               </div>
               <div class="archive-meta">
                 No. {iNumber}<span style="margin: 0 0.5em; color: var(--sand);">·</span>{iSeason} {i.data.year}

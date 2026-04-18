@@ -1,13 +1,13 @@
 ---
 /**
- * Full-width article hero image with caption + credit in small caps.
- * Spec §4.4. Optional — article renders without it when frontmatter omits hero_image.
+ * Full-width article hero. Uses Astro's Image component so the pipeline
+ * emits responsive variants (webp/avif) at build time.
  */
 
-import { Image } from 'astro:assets';
+import { Image, type ImageMetadata } from 'astro:assets';
 
 interface Props {
-  src?: string;
+  src?: ImageMetadata;
   alt?: string;
   caption?: string;
   credit?: string;
@@ -18,37 +18,75 @@ const { src, alt, caption, credit } = Astro.props;
 
 {
   src && (
-    <figure class="mt-4 mb-12 md:mb-16">
-      <div class="max-w-screen-xl mx-auto">
-        <img
+    <figure class="article-hero">
+      <div class="article-hero-frame">
+        <Image
           src={src}
           alt={alt ?? caption ?? ''}
-          class="w-full h-auto block"
+          widths={[720, 1080, 1440, 1920]}
+          sizes="(min-width: 1200px) 1200px, 100vw"
           loading="eager"
           decoding="async"
+          class="article-hero-img"
         />
       </div>
 
       {(caption || credit) && (
-        <figcaption class="max-w-3xl mx-auto px-6 md:px-10 mt-4 flex flex-col md:flex-row md:items-baseline gap-2 md:gap-6">
-          {caption && (
-            <span
-              class="text-sm leading-snug text-[var(--color-muted)] italic flex-1"
-              style="font-family: var(--font-body);"
-            >
-              {caption}
-            </span>
-          )}
-          {credit && (
-            <span
-              class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-muted)]"
-              style="font-family: var(--font-mono);"
-            >
-              {credit}
-            </span>
-          )}
+        <figcaption class="article-hero-caption">
+          {caption && <span class="article-hero-caption-text">{caption}</span>}
+          {credit && <span class="article-hero-caption-credit">{credit}</span>}
         </figcaption>
       )}
     </figure>
   )
 }
+
+<style>
+  .article-hero {
+    margin: 0 0 56px;
+  }
+  .article-hero-frame {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  .article-hero-img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .article-hero-caption {
+    max-width: 820px;
+    margin: 16px auto 0;
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  @media (min-width: 768px) {
+    .article-hero-caption {
+      flex-direction: row;
+      gap: 28px;
+      align-items: baseline;
+    }
+  }
+  .article-hero-caption-text {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+    flex: 1;
+  }
+  .article-hero-caption-credit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  @media (max-width: 640px) {
+    .article-hero-frame, .article-hero-caption { padding: 0 24px; }
+  }
+</style>

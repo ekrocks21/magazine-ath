@@ -4,14 +4,28 @@ issue_number: 1
 season: winter
 year: 2026
 status: published
-publish_date: 2026-01-15
-theme: "The Quiet Season"
-order_print: false
+publish_date: 2026-03-31
+theme: "The Gateway to the World"
+tagline: "The inaugural issue of The Local Lookout."
+cover_image: ./winter-2026-cover.jpg
+cover_image_alt: "Aerial winter view of Highlands, the Highlands–Sea Bright bridge, and Sandy Hook curling north toward Manhattan on the horizon."
+editors_letter: a-letter-from-the-hilltop
+contributors:
+  - Eric Kane
+  - Mary McKiever
+photographers:
+  - Eric Kane
+editors:
+  - Mary McKiever
+  - Eric Kane
+special_thanks:
+  - The Tackle Box
+  - Goldie Gifted
+  - The great people of the North Jersey Shore
+order_print: true
+print_price_cents: 2500
 ---
 
-The inaugural issue of The Local Lookout, published retroactively as the
-magazine's formal first number. Coverage focused on the winter harbor:
-loons and long-tailed ducks off the Twin Lights, the frozen wrack line
-at Gateway, the ferries running at reduced weekend service.
-
-Archive placeholder: full digital edition forthcoming.
+The inaugural issue of The Local Lookout. A winter the Navesink froze, the
+ice boaters came back, and Above the Hook put its first print piece into
+readers' hands.
