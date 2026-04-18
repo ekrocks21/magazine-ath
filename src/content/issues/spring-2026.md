@@ -6,7 +6,18 @@ year: 2026
 status: in_production
 publish_date: 2026-04-15
 theme: "Return"
+tagline: "The return of the ospreys, thirteen shillings paid to the Lenape, and seven stories from the second issue."
+cover_image: ./spring-2026-cover.svg
+cover_image_alt: "Illustrated cover: a sandy peninsula running through cool green water, charted with topographic lines."
 editors_letter: editors-letter
+contributors:
+  - Eric Kane
+  - Mary McKiever
+photographers:
+  - Eric Kane
+editors:
+  - Mary McKiever
+  - Eric Kane
 order_print: true
 print_price_cents: 2500
 ---

@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="dk-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a5c4e"></stop>
+      <stop offset="1" stop-color="#d4c29a"></stop>
+    </linearGradient>
+    <linearGradient id="dk-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a3a2f"></stop>
+      <stop offset="1" stop-color="#10192B"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#dk-sky)"></rect>
+
+  
+  <circle cx="900" cy="260" r="40" fill="#F5F0E8" opacity="0.7"></circle>
+
+  
+  <path d="M 0 380 Q 200 372 400 380 Q 600 388 800 380 Q 1000 372 1200 380 L 1200 400 L 0 400 Z" fill="#1B2E4B" opacity="0.3"></path>
+
+  
+  <rect x="0" y="400" width="1200" height="300" fill="url(#dk-water)"></rect>
+
+  
+  <g fill="#F5F0E8" opacity="0.35">
+    <ellipse cx="900" cy="430" rx="50" ry="3"></ellipse>
+    <ellipse cx="900" cy="465" rx="70" ry="3"></ellipse>
+    <ellipse cx="900" cy="510" rx="90" ry="4"></ellipse>
+    <ellipse cx="900" cy="570" rx="110" ry="5"></ellipse>
+    <ellipse cx="900" cy="640" rx="130" ry="5"></ellipse>
+  </g>
+
+  
+  <g stroke="#F5F0E8" stroke-width="0.5" fill="none" opacity="0.3">
+    <path d="M 0 430 Q 200 438 400 432 Q 600 426 800 434 L 850 434"></path>
+    <path d="M 950 434 Q 1100 440 1200 432"></path>
+    <path d="M 0 480 Q 200 488 400 482 L 830 482"></path>
+    <path d="M 970 482 Q 1100 488 1200 482"></path>
+    <path d="M 0 540 Q 200 548 400 542 Q 600 536 800 544 Q 1000 550 1200 542"></path>
+    <path d="M 0 620 Q 200 628 400 622 Q 600 616 800 624 Q 1000 630 1200 622"></path>
+  </g>
+
+  
+  <g transform="translate(0, 500)">
+    <path d="M 0 0 L 780 -60 L 780 -44 L 0 10 Z" fill="#3D3020"></path>
+    <path d="M 0 10 L 780 -44 L 780 -28 L 0 26 Z" fill="#1A1208"></path>
+    
+    <g stroke="#1A1208" stroke-width="0.5" opacity="0.6">
+      <line x1="0" y1="6" x2="780" y2="-48"></line>
+      <line x1="0" y1="2" x2="780" y2="-52"></line>
+      <line x1="0" y1="-2" x2="780" y2="-56"></line>
+    </g>
+    
+    <rect x="80" y="-54" width="8" height="120" fill="#3D3020"></rect>
+    <rect x="180" y="-60" width="8" height="124" fill="#3D3020"></rect>
+    <rect x="300" y="-66" width="8" height="130" fill="#3D3020"></rect>
+    <rect x="420" y="-72" width="8" height="132" fill="#3D3020"></rect>
+    <rect x="540" y="-76" width="8" height="134" fill="#3D3020"></rect>
+    <rect x="660" y="-80" width="8" height="136" fill="#3D3020"></rect>
+    
+    <rect x="60" y="-44" width="14" height="8" fill="#1A1208"></rect>
+    <rect x="280" y="-56" width="14" height="8" fill="#1A1208"></rect>
+    <rect x="500" y="-68" width="14" height="8" fill="#1A1208"></rect>
+  </g>
+
+  
+  <g transform="translate(120, 340)">
+    <rect x="-2" y="0" width="4" height="130" fill="#1A1208"></rect>
+    <g transform="translate(0, -10)">
+      <polygon points="-10,0 10,0 0,-14" fill="#1A1208"></polygon>
+      <rect x="-8" y="0" width="16" height="18" fill="#1B2E4B"></rect>
+      <rect x="-7" y="1" width="14" height="16" fill="#C4583E" opacity="0.7"></rect>
+      <rect x="-8" y="18" width="16" height="3" fill="#1A1208"></rect>
+    </g>
+    
+    <circle cx="0" cy="-2" r="32" fill="#C4583E" opacity="0.25"></circle>
+    <circle cx="0" cy="-2" r="18" fill="#F5F0E8" opacity="0.3"></circle>
+  </g>
+
+  
+  <g transform="translate(540, 500)">
+    <path d="M -60 0 Q -50 14 -20 16 L 40 16 Q 70 14 80 0 Z" fill="#8B3A2A"></path>
+    <rect x="-60" y="-4" width="140" height="4" fill="#F5F0E8"></rect>
+    <rect x="-10" y="-16" width="4" height="16" fill="#3D3020"></rect>
+    <rect x="-40" y="0" width="60" height="4" fill="#3D3020"></rect>
+    
+    <line x1="-60" y1="-10" x2="20" y2="12" stroke="#3D3020" stroke-width="1.5"></line>
+    <polygon points="-60,-10 -70,-4 -62,-6" fill="#3D3020"></polygon>
+    
+    <path d="M 20 -4 Q 10 -20 -10 -24" fill="none" stroke="#1A1208" stroke-width="1"></path>
+  </g>
+
+  
+  <g transform="translate(820, 440)">
+    <line x1="0" y1="0" x2="0" y2="-60" stroke="#3D3020" stroke-width="1.2"></line>
+    <path d="M 0 -60 L 0 -10 L 22 -10 Z" fill="#F5F0E8"></path>
+    <path d="M -18 0 Q -8 6 12 6 Q 28 6 32 0 Z" fill="#1B2E4B"></path>
+  </g>
+
+  
+  <g transform="translate(360, 438)" fill="#10192B">
+    <rect x="-3" y="0" width="6" height="18"></rect>
+    <circle cx="0" cy="-5" r="4"></circle>
+    <rect x="-4" y="-10" width="8" height="4"></rect>
+    
+    <line x1="4" y1="-2" x2="40" y2="-40" stroke="#3D3020" stroke-width="1"></line>
+    
+    <line x1="40" y1="-40" x2="55" y2="30" stroke="#1A1208" stroke-width="0.5"></line>
+  </g>
+
+  
+  <g fill="#1A1208" opacity="0.7">
+    <path d="M 260 200 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 320 220 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 680 190 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+  </g>
+</svg>

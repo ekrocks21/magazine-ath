@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="mp-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5F0E8"></stop>
+      <stop offset="1" stop-color="#E0D5C0"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#mp-bg)"></rect>
+
+  
+  <g fill="#a89577" opacity="0.25">
+    <circle cx="120" cy="80" r="1"></circle><circle cx="340" cy="150" r="1.2"></circle>
+    <circle cx="580" cy="220" r="1"></circle><circle cx="820" cy="90" r="1"></circle>
+    <circle cx="1080" cy="180" r="1.2"></circle><circle cx="200" cy="420" r="1"></circle>
+    <circle cx="460" cy="520" r="1.2"></circle><circle cx="720" cy="620" r="1"></circle>
+    <circle cx="960" cy="470" r="1.2"></circle>
+  </g>
+
+  
+  <g fill="#C9B99A" opacity="0.5" stroke="#8B3A2A" stroke-width="1.2">
+    <path d="M 100 200 Q 160 240 200 320 Q 230 400 250 500 Q 270 580 290 660 L 240 660 Q 220 580 200 500 Q 180 420 150 340 Q 120 280 80 240 Z"></path>
+  </g>
+
+  
+  <g stroke="#8B3A2A" stroke-width="0.4" fill="none" opacity="0.4">
+    <path d="M 110 210 L 140 190"></path>
+    <path d="M 120 240 L 150 220"></path>
+    <path d="M 140 280 L 170 260"></path>
+    <path d="M 160 320 L 190 300"></path>
+    <path d="M 180 360 L 210 340"></path>
+    <path d="M 200 410 L 230 390"></path>
+    <path d="M 220 460 L 250 440"></path>
+  </g>
+
+  
+  <g fill="#2A4470" opacity="0.3">
+    <circle cx="380" cy="260" r="0.8"></circle><circle cx="420" cy="300" r="0.8"></circle>
+    <circle cx="460" cy="340" r="0.8"></circle><circle cx="500" cy="380" r="0.8"></circle>
+    <circle cx="540" cy="420" r="0.8"></circle><circle cx="580" cy="460" r="0.8"></circle>
+    <circle cx="620" cy="500" r="0.8"></circle><circle cx="660" cy="540" r="0.8"></circle>
+    <circle cx="440" cy="260" r="0.8"></circle><circle cx="480" cy="300" r="0.8"></circle>
+    <circle cx="520" cy="340" r="0.8"></circle><circle cx="560" cy="380" r="0.8"></circle>
+    <circle cx="600" cy="420" r="0.8"></circle><circle cx="640" cy="460" r="0.8"></circle>
+    <circle cx="680" cy="500" r="0.8"></circle><circle cx="720" cy="540" r="0.8"></circle>
+    <circle cx="500" cy="260" r="0.8"></circle><circle cx="540" cy="300" r="0.8"></circle>
+    <circle cx="580" cy="340" r="0.8"></circle><circle cx="620" cy="380" r="0.8"></circle>
+    <circle cx="660" cy="420" r="0.8"></circle><circle cx="700" cy="460" r="0.8"></circle>
+    <circle cx="740" cy="500" r="0.8"></circle><circle cx="780" cy="540" r="0.8"></circle>
+  </g>
+
+  
+  <g stroke="#2A4470" stroke-width="0.5" fill="none" opacity="0.35">
+    <path d="M 340 500 Q 480 508 620 502"></path>
+    <path d="M 360 540 Q 500 548 640 542"></path>
+    <path d="M 380 580 Q 520 588 660 582"></path>
+  </g>
+
+  
+  <g stroke="#1B2E4B" stroke-width="1" fill="none" opacity="0.7" stroke-dasharray="8 4">
+    <path d="M 320 180 Q 560 340 880 560"></path>
+  </g>
+
+  
+  <g fill="#1B2E4B" opacity="0.5">
+    <path d="M 0 60 L 0 140 L 50 130 L 80 120 L 130 125 L 180 115 L 240 130 L 300 120 L 360 140 L 420 135 L 480 150 L 540 145 L 600 160 L 660 170 L 720 165 L 0 165 Z"></path>
+  </g>
+  <g fill="#1B2E4B" opacity="0.85">
+    <rect x="60" y="100" width="3" height="30"></rect>
+    <rect x="72" y="90" width="4" height="40"></rect>
+    <rect x="88" y="105" width="3" height="25"></rect>
+    <rect x="102" y="80" width="5" height="50"></rect>
+    <rect x="120" y="100" width="3" height="30"></rect>
+    <rect x="136" y="88" width="3" height="42"></rect>
+    <polygon points="154,130 154,72 160,66 166,72 166,130"></polygon>
+    <rect x="178" y="96" width="3" height="34"></rect>
+    <rect x="196" y="86" width="5" height="44"></rect>
+    <rect x="214" y="100" width="3" height="30"></rect>
+    <polygon points="234,130 234,76 240,70 246,76 246,130"></polygon>
+  </g>
+
+  
+  <g font-family="Playfair Display, serif" fill="#3D3020">
+    <text x="60" y="56" font-size="14" letter-spacing="4" fill="#8B3A2A">NEW YORK HARBOR</text>
+    <text x="210" y="620" font-size="14" font-style="italic">Sandy Hook</text>
+    <text x="50" y="480" font-size="12" font-style="italic" fill="#7A6F5F">Navesink</text>
+    <text x="70" y="380" font-size="11" font-style="italic" fill="#7A6F5F">Highlands</text>
+    <text x="520" y="280" font-size="13" font-style="italic" fill="#2A4470">Lower Bay</text>
+    <text x="820" y="400" font-size="13" font-style="italic" fill="#2A4470">Atlantic Ocean</text>
+    <text x="680" y="600" font-size="10" font-style="italic" fill="#8B3A2A" letter-spacing="1.5">shipping lane</text>
+  </g>
+
+  
+  <g transform="translate(1040, 220)" fill="#8B3A2A" stroke="#8B3A2A" stroke-width="0.8">
+    <circle r="46" fill="none"></circle>
+    <circle r="34" fill="none" opacity="0.5"></circle>
+    <path d="M 0 -46 L 6 0 L 0 46 L -6 0 Z"></path>
+    <path d="M -46 0 L 0 -6 L 46 0 L 0 6 Z" opacity="0.5"></path>
+    <text x="0" y="-54" text-anchor="middle" font-family="serif" font-style="italic" font-size="14">N</text>
+    <text x="54" y="4" font-family="serif" font-style="italic" font-size="11" opacity="0.6">E</text>
+    <text x="0" y="62" text-anchor="middle" font-family="serif" font-style="italic" font-size="11" opacity="0.6">S</text>
+    <text x="-58" y="4" font-family="serif" font-style="italic" font-size="11" opacity="0.6">W</text>
+  </g>
+
+  
+  <g transform="translate(620, 420)">
+    <path d="M -14 0 Q -10 4 -4 5 L 10 5 Q 16 4 20 0 Z" fill="#1A1208"></path>
+    <rect x="-14" y="-1" width="34" height="1" fill="#8B3A2A"></rect>
+    <rect x="-4" y="-8" width="14" height="7" fill="#1A1208"></rect>
+    <line x1="0" y1="-14" x2="0" y2="-8" stroke="#1A1208" stroke-width="0.8"></line>
+  </g>
+  <text x="640" y="432" font-family="serif" font-style="italic" font-size="9" fill="#3D3020">MV Liberty</text>
+
+  
+  <g fill="#2A4470" font-family="serif" font-size="8" opacity="0.6">
+    <text x="420" y="420">24</text>
+    <text x="500" y="460">31</text>
+    <text x="580" y="500">42</text>
+    <text x="680" y="540">58</text>
+    <text x="760" y="580">71</text>
+  </g>
+
+  
+  <rect x="16" y="16" width="1168" height="668" fill="none" stroke="#8B3A2A" stroke-width="1" opacity="0.5"></rect>
+  <rect x="24" y="24" width="1152" height="652" fill="none" stroke="#8B3A2A" stroke-width="0.3" opacity="0.4"></rect>
+
+  
+  <g transform="translate(900, 600)" opacity="0.9">
+    <rect x="0" y="0" width="260" height="60" fill="#F5F0E8" stroke="#8B3A2A" stroke-width="0.6"></rect>
+    <text x="130" y="22" text-anchor="middle" font-family="serif" font-size="11" letter-spacing="2.5" fill="#8B3A2A">A CHART OF</text>
+    <text x="130" y="42" text-anchor="middle" font-family="serif" font-style="italic" font-weight="700" font-size="16" fill="#1A1208">the Highlands Coast</text>
+  </g>
+</svg>

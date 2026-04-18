@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ny2-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d9dde3"></stop>
+      <stop offset="1" stop-color="#F5F0E8"></stop>
+    </linearGradient>
+    <linearGradient id="ny2-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a5c6e"></stop>
+      <stop offset="1" stop-color="#2A4470"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#ny2-sky)"></rect>
+
+  
+  <g fill="#d9dde3" opacity="0.6">
+    <ellipse cx="300" cy="380" rx="400" ry="12"></ellipse>
+    <ellipse cx="900" cy="370" rx="380" ry="10"></ellipse>
+  </g>
+
+  
+  <g fill="#4a5c6e">
+    <rect x="0" y="400" width="1200" height="4"></rect>
+    <rect x="40" y="370" width="24" height="34"></rect>
+    <rect x="70" y="358" width="20" height="46"></rect>
+    <rect x="96" y="380" width="28" height="24"></rect>
+    <rect x="128" y="348" width="22" height="56"></rect>
+    <rect x="156" y="372" width="30" height="32"></rect>
+    <polygon points="196,404 196,288 206,280 216,288 216,404"></polygon>
+    <rect x="226" y="360" width="24" height="44"></rect>
+    <rect x="256" y="340" width="30" height="64"></rect>
+    <rect x="290" y="370" width="24" height="34"></rect>
+    <rect x="320" y="330" width="32" height="74"></rect>
+    <polygon points="358,404 358,300 372,292 372,252 378,246 384,252 384,292 398,300 398,404"></polygon>
+    <rect x="412" y="360" width="28" height="44"></rect>
+    <rect x="446" y="340" width="26" height="64"></rect>
+    <rect x="478" y="320" width="30" height="84"></rect>
+    <polygon points="514,404 514,260 528,252 528,220 536,214 544,220 544,252 558,260 558,404"></polygon>
+    <rect x="570" y="330" width="22" height="74"></rect>
+    <rect x="596" y="300" width="34" height="104"></rect>
+    <rect x="634" y="340" width="24" height="64"></rect>
+    <rect x="662" y="320" width="30" height="84"></rect>
+    <rect x="696" y="360" width="26" height="44"></rect>
+    <rect x="726" y="340" width="24" height="64"></rect>
+    <rect x="754" y="310" width="30" height="94"></rect>
+    <polygon points="790,404 790,298 802,290 802,270 810,264 818,270 818,290 830,298 830,404"></polygon>
+    <rect x="840" y="340" width="28" height="64"></rect>
+    <rect x="874" y="360" width="26" height="44"></rect>
+    <rect x="906" y="340" width="30" height="64"></rect>
+    <rect x="940" y="370" width="24" height="34"></rect>
+    <rect x="970" y="360" width="28" height="44"></rect>
+    <rect x="1004" y="340" width="26" height="64"></rect>
+    <rect x="1034" y="370" width="22" height="34"></rect>
+    <rect x="1062" y="350" width="30" height="54"></rect>
+    <rect x="1096" y="370" width="24" height="34"></rect>
+    <rect x="1126" y="360" width="28" height="44"></rect>
+    <rect x="1160" y="380" width="22" height="24"></rect>
+  </g>
+
+  
+  <g fill="#F5F0E8" opacity="0.6">
+    <circle cx="50" cy="380" r="0.8"></circle><circle cx="78" cy="370" r="0.8"></circle>
+    <circle cx="108" cy="390" r="0.8"></circle><circle cx="138" cy="360" r="0.8"></circle>
+    <circle cx="206" cy="310" r="0.8"></circle><circle cx="206" cy="350" r="0.8"></circle>
+    <circle cx="272" cy="360" r="0.8"></circle><circle cx="336" cy="350" r="0.8"></circle>
+    <circle cx="378" cy="280" r="0.8"></circle><circle cx="378" cy="320" r="0.8"></circle>
+    <circle cx="536" cy="280" r="0.8"></circle><circle cx="536" cy="320" r="0.8"></circle>
+    <circle cx="610" cy="320" r="0.8"></circle><circle cx="676" cy="350" r="0.8"></circle>
+    <circle cx="810" cy="320" r="0.8"></circle><circle cx="920" cy="360" r="0.8"></circle>
+    <circle cx="1020" cy="370" r="0.8"></circle>
+  </g>
+
+  
+  <g transform="translate(0, 0)">
+    
+    <rect x="60" y="230" width="12" height="170" fill="#6B2A1D"></rect>
+    <rect x="62" y="230" width="8" height="170" fill="#8B3A2A"></rect>
+    <rect x="56" y="260" width="20" height="6" fill="#6B2A1D"></rect>
+    <rect x="56" y="340" width="20" height="6" fill="#6B2A1D"></rect>
+    
+    <rect x="460" y="230" width="12" height="170" fill="#6B2A1D"></rect>
+    <rect x="462" y="230" width="8" height="170" fill="#8B3A2A"></rect>
+    <rect x="456" y="260" width="20" height="6" fill="#6B2A1D"></rect>
+    <rect x="456" y="340" width="20" height="6" fill="#6B2A1D"></rect>
+
+    
+    <path d="M 66 240 Q 266 420 466 240" fill="none" stroke="#1A1208" stroke-width="2.5"></path>
+    <path d="M 66 240 Q 166 180 0 180" fill="none" stroke="#1A1208" stroke-width="2.5"></path>
+    <path d="M 466 240 Q 560 180 640 220" fill="none" stroke="#1A1208" stroke-width="2.5"></path>
+
+    
+    <g stroke="#1A1208" stroke-width="0.6">
+      <line x1="90" y1="280" x2="90" y2="400"></line>
+      <line x1="120" y1="310" x2="120" y2="400"></line>
+      <line x1="150" y1="336" x2="150" y2="400"></line>
+      <line x1="180" y1="358" x2="180" y2="400"></line>
+      <line x1="210" y1="376" x2="210" y2="400"></line>
+      <line x1="240" y1="388" x2="240" y2="400"></line>
+      <line x1="270" y1="388" x2="270" y2="400"></line>
+      <line x1="300" y1="376" x2="300" y2="400"></line>
+      <line x1="330" y1="358" x2="330" y2="400"></line>
+      <line x1="360" y1="336" x2="360" y2="400"></line>
+      <line x1="390" y1="310" x2="390" y2="400"></line>
+      <line x1="420" y1="280" x2="420" y2="400"></line>
+    </g>
+
+    
+    <rect x="0" y="398" width="640" height="8" fill="#3D3020"></rect>
+    <rect x="0" y="406" width="640" height="3" fill="#1A1208"></rect>
+  </g>
+
+  
+  <rect x="0" y="410" width="1200" height="290" fill="url(#ny2-water)"></rect>
+
+  
+  <g stroke="#F5F0E8" stroke-width="0.4" fill="none" opacity="0.3">
+    <path d="M 0 440 Q 300 448 600 442 Q 900 436 1200 442"></path>
+    <path d="M 0 480 Q 300 488 600 482 Q 900 476 1200 482"></path>
+    <path d="M 0 530 Q 300 538 600 532 Q 900 526 1200 532"></path>
+    <path d="M 0 590 Q 300 598 600 592 Q 900 586 1200 592"></path>
+    <path d="M 0 660 Q 300 668 600 662 Q 900 656 1200 662"></path>
+  </g>
+  
+  <g fill="#1B2E4B" opacity="0.3">
+    <rect x="60" y="410" width="12" height="80"></rect>
+    <rect x="460" y="410" width="12" height="80"></rect>
+  </g>
+
+  
+  <g transform="translate(820, 460)">
+    <path d="M -80 0 Q -60 18 -30 22 L 110 22 Q 140 18 150 0 Z" fill="#F5F0E8"></path>
+    <rect x="-80" y="-4" width="230" height="4" fill="#8B3A2A"></rect>
+    <rect x="-50" y="-30" width="160" height="26" fill="#C4583E"></rect>
+    <g fill="#1B2E4B">
+      <rect x="-46" y="-26" width="14" height="16"></rect>
+      <rect x="-28" y="-26" width="14" height="16"></rect>
+      <rect x="-10" y="-26" width="14" height="16"></rect>
+      <rect x="8" y="-26" width="14" height="16"></rect>
+      <rect x="26" y="-26" width="14" height="16"></rect>
+      <rect x="44" y="-26" width="14" height="16"></rect>
+      <rect x="62" y="-26" width="14" height="16"></rect>
+      <rect x="80" y="-26" width="14" height="16"></rect>
+      <rect x="98" y="-26" width="14" height="16"></rect>
+    </g>
+    
+    <rect x="-20" y="-44" width="100" height="14" fill="#F5F0E8"></rect>
+    <rect x="-20" y="-44" width="100" height="3" fill="#8B3A2A"></rect>
+    
+    <rect x="20" y="-64" width="14" height="20" fill="#1B2E4B"></rect>
+    <rect x="20" y="-64" width="14" height="4" fill="#C4583E"></rect>
+    
+    <line x1="-80" y1="-4" x2="-80" y2="-24" stroke="#1A1208" stroke-width="1"></line>
+    <polygon points="-80,-24 -68,-20 -80,-16" fill="#8B3A2A"></polygon>
+  </g>
+
+  
+  <path d="M 720 474 Q 760 482 820 476 L 780 470 Z" fill="#F5F0E8" opacity="0.5"></path>
+  <path d="M 960 478 Q 1000 484 1040 480 L 1010 474 Z" fill="#F5F0E8" opacity="0.4"></path>
+
+  
+  <g fill="#1A1208" opacity="0.6">
+    <path d="M 700 160 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 780 180 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+    <path d="M 900 140 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+  </g>
+</svg>

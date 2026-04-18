@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="nyc-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C4583E"></stop>
+      <stop offset="0.4" stop-color="#C9B99A"></stop>
+      <stop offset="1" stop-color="#E0D5C0"></stop>
+    </linearGradient>
+    <linearGradient id="nyc-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2A4470"></stop>
+      <stop offset="1" stop-color="#10192B"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#nyc-sky)"></rect>
+
+  
+  <circle cx="980" cy="340" r="55" fill="#F5F0E8" opacity="0.6"></circle>
+  <circle cx="980" cy="340" r="38" fill="#C4583E" opacity="0.4"></circle>
+
+  
+  <rect x="0" y="360" width="1200" height="40" fill="#C9B99A" opacity="0.35"></rect>
+
+  
+  <g fill="#1B2E4B">
+    
+    <rect x="0" y="408" width="1200" height="4" fill="#10192B"></rect>
+
+    
+    <rect x="20" y="370" width="28" height="42"></rect>
+    <rect x="52" y="355" width="20" height="57"></rect>
+    <rect x="76" y="365" width="34" height="47"></rect>
+    <rect x="114" y="340" width="22" height="72"></rect>
+    <rect x="140" y="360" width="28" height="52"></rect>
+    <rect x="172" y="345" width="24" height="67"></rect>
+    <rect x="200" y="370" width="36" height="42"></rect>
+
+    
+    <polygon points="260,410 260,240 272,232 284,240 284,410"></polygon>
+    <rect x="265" y="168" width="2" height="68"></rect>
+    <rect x="278" y="168" width="2" height="68"></rect>
+
+    <rect x="300" y="320" width="28" height="92"></rect>
+    <rect x="332" y="340" width="22" height="72"></rect>
+    <rect x="358" y="310" width="34" height="102"></rect>
+    <polygon points="394,412 394,280 404,268 414,280 414,412"></polygon>
+    <rect x="422" y="330" width="26" height="82"></rect>
+    <rect x="452" y="300" width="30" height="112"></rect>
+    <rect x="486" y="340" width="22" height="72"></rect>
+    <rect x="512" y="320" width="28" height="92"></rect>
+
+    
+    <polygon points="548,410 548,260 568,252 568,200 574,192 578,140 582,192 588,200 588,252 608,260 608,410"></polygon>
+
+    <rect x="620" y="320" width="24" height="92"></rect>
+    <rect x="648" y="300" width="32" height="112"></rect>
+    <rect x="684" y="340" width="22" height="72"></rect>
+    <rect x="710" y="360" width="26" height="52"></rect>
+    <rect x="740" y="335" width="30" height="77"></rect>
+    <rect x="774" y="345" width="22" height="67"></rect>
+
+    
+    <polygon points="800,412 800,280 814,268 814,240 822,232 830,240 830,268 844,280 844,412"></polygon>
+    <rect x="819" y="216" width="2" height="18"></rect>
+    <rect x="823" y="216" width="2" height="18"></rect>
+
+    <rect x="858" y="330" width="24" height="82"></rect>
+    <rect x="886" y="310" width="30" height="102"></rect>
+    <rect x="920" y="350" width="22" height="62"></rect>
+    <rect x="948" y="370" width="28" height="42"></rect>
+
+    <rect x="1020" y="330" width="26" height="82"></rect>
+    <rect x="1050" y="350" width="22" height="62"></rect>
+    <rect x="1078" y="320" width="30" height="92"></rect>
+    <rect x="1112" y="345" width="22" height="67"></rect>
+    <rect x="1138" y="360" width="28" height="52"></rect>
+    <rect x="1170" y="355" width="22" height="57"></rect>
+  </g>
+
+  
+  <g fill="#C4583E" opacity="0.55">
+    <circle cx="85" cy="380" r="1"></circle><circle cx="95" cy="390" r="1"></circle>
+    <circle cx="125" cy="360" r="1"></circle><circle cx="150" cy="380" r="1"></circle>
+    <circle cx="272" cy="300" r="1"></circle><circle cx="272" cy="340" r="1"></circle>
+    <circle cx="370" cy="350" r="1"></circle><circle cx="380" cy="380" r="1"></circle>
+    <circle cx="460" cy="340" r="1"></circle><circle cx="470" cy="370" r="1"></circle>
+    <circle cx="568" cy="300" r="1"></circle><circle cx="578" cy="340" r="1"></circle><circle cx="568" cy="380" r="1"></circle>
+    <circle cx="660" cy="340" r="1"></circle><circle cx="670" cy="370" r="1"></circle>
+    <circle cx="815" cy="310" r="1"></circle><circle cx="825" cy="350" r="1"></circle>
+    <circle cx="900" cy="350" r="1"></circle><circle cx="910" cy="380" r="1"></circle>
+    <circle cx="1090" cy="360" r="1"></circle><circle cx="1100" cy="380" r="1"></circle>
+  </g>
+
+  
+  <rect x="0" y="412" width="1200" height="288" fill="url(#nyc-water)"></rect>
+
+  
+  <g stroke="#F5F0E8" stroke-width="0.5" fill="none" opacity="0.35">
+    <path d="M 0 430 Q 300 438 600 432 Q 900 426 1200 432"></path>
+    <path d="M 0 460 Q 300 468 600 462 Q 900 456 1200 462"></path>
+    <path d="M 0 500 Q 300 508 600 502 Q 900 496 1200 502"></path>
+    <path d="M 0 550 Q 300 558 600 552 Q 900 546 1200 552"></path>
+    <path d="M 0 610 Q 300 618 600 612 Q 900 606 1200 612"></path>
+  </g>
+
+  
+  <g fill="#C4583E" opacity="0.4">
+    <ellipse cx="980" cy="430" rx="50" ry="3"></ellipse>
+    <ellipse cx="980" cy="460" rx="70" ry="3"></ellipse>
+    <ellipse cx="980" cy="500" rx="90" ry="4"></ellipse>
+    <ellipse cx="980" cy="550" rx="110" ry="5"></ellipse>
+    <ellipse cx="980" cy="610" rx="130" ry="5"></ellipse>
+    <ellipse cx="980" cy="670" rx="150" ry="6"></ellipse>
+  </g>
+
+  
+  <g transform="translate(100, 560)">
+    <line x1="0" y1="0" x2="0" y2="-90" stroke="#10192B" stroke-width="1.5"></line>
+    <path d="M 0 -90 L 0 -14 L 30 -14 Z" fill="#10192B"></path>
+    <path d="M -24 0 Q -10 8 16 8 Q 38 8 48 0 Z" fill="#10192B"></path>
+  </g>
+
+  
+  <g fill="#1A1208" opacity="0.7">
+    <path d="M 320 160 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+    <path d="M 400 130 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 500 180 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 680 110 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+  </g>
+</svg>

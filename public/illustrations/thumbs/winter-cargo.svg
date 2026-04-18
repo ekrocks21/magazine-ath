@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="st-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#10192B"></stop>
+      <stop offset="0.5" stop-color="#4a5668"></stop>
+      <stop offset="1" stop-color="#a4adb8"></stop>
+    </linearGradient>
+    <linearGradient id="st-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a5668"></stop>
+      <stop offset="1" stop-color="#1B2E4B"></stop>
+    </linearGradient>
+    <linearGradient id="st-snow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0f0ec"></stop>
+      <stop offset="1" stop-color="#c8cdd2"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#st-sky)"></rect>
+
+  
+  <g fill="#F5F0E8" opacity="0.7">
+    <circle cx="80" cy="60" r="1.2"></circle><circle cx="160" cy="120" r="1"></circle>
+    <circle cx="240" cy="80" r="1.4"></circle><circle cx="320" cy="140" r="1"></circle>
+    <circle cx="400" cy="70" r="1.2"></circle><circle cx="480" cy="130" r="1"></circle>
+    <circle cx="560" cy="90" r="1.4"></circle><circle cx="640" cy="150" r="1"></circle>
+    <circle cx="720" cy="60" r="1.2"></circle><circle cx="800" cy="110" r="1"></circle>
+    <circle cx="880" cy="80" r="1.4"></circle><circle cx="960" cy="140" r="1"></circle>
+    <circle cx="1040" cy="70" r="1.2"></circle><circle cx="1120" cy="120" r="1"></circle>
+    <circle cx="60" cy="200" r="1"></circle><circle cx="200" cy="220" r="1.2"></circle>
+    <circle cx="380" cy="240" r="1"></circle><circle cx="540" cy="200" r="1"></circle>
+    <circle cx="720" cy="230" r="1"></circle><circle cx="900" cy="210" r="1.2"></circle>
+    <circle cx="1080" cy="240" r="1"></circle>
+  </g>
+
+  
+  <path d="M 0 420 Q 200 410 400 418 Q 600 426 800 420 Q 1000 414 1200 418 L 1200 440 L 0 440 Z" fill="#4a5668" opacity="0.6"></path>
+
+  
+  <rect x="0" y="440" width="1200" height="260" fill="url(#st-water)"></rect>
+
+  
+  <g fill="url(#st-snow)">
+    <polygon points="80,500 110,495 130,505 120,515 90,518 70,510"></polygon>
+    <polygon points="200,540 240,535 260,548 250,560 210,562 190,552"></polygon>
+    <polygon points="420,520 460,515 480,528 470,540 430,542 410,532"></polygon>
+    <polygon points="700,560 740,555 760,568 750,580 710,582 690,572"></polygon>
+    <polygon points="940,530 980,525 1000,538 990,550 950,552 930,542"></polygon>
+    <polygon points="1100,580 1140,575 1160,588 1150,600 1110,602 1090,592"></polygon>
+  </g>
+  <g fill="#a4adb8" opacity="0.6">
+    <polygon points="140,560 170,555 190,565 180,575 150,577 130,568"></polygon>
+    <polygon points="340,580 370,575 390,585 380,595 350,597 330,588"></polygon>
+    <polygon points="580,600 610,595 630,605 620,615 590,617 570,608"></polygon>
+    <polygon points="820,590 850,585 870,595 860,605 830,607 810,598"></polygon>
+  </g>
+
+  
+  <g stroke="#F5F0E8" stroke-width="0.5" fill="none" opacity="0.4">
+    <path d="M 0 470 Q 200 478 400 472 Q 600 466 800 474 Q 1000 480 1200 472"></path>
+    <path d="M 0 510 Q 200 518 400 512 L 800 514"></path>
+    <path d="M 0 560 Q 200 568 400 562 L 800 564"></path>
+    <path d="M 0 640 Q 200 648 400 642 Q 600 636 800 644 Q 1000 650 1200 642"></path>
+  </g>
+
+  
+  <g transform="translate(380, 380)">
+    
+    <path d="M 0 30 L 16 54 L 420 54 L 436 30 Z" fill="#10192B"></path>
+    <rect x="6" y="30" width="424" height="3" fill="#8B3A2A"></rect>
+    <rect x="20" y="0" width="404" height="30" fill="#3D3020"></rect>
+    
+    <rect x="20" y="-2" width="404" height="3" fill="#f0f0ec"></rect>
+    
+    <g>
+      <rect x="34" y="-26" width="50" height="26" fill="#C4583E"></rect>
+      <rect x="86" y="-26" width="50" height="26" fill="#1B2E4B"></rect>
+      <rect x="138" y="-26" width="50" height="26" fill="#C9B99A"></rect>
+      <rect x="190" y="-26" width="50" height="26" fill="#8B3A2A"></rect>
+      <rect x="242" y="-26" width="50" height="26" fill="#2D6A4F"></rect>
+      <rect x="294" y="-26" width="50" height="26" fill="#C4583E"></rect>
+      
+      <rect x="34" y="-28" width="310" height="2" fill="#f0f0ec" opacity="0.9"></rect>
+      
+      <rect x="46" y="-48" width="50" height="22" fill="#1B2E4B"></rect>
+      <rect x="100" y="-48" width="50" height="22" fill="#C9B99A"></rect>
+      <rect x="154" y="-48" width="50" height="22" fill="#C4583E"></rect>
+      <rect x="208" y="-48" width="50" height="22" fill="#2D6A4F"></rect>
+      <rect x="262" y="-48" width="50" height="22" fill="#8B3A2A"></rect>
+      <rect x="46" y="-50" width="266" height="2" fill="#f0f0ec" opacity="0.9"></rect>
+    </g>
+    
+    <rect x="350" y="-68" width="70" height="68" fill="#F5F0E8"></rect>
+    <rect x="350" y="-70" width="70" height="2" fill="#f0f0ec"></rect>
+    <g fill="#1B2E4B">
+      <rect x="358" y="-60" width="12" height="8"></rect>
+      <rect x="374" y="-60" width="12" height="8"></rect>
+      <rect x="390" y="-60" width="12" height="8"></rect>
+      <rect x="406" y="-60" width="12" height="8"></rect>
+      <rect x="358" y="-46" width="12" height="8"></rect>
+      <rect x="374" y="-46" width="12" height="8"></rect>
+      <rect x="390" y="-46" width="12" height="8"></rect>
+      <rect x="406" y="-46" width="12" height="8"></rect>
+    </g>
+    
+    <rect x="380" y="-90" width="22" height="22" fill="#C9B99A"></rect>
+    <rect x="380" y="-90" width="22" height="4" fill="#8B3A2A"></rect>
+    <g fill="#F5F0E8" opacity="0.5">
+      <ellipse cx="391" cy="-96" rx="14" ry="6"></ellipse>
+      <ellipse cx="400" cy="-110" rx="18" ry="7"></ellipse>
+      <ellipse cx="414" cy="-124" rx="22" ry="8"></ellipse>
+    </g>
+  </g>
+
+  
+  <g fill="url(#st-snow)">
+    <polygon points="340,460 380,454 400,468 390,480 350,482 330,472"></polygon>
+    <polygon points="400,476 440,470 460,484 450,496 410,498 390,488"></polygon>
+  </g>
+
+  
+  <g transform="translate(280, 470)">
+    <path d="M -40 0 Q -30 12 -14 14 L 18 14 Q 34 12 40 0 Z" fill="#8B3A2A"></path>
+    <rect x="-40" y="-3" width="80" height="3" fill="#F5F0E8"></rect>
+    <rect x="-14" y="-18" width="34" height="16" fill="#F5F0E8"></rect>
+    <rect x="-4" y="-14" width="6" height="8" fill="#1B2E4B"></rect>
+    <rect x="6" y="-14" width="6" height="8" fill="#1B2E4B"></rect>
+    
+    <circle cx="3" cy="-22" r="3" fill="#2A4470"></circle>
+  </g>
+  <path d="M 220 484 Q 250 488 280 484 L 260 480 Z" fill="#F5F0E8" opacity="0.7"></path>
+
+  
+  <g fill="#1A1208" opacity="0.7">
+    <path d="M 720 280 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 780 250 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+    <path d="M 840 270 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+  </g>
+
+  
+  <line x1="0" y1="440" x2="1200" y2="440" stroke="#8B3A2A" stroke-width="0.6" opacity="0.35"></line>
+</svg>

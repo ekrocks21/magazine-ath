@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" fill="#1B2E4B"></rect>
+  <line x1="0" y1="96" x2="120" y2="96" stroke="#8B3A2A" stroke-width="3"></line>
+  <text x="60" y="74" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-weight="700" font-size="52" fill="#F5F0E8" letter-spacing="-0.02em">ATH</text>
+</svg>

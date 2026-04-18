@@ -1,0 +1,75 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="w26-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d9dde3"></stop>
+      <stop offset="0.45" stop-color="#a4adb8"></stop>
+      <stop offset="1" stop-color="#4a5668"></stop>
+    </linearGradient>
+    <linearGradient id="w26-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a2838"></stop>
+      <stop offset="1" stop-color="#0a1220"></stop>
+    </linearGradient>
+    <linearGradient id="w26-snow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0f0ec"></stop>
+      <stop offset="1" stop-color="#c8cdd2"></stop>
+    </linearGradient>
+  </defs>
+
+  
+  <rect width="600" height="800" fill="url(#w26-sky)"></rect>
+
+  
+  <rect x="380" y="240" width="220" height="2" fill="#3a4556" opacity="0.5"></rect>
+  <g fill="#3a4556" opacity="0.4">
+    <rect x="420" y="228" width="3" height="14"></rect>
+    <rect x="440" y="222" width="4" height="20"></rect>
+    <rect x="460" y="232" width="3" height="10"></rect>
+    <rect x="475" y="218" width="5" height="24"></rect>
+    <rect x="498" y="226" width="3" height="16"></rect>
+    <rect x="520" y="230" width="4" height="12"></rect>
+    <rect x="545" y="224" width="3" height="18"></rect>
+    <rect x="568" y="232" width="3" height="10"></rect>
+  </g>
+
+  
+  <path d="M 0 300 L 600 242 L 600 800 L 0 800 Z" fill="url(#w26-water)"></path>
+
+  
+  <path d="M 600 220 L 600 800 L 440 800 Q 410 720 395 640 Q 390 560 405 480 Q 430 380 490 300 Q 540 260 600 230 Z" fill="url(#w26-snow)"></path>
+
+  
+  <path d="M 600 220 Q 540 260 490 300 Q 430 380 405 480 Q 390 560 395 640 Q 410 720 440 800" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.7"></path>
+
+  
+  <path d="M 0 620 Q 60 600 120 610 Q 180 620 200 640 L 200 800 L 0 800 Z" fill="#e8e6e0"></path>
+  
+  <g stroke="#2a2a2a" stroke-width="1.5" fill="none">
+    <path d="M 80 660 L 440 620"></path>
+    <path d="M 80 666 L 440 626"></path>
+    <line x1="120" y1="651" x2="120" y2="700"></line>
+    <line x1="170" y1="643" x2="170" y2="700"></line>
+    <line x1="220" y1="637" x2="220" y2="700"></line>
+    <line x1="280" y1="632" x2="280" y2="700"></line>
+    <line x1="340" y1="628" x2="340" y2="700"></line>
+    <line x1="400" y1="624" x2="400" y2="700"></line>
+  </g>
+
+  
+  <g stroke="#2a3a4e" stroke-width="0.5" fill="none" opacity="0.5">
+    <path d="M 30 340 Q 120 352 240 358"></path>
+    <path d="M 60 400 Q 180 412 320 420"></path>
+    <path d="M 20 470 Q 160 480 300 488"></path>
+    <path d="M 80 540 Q 220 548 360 556"></path>
+  </g>
+
+  
+  <g fill="#c4c8ce">
+    <rect x="20" y="680" width="6" height="6"></rect>
+    <rect x="32" y="684" width="5" height="5"></rect>
+    <rect x="46" y="682" width="7" height="7"></rect>
+    <rect x="62" y="686" width="5" height="5"></rect>
+    <rect x="140" y="700" width="6" height="6"></rect>
+    <rect x="156" y="702" width="5" height="5"></rect>
+  </g>
+</svg>

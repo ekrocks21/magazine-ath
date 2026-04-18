@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>ATH — Animated Thumbnails</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="stylesheet" href="colors_and_type.css"/>
+<style>
+  body { background: var(--cream); padding: 64px 48px; }
+  .page { max-width: 1400px; margin: 0 auto; }
+  .masthead { display: flex; align-items: baseline; justify-content: space-between;
+    border-bottom: 1px solid var(--rule); padding-bottom: 16px; margin-bottom: 8px; }
+  .masthead h1 { font-family: var(--font-display); font-weight: 700; font-size: 2.4rem; color: var(--navy); }
+  .masthead .meta { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
+  .rust-rule { height: 3px; background: var(--rust); margin-bottom: 24px; }
+  .lede { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); font-size: 1.15rem; max-width: 640px; margin-bottom: 48px; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .card { background: var(--paper); border: 1px solid var(--border); overflow: hidden; }
+  .thumb-wrap { position: relative; width: 100%; aspect-ratio: 12/7; overflow: hidden; background: var(--cream-dark); }
+  .thumb-wrap > svg, .thumb-wrap > img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .caption { padding: 16px 20px 20px; border-top: 1px solid var(--border); }
+  .kicker { font-family: var(--font-mono); font-size: .65rem; letter-spacing: .15em; text-transform: uppercase; color: var(--rust); display: block; margin-bottom: 4px; }
+  .title { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; color: var(--ink); line-height: 1.3; }
+  .dek { font-family: var(--font-body); font-size: .9rem; color: var(--muted); margin-top: 4px; }
+
+  /* ===== Shared animation keyframes (viewBox coords, using SMIL-style SVG animate) ===== */
+  /* using CSS: animate SVG child elements by class */
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  @keyframes bob-s { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+  @keyframes sway { 0%,100% { transform: rotate(-0.6deg); } 50% { transform: rotate(0.6deg); } }
+  @keyframes drift-r { from { transform: translateX(-40px); } to { transform: translateX(calc(100% + 40px)); } }
+  @keyframes drift-l { from { transform: translateX(calc(100% + 40px)); } to { transform: translateX(-40px); } }
+  @keyframes flap { 0%,100% { d: path('M 0 0 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z'); } 50% { d: path('M 0 0 l 6 2 l 6 -2 l -2.5 -1.5 l -3.5 0.8 l -3.5 -0.8 l -2.5 1.5 z'); } }
+  @keyframes pulse-glow { 0%,100% { opacity: 0.35; } 50% { opacity: 0.75; } }
+  @keyframes lamp-blink { 0%,48%,100% { opacity: 0.35; } 50%,52% { opacity: 0.85; } }
+  @keyframes wave-x { 0% { transform: translateX(0); } 100% { transform: translateX(-40px); } }
+  @keyframes shimmer { 0%,100% { opacity: 0.25; } 50% { opacity: 0.55; } }
+  @keyframes smoke { 0% { transform: translateY(0) scale(1); opacity: 0.35; } 100% { transform: translateY(-30px) scale(1.4); opacity: 0; } }
+  @keyframes fall { 0% { transform: translateY(-30px); } 100% { transform: translateY(800px); } }
+  @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes beam-sweep { 0%,100% { transform: rotate(-18deg); } 50% { transform: rotate(18deg); } }
+  @keyframes twinkle { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+  @keyframes wake-fade { 0% { opacity: 0.8; transform: translateX(0) scaleX(1); } 100% { opacity: 0; transform: translateX(-40px) scaleX(1.6); } }
+
+  /* Reusable overlay animation classes (applied to <g> elements inside SVGs) */
+  .a-bob { animation: bob 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .a-bob-s { animation: bob-s 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .a-sway { animation: sway 5s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
+  .a-drift-r { animation: drift-r 24s linear infinite; }
+  .a-drift-l { animation: drift-l 28s linear infinite; }
+  .a-drift-r-slow { animation: drift-r 60s linear infinite; }
+  .a-drift-l-slow { animation: drift-l 70s linear infinite; }
+  .a-flap { animation: flap 0.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .a-pulse { animation: pulse-glow 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .a-lamp { animation: lamp-blink 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .a-wave { animation: wave-x 7s linear infinite; }
+  .a-shimmer { animation: shimmer 4s ease-in-out infinite; }
+  .a-smoke { animation: smoke 4s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+  .a-spin { animation: spin-slow 60s linear infinite; transform-box: fill-box; transform-origin: center; }
+  .a-beam { animation: beam-sweep 8s ease-in-out infinite; transform-box: fill-box; transform-origin: left center; }
+  .a-twinkle { animation: twinkle 2.4s ease-in-out infinite; }
+  .a-twinkle-2 { animation: twinkle 3.2s ease-in-out infinite 0.6s; }
+  .a-twinkle-3 { animation: twinkle 1.8s ease-in-out infinite 1.1s; }
+
+  /* Overlay gull-flock that drifts across the scene on top of a static plate */
+  .flock { position: absolute; inset: 0; pointer-events: none; }
+  .flock svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .gull { animation: flap 0.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+
+  .drift-across-slow { animation: drift-r 30s linear infinite; }
+  .drift-across { animation: drift-r 18s linear infinite; }
+
+  /* Shimmer band for water */
+  .water-shimmer {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 50%;
+    background: linear-gradient(110deg, transparent 40%, rgba(245,240,232,0.12) 48%, transparent 56%);
+    background-size: 300% 100%;
+    animation: wave-x 8s linear infinite;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  /* Snow overlay */
+  .snow { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+  .snow span { position:absolute; top:-10px; width:3px; height:3px; border-radius:50%; background:#F5F0E8; opacity:0.8; animation: fall linear infinite; }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0s !important; animation-iteration-count: 1 !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <h1>Animated Thumbnails</h1>
+    <div class="meta">ATH · SPRING 2026 · MOTION</div>
+  </header>
+  <div class="rust-rule"></div>
+  <p class="lede">Each plate given a subtle, looping life — birds flapping, water shimmering, light towers sweeping, smoke curling, snow falling. Motion is decorative, never intrusive; pauses if you prefer reduced motion.</p>
+
+  <div class="grid">
+
+    <!-- 1. Twin Lights — lamps blink, birds drift -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/twin-lights.svg" alt=""/>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <!-- lamp blink overlays on towers -->
+        <circle cx="515" cy="251" r="18" fill="#C4583E" class="a-lamp"/>
+        <circle cx="730" cy="226" r="18" fill="#C4583E" class="a-lamp" style="animation-delay:-2s"/>
+        <!-- drifting gull -->
+        <g class="drift-across-slow" style="--dy:120px">
+          <path class="gull" d="M 0 180 l 8 -3 l 8 3 l -3 2 l -5 -1 l -5 1 l -3 -2 z" fill="#1A1208" opacity="0.7"/>
+        </g>
+        <g class="drift-across" style="animation-delay:-6s">
+          <path class="gull" d="M 0 140 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z" fill="#1A1208" opacity="0.6"/>
+        </g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Highlands · Navesink</span><div class="title">Twin Lights at Dusk</div><div class="dek">Lamps alternate. A gull crosses the valley.</div></figcaption></figure>
+
+    <!-- 2. Sandy Hook Beach — water shimmer, gulls -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/sandy-hook-beach.svg" alt=""/>
+      <div class="water-shimmer" style="top:53%;height:20%"></div>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <g class="drift-across"><path class="gull" d="M 0 200 l 7 -2 l 7 2 l -3 2 l -4 -1 l -4 1 l -3 -2 z" fill="#1A1208" opacity="0.7"/></g>
+        <g class="drift-across-slow" style="animation-delay:-8s"><path class="gull" d="M 0 260 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z" fill="#1A1208" opacity="0.6"/></g>
+        <!-- bird on sand bobs -->
+        <g transform="translate(900,540)" class="a-bob-s">
+          <ellipse cx="0" cy="0" rx="10" ry="5" fill="#1A1208"/>
+          <circle cx="9" cy="-4" r="3" fill="#1A1208"/>
+        </g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Sandy Hook · Ocean</span><div class="title">Beach &amp; Shoreline</div><div class="dek">Tideline shimmers; a plover pecks at the wet sand.</div></figcaption></figure>
+
+    <!-- 3. Container Ship — smoke, bob, wake -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/container-ship.svg" alt=""/>
+      <div class="water-shimmer" style="top:60%;height:30%"></div>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <!-- smoke puffs rising from stack -->
+        <g transform="translate(815,210)">
+          <ellipse cx="0" cy="0" rx="14" ry="6" fill="#1A1208" class="a-smoke"/>
+          <ellipse cx="0" cy="0" rx="14" ry="6" fill="#1A1208" class="a-smoke" style="animation-delay:-1.3s"/>
+          <ellipse cx="0" cy="0" rx="14" ry="6" fill="#1A1208" class="a-smoke" style="animation-delay:-2.6s"/>
+        </g>
+        <g class="drift-across-slow"><path class="gull" d="M 0 180 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z" fill="#1A1208" opacity="0.6"/></g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Shipping Lane</span><div class="title">Container Ship, Outbound</div><div class="dek">Stack smokes; wake shimmers behind.</div></figcaption></figure>
+
+    <!-- 4. Sailboat Race — boats bob, shimmer -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/sailboat-race.svg" alt=""/>
+      <div class="water-shimmer" style="top:58%;height:30%"></div>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <g class="drift-across"><path class="gull" d="M 0 170 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z" fill="#1A1208" opacity="0.7"/></g>
+        <g class="drift-across-slow" style="animation-delay:-10s"><path class="gull" d="M 0 200 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z" fill="#1A1208" opacity="0.6"/></g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Navesink River</span><div class="title">Three-Boat Reach</div><div class="dek">Water shimmers; gulls wheel overhead.</div></figcaption></figure>
+
+    <!-- 5. NYC Skyline sunset — twinkling windows, water shimmer -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/nyc-skyline.svg" alt=""/>
+      <div class="water-shimmer" style="top:60%;height:35%"></div>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <!-- window twinkles -->
+        <circle cx="272" cy="300" r="2" fill="#C4583E" class="a-twinkle"/>
+        <circle cx="568" cy="300" r="2" fill="#C4583E" class="a-twinkle-2"/>
+        <circle cx="815" cy="310" r="2" fill="#C4583E" class="a-twinkle-3"/>
+        <circle cx="370" cy="350" r="2" fill="#C4583E" class="a-twinkle-2"/>
+        <circle cx="670" cy="370" r="2" fill="#C4583E" class="a-twinkle"/>
+        <g class="drift-across-slow"><path class="gull" d="M 0 160 l 7 -2 l 7 2 l -3 2 l -4 -1 l -4 1 l -3 -2 z" fill="#1A1208" opacity="0.7"/></g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Lower Bay · Manhattan</span><div class="title">Skyline, Looking North</div><div class="dek">Windows twinkle on as day drains west.</div></figcaption></figure>
+
+    <!-- 6. Highlands Night — stars twinkle, beam sweeps -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/highlands-night.svg" alt=""/>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <!-- rotating beam from lighthouse -->
+        <g transform="translate(394,352)">
+          <path d="M 0 0 L 900 -80 L 900 80 Z" fill="#F5F0E8" opacity="0.1" class="a-beam"/>
+        </g>
+        <!-- blinking lamp -->
+        <circle cx="394" cy="352" r="22" fill="#C4583E" class="a-pulse" opacity="0.6"/>
+        <!-- twinkling stars -->
+        <circle cx="420" cy="50" r="1.3" fill="#F5F0E8" class="a-twinkle"/>
+        <circle cx="720" cy="110" r="1.2" fill="#F5F0E8" class="a-twinkle-2"/>
+        <circle cx="1000" cy="120" r="1.2" fill="#F5F0E8" class="a-twinkle-3"/>
+        <circle cx="280" cy="90" r="1" fill="#F5F0E8" class="a-twinkle-2"/>
+        <circle cx="860" cy="80" r="1" fill="#F5F0E8" class="a-twinkle"/>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Highlands · Night</span><div class="title">Lighthouse Under Moon</div><div class="dek">Beam sweeps; stars breathe.</div></figcaption></figure>
+
+    <!-- 7. Fishing Boat — smoke, bob, gulls -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/fishing-boat.svg" alt=""/>
+      <div class="water-shimmer" style="top:60%;height:35%"></div>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <g transform="translate(607,340)">
+          <ellipse cx="0" cy="0" rx="10" ry="4" fill="#1A1208" class="a-smoke"/>
+          <ellipse cx="0" cy="0" rx="10" ry="4" fill="#1A1208" class="a-smoke" style="animation-delay:-1.8s"/>
+        </g>
+        <g class="drift-across"><path class="gull" d="M 0 220 l 7 -2 l 7 2 l -3 2 l -4 -1 l -4 1 l -3 -2 z" fill="#1A1208" opacity="0.7"/></g>
+        <g class="drift-across-slow" style="animation-delay:-7s"><path class="gull" d="M 0 260 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z" fill="#1A1208" opacity="0.6"/></g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Shrewsbury River</span><div class="title">The Miss Navesink</div><div class="dek">Stack puffs; gulls ride the wake.</div></figcaption></figure>
+
+    <!-- 8. Fort Hancock — flag sways, crow flaps -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/fort-hancock.svg" alt=""/>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <!-- flag sway (placed over the original, mostly matches) -->
+        <g transform="translate(560,440)" class="a-sway">
+          <path d="M 0 -115 L 56 -112 L 50 -90 L 0 -92 Z" fill="#F5F0E8"/>
+          <rect x="0" y="-115" width="22" height="12" fill="#1B2E4B"/>
+          <rect x="0" y="-103" width="56" height="3" fill="#8B3A2A"/>
+          <rect x="0" y="-97" width="56" height="3" fill="#8B3A2A"/>
+        </g>
+        <g class="drift-across-slow"><path class="gull" d="M 0 180 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z" fill="#1A1208" opacity="0.7"/></g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Sandy Hook · Fort Hancock</span><div class="title">Battery &amp; Flagstaff</div><div class="dek">Flag ripples in the offshore breeze.</div></figcaption></figure>
+
+    <!-- 9. Lobster Boat — buoys bob, shimmer -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/lobster-boat.svg" alt=""/>
+      <div class="water-shimmer" style="top:60%;height:35%"></div>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <!-- overlay bobbing buoys on top -->
+        <g transform="translate(240,560)" class="a-bob">
+          <circle cx="0" cy="0" r="8" fill="#C4583E"/>
+          <path d="M -8 0 a 8 8 0 0 1 16 0" fill="#F5F0E8"/>
+        </g>
+        <g transform="translate(300,585)" class="a-bob-s" style="animation-delay:-1s">
+          <circle cx="0" cy="0" r="7" fill="#2D6A4F"/>
+          <path d="M -7 0 a 7 7 0 0 1 14 0" fill="#F5F0E8"/>
+        </g>
+        <g class="drift-across"><path class="gull" d="M 0 240 l 7 -2 l 7 2 l -3 2 l -4 -1 l -4 1 l -3 -2 z" fill="#1A1208" opacity="0.7"/></g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Working Boat</span><div class="title">Lobsterman in Fog</div><div class="dek">Pot buoys bob; a gull passes high.</div></figcaption></figure>
+
+    <!-- 10. Sandy Hook Lighthouse — beam pulse, birds -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/sandy-hook-lighthouse.svg" alt=""/>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <circle cx="880" cy="256" r="26" fill="#F5F0E8" opacity="0.5" class="a-pulse"/>
+        <circle cx="880" cy="256" r="14" fill="#C4583E" opacity="0.7" class="a-lamp"/>
+        <g class="drift-across-slow"><path class="gull" d="M 0 210 l 7 -2 l 7 2 l -3 2 l -4 -1 l -4 1 l -3 -2 z" fill="#10192B" opacity="0.8"/></g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Sandy Hook · 1764</span><div class="title">The Oldest Lighthouse</div><div class="dek">Lamp breathes; a gull drifts past the dusk.</div></figcaption></figure>
+
+    <!-- 11. Highlands Bridge — passing boat bobs, shimmer -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/highlands-bridge.svg" alt=""/>
+      <div class="water-shimmer" style="top:58%;height:40%"></div>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <g class="drift-across"><path class="gull" d="M 0 130 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z" fill="#1A1208" opacity="0.7"/></g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Route 36 · Shrewsbury</span><div class="title">The Highlands Bridge</div><div class="dek">Tide runs under the truss.</div></figcaption></figure>
+
+    <!-- 12. Dock at Dusk — lantern pulses, shimmer -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/dock-dusk.svg" alt=""/>
+      <div class="water-shimmer" style="top:62%;height:35%"></div>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <circle cx="120" cy="338" r="32" fill="#C4583E" opacity="0.25" class="a-pulse"/>
+        <circle cx="120" cy="338" r="18" fill="#F5F0E8" opacity="0.3" class="a-pulse" style="animation-delay:-1.5s"/>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Private Pier · Navesink</span><div class="title">Dock at Dusk</div><div class="dek">The lantern breathes against the dark water.</div></figcaption></figure>
+
+    <!-- 13. Ferry to NYC — ferry wake, twinkle, shimmer -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/ferry-to-nyc.svg" alt=""/>
+      <div class="water-shimmer" style="top:60%;height:35%"></div>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <circle cx="272" cy="360" r="1.3" fill="#F5F0E8" class="a-twinkle"/>
+        <circle cx="610" cy="320" r="1.3" fill="#F5F0E8" class="a-twinkle-2"/>
+        <circle cx="810" cy="320" r="1.3" fill="#F5F0E8" class="a-twinkle-3"/>
+        <circle cx="920" cy="360" r="1.3" fill="#F5F0E8" class="a-twinkle"/>
+        <g class="drift-across-slow"><path class="gull" d="M 0 160 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z" fill="#1A1208" opacity="0.6"/></g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Atlantic Highlands · Pier 11</span><div class="title">Seastreak, Inbound</div><div class="dek">Harbor windows wake one by one.</div></figcaption></figure>
+
+    <!-- 14. Harbor Chart — compass rotates slowly, ship drifts -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/harbor-chart.svg" alt=""/>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <!-- subtle tint on compass card -->
+        <g transform="translate(1040,220)" class="a-spin" style="animation-duration:120s">
+          <circle r="34" fill="none" stroke="#8B3A2A" stroke-width="0.4" opacity="0.6"/>
+          <path d="M 0 -34 L 4 0 L 0 34 L -4 0 Z" fill="#8B3A2A" opacity="0.3"/>
+        </g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Cartography</span><div class="title">A Chart of the Highlands Coast</div><div class="dek">The compass inner card turns with the tide.</div></figcaption></figure>
+
+    <!-- 15. Winter Cargo — snow falling, smoke -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/winter-cargo.svg" alt=""/>
+      <div class="snow" id="snow-winter"></div>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <g transform="translate(771,280)">
+          <ellipse cx="0" cy="0" rx="14" ry="6" fill="#F5F0E8" class="a-smoke" opacity="0.6"/>
+          <ellipse cx="0" cy="0" rx="14" ry="6" fill="#F5F0E8" class="a-smoke" opacity="0.6" style="animation-delay:-1.8s"/>
+          <ellipse cx="0" cy="0" rx="14" ry="6" fill="#F5F0E8" class="a-smoke" opacity="0.6" style="animation-delay:-3.2s"/>
+        </g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Winter · Shipping</span><div class="title">Cargo in Ice</div><div class="dek">Snow settles over the stacks.</div></figcaption></figure>
+
+    <!-- 16. Regatta — shimmer, gulls, boats bob -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/regatta.svg" alt=""/>
+      <div class="water-shimmer" style="top:62%;height:35%"></div>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <g class="drift-across"><path class="gull" d="M 0 200 l 7 -2 l 7 2 l -3 2 l -4 -1 l -4 1 l -3 -2 z" fill="#1A1208" opacity="0.7"/></g>
+        <g class="drift-across-slow" style="animation-delay:-8s"><path class="gull" d="M 0 240 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z" fill="#1A1208" opacity="0.6"/></g>
+        <!-- course buoy flag sway -->
+        <g transform="translate(120,480)" class="a-sway">
+          <polygon points="0,0 30,4 0,18" fill="#8B3A2A"/>
+        </g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Summer · Yacht Club</span><div class="title">Navesink Regatta</div><div class="dek">Committee flag snaps at the weather mark.</div></figcaption></figure>
+
+    <!-- 17. Overlook — gulls drift, ship crosses -->
+    <figure class="card"><div class="thumb-wrap">
+      <img src="ui_kits/ath-magazine/assets/thumbs/overlook.svg" alt=""/>
+      <svg class="flock" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <!-- drifting cargo ship -->
+        <g class="a-drift-l-slow">
+          <g transform="translate(0,510)">
+            <path d="M -36 0 Q -28 6 -16 8 L 30 8 Q 42 6 46 0 Z" fill="#10192B"/>
+            <rect x="-28" y="-8" width="58" height="8" fill="#3D3020"/>
+            <rect x="-22" y="-16" width="14" height="8" fill="#C4583E"/>
+            <rect x="-6" y="-16" width="14" height="8" fill="#2D6A4F"/>
+            <rect x="10" y="-16" width="14" height="8" fill="#C9B99A"/>
+            <rect x="20" y="-26" width="10" height="10" fill="#F5F0E8"/>
+          </g>
+        </g>
+        <g class="drift-across"><path class="gull" d="M 0 210 l 7 -2 l 7 2 l -3 2 l -4 -1 l -4 1 l -3 -2 z" fill="#1A1208" opacity="0.75"/></g>
+        <g class="drift-across-slow" style="animation-delay:-9s"><path class="gull" d="M 0 180 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z" fill="#1A1208" opacity="0.6"/></g>
+      </svg>
+    </div><figcaption class="caption"><span class="kicker">Hartshorne Woods · Overlook</span><div class="title">Bench with a View</div><div class="dek">A freighter crawls across the horizon.</div></figcaption></figure>
+
+  </div>
+</div>
+<script>
+  // generate snow in .snow container
+  document.querySelectorAll('.snow').forEach(snow => {
+    for (let i = 0; i < 60; i++) {
+      const s = document.createElement('span');
+      const left = Math.random() * 100;
+      const dur = 4 + Math.random() * 6;
+      const delay = -Math.random() * 10;
+      const size = 1.5 + Math.random() * 2.5;
+      s.style.left = left + '%';
+      s.style.animationDuration = dur + 's';
+      s.style.animationDelay = delay + 's';
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.opacity = 0.4 + Math.random() * 0.5;
+      snow.appendChild(s);
+    }
+  });
+</script>
+</body>
+</html>

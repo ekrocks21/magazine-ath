@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cs-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E0D5C0"></stop>
+      <stop offset="1" stop-color="#C9B99A"></stop>
+    </linearGradient>
+    <linearGradient id="cs-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2A4470"></stop>
+      <stop offset="1" stop-color="#10192B"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#cs-sky)"></rect>
+
+  
+  <circle cx="950" cy="220" r="80" fill="#C4583E" opacity="0.6"></circle>
+  <circle cx="950" cy="220" r="50" fill="#8B3A2A" opacity="0.4"></circle>
+
+  
+  <line x1="0" y1="380" x2="1200" y2="380" stroke="#1B2E4B" stroke-width="0.8" opacity="0.5"></line>
+
+  
+  <rect x="0" y="380" width="1200" height="320" fill="url(#cs-water)"></rect>
+
+  
+  <g fill="#C4583E" opacity="0.35">
+    <ellipse cx="950" cy="400" rx="60" ry="3"></ellipse>
+    <ellipse cx="950" cy="420" rx="70" ry="3"></ellipse>
+    <ellipse cx="950" cy="445" rx="85" ry="3.5"></ellipse>
+    <ellipse cx="950" cy="475" rx="100" ry="4"></ellipse>
+    <ellipse cx="950" cy="510" rx="120" ry="5"></ellipse>
+    <ellipse cx="950" cy="550" rx="140" ry="5"></ellipse>
+    <ellipse cx="950" cy="600" rx="160" ry="6"></ellipse>
+  </g>
+
+  
+  <g stroke="#F5F0E8" stroke-width="0.5" fill="none" opacity="0.3">
+    <path d="M 0 410 Q 200 418 400 412 Q 600 406 800 414 L 850 414"></path>
+    <path d="M 1050 414 Q 1120 418 1200 414"></path>
+    <path d="M 0 445 Q 180 452 360 446 L 820 446"></path>
+    <path d="M 1080 446 Q 1140 452 1200 446"></path>
+    <path d="M 0 490 Q 200 498 400 492 Q 600 486 800 494 Q 1000 500 1200 492"></path>
+    <path d="M 0 540 Q 200 548 400 542 Q 600 536 800 544 Q 1000 550 1200 542"></path>
+    <path d="M 0 600 Q 200 608 400 602 Q 600 596 800 604 Q 1000 610 1200 602"></path>
+  </g>
+
+  
+  <g transform="translate(180, 350)">
+    
+    <path d="M 0 30 L 20 60 L 700 60 L 720 30 Z" fill="#1A1208"></path>
+    
+    <rect x="10" y="30" width="700" height="4" fill="#8B3A2A"></rect>
+    
+    <rect x="30" y="0" width="660" height="30" fill="#3D3020"></rect>
+
+    
+    <g>
+      
+      <rect x="50" y="-30" width="70" height="30" fill="#8B3A2A"></rect>
+      <rect x="50" y="-30" width="70" height="4" fill="#6B2A1D"></rect>
+      <rect x="125" y="-30" width="70" height="30" fill="#2D6A4F"></rect>
+      <rect x="125" y="-30" width="70" height="4" fill="#1e4a37"></rect>
+      <rect x="200" y="-30" width="70" height="30" fill="#C9B99A"></rect>
+      <rect x="200" y="-30" width="70" height="4" fill="#a89577"></rect>
+      <rect x="275" y="-30" width="70" height="30" fill="#1B2E4B"></rect>
+      <rect x="275" y="-30" width="70" height="4" fill="#10192B"></rect>
+      <rect x="350" y="-30" width="70" height="30" fill="#C4583E"></rect>
+      <rect x="350" y="-30" width="70" height="4" fill="#8B3A2A"></rect>
+      <rect x="425" y="-30" width="70" height="30" fill="#2D6A4F"></rect>
+      <rect x="425" y="-30" width="70" height="4" fill="#1e4a37"></rect>
+      <rect x="500" y="-30" width="70" height="30" fill="#8B3A2A"></rect>
+      <rect x="500" y="-30" width="70" height="4" fill="#6B2A1D"></rect>
+      
+      <rect x="60" y="-58" width="70" height="28" fill="#C9B99A"></rect>
+      <rect x="135" y="-58" width="70" height="28" fill="#8B3A2A"></rect>
+      <rect x="210" y="-58" width="70" height="28" fill="#1B2E4B"></rect>
+      <rect x="285" y="-58" width="70" height="28" fill="#C4583E"></rect>
+      <rect x="360" y="-58" width="70" height="28" fill="#C9B99A"></rect>
+      <rect x="435" y="-58" width="70" height="28" fill="#2D6A4F"></rect>
+      
+      <rect x="70" y="-84" width="70" height="26" fill="#1B2E4B"></rect>
+      <rect x="145" y="-84" width="70" height="26" fill="#C4583E"></rect>
+      <rect x="220" y="-84" width="70" height="26" fill="#2D6A4F"></rect>
+      <rect x="295" y="-84" width="70" height="26" fill="#C9B99A"></rect>
+      <rect x="370" y="-84" width="70" height="26" fill="#8B3A2A"></rect>
+    </g>
+
+    
+    <g>
+      <rect x="580" y="-100" width="100" height="100" fill="#F5F0E8"></rect>
+      <rect x="580" y="-100" width="100" height="6" fill="#8B3A2A"></rect>
+      <g fill="#1B2E4B">
+        <rect x="590" y="-85" width="16" height="10"></rect>
+        <rect x="612" y="-85" width="16" height="10"></rect>
+        <rect x="634" y="-85" width="16" height="10"></rect>
+        <rect x="656" y="-85" width="16" height="10"></rect>
+        <rect x="590" y="-65" width="16" height="10"></rect>
+        <rect x="612" y="-65" width="16" height="10"></rect>
+        <rect x="634" y="-65" width="16" height="10"></rect>
+        <rect x="656" y="-65" width="16" height="10"></rect>
+        <rect x="590" y="-45" width="16" height="10"></rect>
+        <rect x="612" y="-45" width="16" height="10"></rect>
+        <rect x="634" y="-45" width="16" height="10"></rect>
+        <rect x="656" y="-45" width="16" height="10"></rect>
+      </g>
+      
+      <rect x="620" y="-140" width="30" height="44" fill="#C9B99A"></rect>
+      <rect x="620" y="-140" width="30" height="8" fill="#8B3A2A"></rect>
+      
+      <g fill="#1A1208" opacity="0.35">
+        <ellipse cx="635" cy="-150" rx="14" ry="6"></ellipse>
+        <ellipse cx="650" cy="-165" rx="18" ry="7"></ellipse>
+        <ellipse cx="670" cy="-178" rx="22" ry="8"></ellipse>
+      </g>
+    </g>
+
+    
+    <line x1="20" y1="0" x2="20" y2="-40" stroke="#1A1208" stroke-width="1.2"></line>
+    <polygon points="20,-40 34,-36 20,-30" fill="#8B3A2A"></polygon>
+  </g>
+
+  
+  <path d="M 170 412 Q 200 420 240 415 L 200 410 Z" fill="#F5F0E8" opacity="0.6"></path>
+  <path d="M 900 412 Q 920 418 940 415 L 915 410 Z" fill="#F5F0E8" opacity="0.4"></path>
+
+  
+  <g fill="#1A1208" opacity="0.6">
+    <path d="M 140 220 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 200 240 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 260 210 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+  </g>
+</svg>

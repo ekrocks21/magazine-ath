@@ -7,8 +7,8 @@ status: published
 publish_date: 2026-03-31
 theme: "The Gateway to the World"
 tagline: "The inaugural issue of The Local Lookout."
-cover_image: ./winter-2026-cover.jpg
-cover_image_alt: "Aerial winter view of Highlands, the Highlands–Sea Bright bridge, and Sandy Hook curling north toward Manhattan on the horizon."
+cover_image: ./winter-2026-cover.svg
+cover_image_alt: "Illustrated cover: a snow-silvered cliff above the winter river, a long wooden dock stretching toward the far shore, and a horizon of bare masts in the distance."
 editors_letter: a-letter-from-the-hilltop
 contributors:
   - Eric Kane

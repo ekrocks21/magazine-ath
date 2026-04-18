@@ -1,0 +1,46 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="pb-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8a9098"></stop>
+      <stop offset="1" stop-color="#5a626c"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="800" fill="url(#pb-bg)"></rect>
+  
+  <rect y="420" width="600" height="70" fill="#a8aeb6" opacity="0.6"></rect>
+  <rect y="480" width="600" height="80" fill="#b8bec6" opacity="0.5"></rect>
+  
+  <g fill="#2a3240">
+    <rect x="40" y="500" width="180" height="180"></rect>
+    <rect x="40" y="490" width="180" height="14"></rect>
+    
+    <rect x="55" y="550" width="24" height="30" fill="#1a222e"></rect>
+    <rect x="95" y="550" width="24" height="30" fill="#1a222e"></rect>
+    <rect x="135" y="550" width="24" height="30" fill="#1a222e"></rect>
+    <rect x="175" y="550" width="24" height="30" fill="#1a222e"></rect>
+
+    <rect x="260" y="540" width="140" height="140"></rect>
+    <rect x="260" y="530" width="140" height="12"></rect>
+    <rect x="275" y="580" width="20" height="26" fill="#1a222e"></rect>
+    <rect x="310" y="580" width="20" height="26" fill="#1a222e"></rect>
+    <rect x="345" y="580" width="20" height="26" fill="#1a222e"></rect>
+    <rect x="380" y="580" width="20" height="26" fill="#1a222e"></rect>
+
+    <rect x="430" y="560" width="140" height="120"></rect>
+    <rect x="430" y="550" width="140" height="12"></rect>
+    <rect x="445" y="600" width="20" height="22" fill="#1a222e"></rect>
+    <rect x="475" y="600" width="20" height="22" fill="#1a222e"></rect>
+    <rect x="505" y="600" width="20" height="22" fill="#1a222e"></rect>
+    <rect x="535" y="600" width="20" height="22" fill="#1a222e"></rect>
+  </g>
+  
+  <rect y="680" width="600" height="120" fill="#3a3a30"></rect>
+  
+  <g stroke="#1a1a10" stroke-width="1" fill="none" opacity="0.5">
+    <path d="M 30 690 l 0 -4 M 34 691 l 0 -5"></path>
+    <path d="M 260 694 l 0 -4 M 264 695 l 0 -5"></path>
+    <path d="M 420 700 l 0 -5 M 426 701 l 0 -6"></path>
+    <path d="M 550 696 l 0 -4 M 556 697 l 0 -5"></path>
+  </g>
+</svg>

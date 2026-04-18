@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sr-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5F0E8"></stop>
+      <stop offset="1" stop-color="#d9dde3"></stop>
+    </linearGradient>
+    <linearGradient id="sr-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a5c6e"></stop>
+      <stop offset="1" stop-color="#1B2E4B"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#sr-sky)"></rect>
+
+  
+  <g fill="#C9B99A" opacity="0.3">
+    <ellipse cx="200" cy="120" rx="80" ry="8"></ellipse>
+    <ellipse cx="360" cy="150" rx="100" ry="6"></ellipse>
+    <ellipse cx="900" cy="100" rx="90" ry="7"></ellipse>
+    <ellipse cx="1080" cy="140" rx="70" ry="6"></ellipse>
+  </g>
+
+  
+  <path d="M 0 400 Q 200 395 400 402 Q 600 408 800 400 Q 1000 393 1200 398 L 1200 420 L 0 420 Z" fill="#1B2E4B" opacity="0.25"></path>
+  <line x1="0" y1="400" x2="1200" y2="400" stroke="#8B3A2A" stroke-width="0.6" opacity="0.35"></line>
+
+  
+  <rect x="0" y="400" width="1200" height="300" fill="url(#sr-water)"></rect>
+
+  
+  <g stroke="#F5F0E8" stroke-width="0.5" fill="none" opacity="0.4">
+    <path d="M 0 430 Q 200 438 400 432 Q 600 426 800 434 Q 1000 440 1200 432"></path>
+    <path d="M 0 465 Q 180 472 360 466 Q 560 460 760 468 Q 960 474 1200 468"></path>
+    <path d="M 0 510 Q 200 518 400 512 Q 600 506 800 514 Q 1000 520 1200 512"></path>
+    <path d="M 0 560 Q 200 568 400 562 Q 600 556 800 564 Q 1000 570 1200 562"></path>
+    <path d="M 0 620 Q 200 628 400 622 Q 600 616 800 624 Q 1000 630 1200 622"></path>
+  </g>
+
+  
+  <g transform="translate(240, 340)">
+    
+    <line x1="0" y1="0" x2="0" y2="-220" stroke="#3D3020" stroke-width="2.5"></line>
+    
+    <line x1="-4" y1="-30" x2="80" y2="-30" stroke="#3D3020" stroke-width="2"></line>
+    
+    <path d="M 0 -220 L 0 -30 L 80 -30 Z" fill="#F5F0E8"></path>
+    <path d="M 0 -220 L 0 -30 L 80 -30 Z" fill="none" stroke="#3D3020" stroke-width="1.2"></path>
+    
+    <text x="25" y="-110" font-family="serif" font-weight="700" font-size="26" fill="#8B3A2A">NJ</text>
+    <text x="18" y="-80" font-family="serif" font-size="16" fill="#1A1208">7 2 9</text>
+    
+    <path d="M 0 -200 L -60 -40 L 0 -40 Z" fill="#EDE7D9"></path>
+    <path d="M 0 -200 L -60 -40 L 0 -40 Z" fill="none" stroke="#3D3020" stroke-width="1"></path>
+    
+    <path d="M -70 0 Q -50 20 40 22 Q 100 20 120 0 Z" fill="#1B2E4B"></path>
+    <path d="M -70 0 L 120 0" stroke="#8B3A2A" stroke-width="2"></path>
+    <rect x="-70" y="-8" width="190" height="8" fill="#F5F0E8"></rect>
+    <rect x="-70" y="-8" width="190" height="2" fill="#8B3A2A"></rect>
+    
+    <polygon points="0,-220 16,-218 2,-210" fill="#8B3A2A"></polygon>
+    
+    <circle cx="60" cy="-14" r="4" fill="#1A1208"></circle>
+  </g>
+
+  
+  <g fill="#F5F0E8" opacity="0.7">
+    <path d="M 170 430 Q 200 438 250 434 Q 280 428 320 430 L 260 426 Z"></path>
+    <path d="M 330 440 Q 360 448 410 442 L 380 436 Z" opacity="0.5"></path>
+  </g>
+
+  
+  <g transform="translate(620, 380)">
+    <line x1="0" y1="0" x2="0" y2="-150" stroke="#3D3020" stroke-width="2"></line>
+    <line x1="-3" y1="-22" x2="54" y2="-22" stroke="#3D3020" stroke-width="1.4"></line>
+    <path d="M 0 -150 L 0 -22 L 54 -22 Z" fill="#F5F0E8"></path>
+    <path d="M 0 -150 L 0 -22 L 54 -22 Z" fill="none" stroke="#3D3020" stroke-width="1"></path>
+    <text x="15" y="-70" font-family="serif" font-weight="700" font-size="16" fill="#1B2E4B">US</text>
+    <path d="M 0 -140 L -42 -30 L 0 -30 Z" fill="#EDE7D9"></path>
+    <path d="M 0 -140 L -42 -30 L 0 -30 Z" fill="none" stroke="#3D3020" stroke-width="0.8"></path>
+    <path d="M -50 0 Q -30 14 30 15 Q 70 14 86 0 Z" fill="#8B3A2A"></path>
+    <rect x="-50" y="-6" width="136" height="6" fill="#F5F0E8"></rect>
+    <polygon points="0,-150 12,-148 2,-142" fill="#C4583E"></polygon>
+  </g>
+
+  
+  <g transform="translate(940, 400)">
+    <line x1="0" y1="0" x2="0" y2="-90" stroke="#3D3020" stroke-width="1.5"></line>
+    <path d="M 0 -90 L 0 -14 L 32 -14 Z" fill="#F5F0E8"></path>
+    <path d="M 0 -90 L 0 -14 L 32 -14 Z" fill="none" stroke="#3D3020" stroke-width="0.7"></path>
+    <path d="M 0 -84 L -24 -18 L 0 -18 Z" fill="#EDE7D9"></path>
+    <path d="M -28 0 Q -14 8 18 8 Q 40 8 52 0 Z" fill="#2D6A4F"></path>
+  </g>
+
+  
+  <g transform="translate(1100, 408)">
+    <line x1="0" y1="0" x2="0" y2="-50" stroke="#3D3020" stroke-width="1"></line>
+    <path d="M 0 -50 L 0 -8 L 18 -8 Z" fill="#F5F0E8"></path>
+    <path d="M -12 0 Q -4 4 12 4 Q 24 4 30 0 Z" fill="#1B2E4B"></path>
+  </g>
+
+  
+  <g fill="#1A1208" opacity="0.7">
+    <path d="M 520 170 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 580 200 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+    <path d="M 720 180 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+  </g>
+
+  
+  <g transform="translate(80, 580)" fill="#8B3A2A" stroke="#8B3A2A" stroke-width="0.6" opacity="0.7">
+    <circle r="22" fill="none"></circle>
+    <path d="M 0 -22 L 4 0 L 0 22 L -4 0 Z"></path>
+    <path d="M -22 0 L 0 -4 L 22 0 L 0 4 Z" opacity="0.5"></path>
+    <text x="0" y="-28" text-anchor="middle" font-family="serif" font-style="italic" font-size="10" fill="#F5F0E8">N</text>
+  </g>
+</svg>

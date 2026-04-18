@@ -1,10 +1,13 @@
 ---
 /**
- * Renders the 400x300 editorial illustration associated with an article.
+ * Renders the editorial illustration associated with an article slug.
  *
- * Illustrations live under /public/illustrations/ and are mapped by the
- * article's filename slug. If no illustration matches, a neutral placeholder
- * SVG is rendered so the 4:3 frame never collapses.
+ * Uses the 17-plate ATH thumbnail library in /public/illustrations/thumbs/.
+ * Each plate is 1200x700 in the house style (navy/cream/rust, limited
+ * palette, archival texture) — sourced from the Claude Design handoff.
+ *
+ * If no mapping matches, a neutral placeholder renders so the frame
+ * never collapses.
  */
 
 interface Props {
@@ -14,26 +17,32 @@ interface Props {
 
 const { slug, title } = Astro.props;
 
-// slug → illustration filename (in /public/illustrations/)
+// Article slug → thumbnail filename.
+// Library inventory (see /public/illustrations/thumbs/):
+//   container-ship, dock-dusk, ferry-to-nyc, fishing-boat, fort-hancock,
+//   harbor-chart, highlands-bridge, highlands-night, lobster-boat,
+//   nyc-skyline, overlook, regatta, sailboat-race, sandy-hook-beach,
+//   sandy-hook-lighthouse, twin-lights, winter-cargo
 const MAP: Record<string, string> = {
-  // Spring 2026
-  'a-very-good-land-to-fall-with': '/illustrations/05-juet-hills.svg',
-  'thirteen-shillings': '/illustrations/06-hartshorne-map.svg',
-  'feature-a-very-good-land-to-fall-with': '/illustrations/05-juet-hills.svg',
-  'feature-thirteen-shillings': '/illustrations/06-hartshorne-map.svg',
-  'the-house-that-stayed': '/illustrations/07-building-600-house.svg',
-  'building-600': '/illustrations/07-building-600-house.svg',
-  strandings: '/illustrations/08-humpback-stranding.svg',
-  'bahrs-landing': '/illustrations/09-bahrs-landing.svg',
-  'goat-hill': '/illustrations/10-goat-hill.svg',
-  // Winter 2026
-  lighthouse: '/illustrations/11-winter-lighthouse.svg',
-  'sandy-hook-lighthouse': '/illustrations/11-winter-lighthouse.svg',
-  bunkers: '/illustrations/12-winter-weapons-bunkers.svg',
-  'fort-hancock': '/illustrations/12-winter-weapons-bunkers.svg',
-  'ice-floes': '/illustrations/13-winter-ice-floes.svg',
-  'winter-diner': '/illustrations/14-winter-diner.svg',
-  'route-36': '/illustrations/15-winter-route-36.svg',
+  // Spring 2026 — historical / cartographic
+  'a-very-good-land-to-fall-with': '/illustrations/thumbs/overlook.svg',
+  'thirteen-shillings': '/illustrations/thumbs/harbor-chart.svg',
+  'editors-letter': '/illustrations/thumbs/sandy-hook-beach.svg',
+
+  // Future / placeholders referenced elsewhere in the site
+  'the-house-that-stayed': '/illustrations/thumbs/fort-hancock.svg',
+  'building-600': '/illustrations/thumbs/fort-hancock.svg',
+  strandings: '/illustrations/thumbs/sandy-hook-beach.svg',
+  'bahrs-landing': '/illustrations/thumbs/fishing-boat.svg',
+  'goat-hill': '/illustrations/thumbs/highlands-bridge.svg',
+
+  // Winter 2026 (articles with real hero photos skip this mapping
+  // via index.astro's hero_image preference; kept for fallback)
+  'a-letter-from-the-hilltop': '/illustrations/thumbs/overlook.svg',
+  'the-river-froze': '/illustrations/thumbs/winter-cargo.svg',
+  'the-year-the-river-remembered': '/illustrations/thumbs/ferry-to-nyc.svg',
+  'coming-to-the-screen': '/illustrations/thumbs/twin-lights.svg',
+  'whats-up-next': '/illustrations/thumbs/highlands-night.svg',
 };
 
 const src = MAP[slug];
@@ -44,7 +53,7 @@ const src = MAP[slug];
     <img src={src} alt={title} loading="lazy" decoding="async" />
   ) : (
     <svg
-      viewBox="0 0 400 300"
+      viewBox="0 0 1200 700"
       preserveAspectRatio="xMidYMid slice"
       width="100%"
       height="100%"
@@ -57,10 +66,10 @@ const src = MAP[slug];
           <stop offset="1" stop-color="#10192B" />
         </linearGradient>
       </defs>
-      <rect width="400" height="300" fill={`url(#ca-fallback-${slug})`} />
-      <circle cx="320" cy="96" r="18" fill="#C4583E" opacity="0.7" />
+      <rect width="1200" height="700" fill={`url(#ca-fallback-${slug})`} />
+      <circle cx="960" cy="224" r="54" fill="#C4583E" opacity="0.7" />
       <path
-        d="M0 210 Q 100 180 200 196 Q 300 210 400 192 L 400 300 L 0 300 Z"
+        d="M0 490 Q 300 420 600 458 Q 900 490 1200 448 L 1200 700 L 0 700 Z"
         fill="#1A1208"
       />
     </svg>

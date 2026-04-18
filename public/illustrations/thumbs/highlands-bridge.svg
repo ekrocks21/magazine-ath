@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="tb-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E0D5C0"></stop>
+      <stop offset="1" stop-color="#F5F0E8"></stop>
+    </linearGradient>
+    <linearGradient id="tb-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a5c6e"></stop>
+      <stop offset="1" stop-color="#2A4470"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#tb-sky)"></rect>
+
+  
+  <path d="M 0 340 Q 200 335 400 340 Q 600 346 800 340 Q 1000 334 1200 340 L 1200 360 L 0 360 Z" fill="#2a3a2f" opacity="0.35"></path>
+
+  
+  <g fill="#2a3a2f" opacity="0.6">
+    <path d="M 60 340 l 3 -8 l 3 8 z"></path>
+    <path d="M 120 340 l 4 -10 l 4 10 z"></path>
+    <path d="M 200 340 l 3 -8 l 3 8 z"></path>
+    <path d="M 280 340 l 5 -12 l 5 12 z"></path>
+    <path d="M 380 340 l 3 -10 l 3 10 z"></path>
+    <path d="M 1040 340 l 3 -8 l 3 8 z"></path>
+    <path d="M 1100 340 l 4 -10 l 4 10 z"></path>
+    <path d="M 1150 340 l 3 -8 l 3 8 z"></path>
+  </g>
+
+  
+  <rect x="0" y="360" width="1200" height="340" fill="url(#tb-water)"></rect>
+
+  
+  <g stroke="#F5F0E8" stroke-width="0.5" fill="none" opacity="0.3">
+    <path d="M 0 390 Q 200 398 400 392 Q 600 386 800 394 Q 1000 400 1200 392"></path>
+    <path d="M 0 440 Q 200 448 400 442 Q 600 436 800 444 Q 1000 450 1200 442"></path>
+    <path d="M 0 500 Q 200 508 400 502 Q 600 496 800 504 Q 1000 510 1200 502"></path>
+    <path d="M 0 570 Q 200 578 400 572 Q 600 566 800 574 Q 1000 580 1200 572"></path>
+    <path d="M 0 650 Q 200 658 400 652 Q 600 646 800 654 Q 1000 660 1200 652"></path>
+  </g>
+
+  
+  <g transform="translate(0, 200)">
+    
+    <rect x="80" y="162" width="1060" height="6" fill="#1B2E4B"></rect>
+    <rect x="80" y="168" width="1060" height="3" fill="#10192B"></rect>
+    
+    <g fill="#1B2E4B">
+      <rect x="100" y="156" width="1" height="6"></rect><rect x="120" y="156" width="1" height="6"></rect>
+      <rect x="140" y="156" width="1" height="6"></rect><rect x="160" y="156" width="1" height="6"></rect>
+      <rect x="180" y="156" width="1" height="6"></rect><rect x="200" y="156" width="1" height="6"></rect>
+      <rect x="220" y="156" width="1" height="6"></rect><rect x="240" y="156" width="1" height="6"></rect>
+      <rect x="260" y="156" width="1" height="6"></rect><rect x="280" y="156" width="1" height="6"></rect>
+      <rect x="300" y="156" width="1" height="6"></rect><rect x="320" y="156" width="1" height="6"></rect>
+      <rect x="340" y="156" width="1" height="6"></rect><rect x="360" y="156" width="1" height="6"></rect>
+      <rect x="380" y="156" width="1" height="6"></rect><rect x="400" y="156" width="1" height="6"></rect>
+      <rect x="420" y="156" width="1" height="6"></rect><rect x="440" y="156" width="1" height="6"></rect>
+      <rect x="460" y="156" width="1" height="6"></rect><rect x="480" y="156" width="1" height="6"></rect>
+      <rect x="500" y="156" width="1" height="6"></rect><rect x="520" y="156" width="1" height="6"></rect>
+      <rect x="540" y="156" width="1" height="6"></rect><rect x="560" y="156" width="1" height="6"></rect>
+      <rect x="580" y="156" width="1" height="6"></rect><rect x="600" y="156" width="1" height="6"></rect>
+      <rect x="620" y="156" width="1" height="6"></rect><rect x="640" y="156" width="1" height="6"></rect>
+      <rect x="660" y="156" width="1" height="6"></rect><rect x="680" y="156" width="1" height="6"></rect>
+      <rect x="700" y="156" width="1" height="6"></rect><rect x="720" y="156" width="1" height="6"></rect>
+      <rect x="740" y="156" width="1" height="6"></rect><rect x="760" y="156" width="1" height="6"></rect>
+      <rect x="780" y="156" width="1" height="6"></rect><rect x="800" y="156" width="1" height="6"></rect>
+      <rect x="820" y="156" width="1" height="6"></rect><rect x="840" y="156" width="1" height="6"></rect>
+      <rect x="860" y="156" width="1" height="6"></rect><rect x="880" y="156" width="1" height="6"></rect>
+      <rect x="900" y="156" width="1" height="6"></rect><rect x="920" y="156" width="1" height="6"></rect>
+      <rect x="940" y="156" width="1" height="6"></rect><rect x="960" y="156" width="1" height="6"></rect>
+      <rect x="980" y="156" width="1" height="6"></rect><rect x="1000" y="156" width="1" height="6"></rect>
+      <rect x="1020" y="156" width="1" height="6"></rect><rect x="1040" y="156" width="1" height="6"></rect>
+      <rect x="1060" y="156" width="1" height="6"></rect><rect x="1080" y="156" width="1" height="6"></rect>
+      <rect x="1100" y="156" width="1" height="6"></rect><rect x="1120" y="156" width="1" height="6"></rect>
+    </g>
+
+    
+    <path d="M 300 162 Q 600 30 900 162" fill="none" stroke="#1B2E4B" stroke-width="4"></path>
+    
+    <g stroke="#1B2E4B" stroke-width="1.4">
+      <line x1="320" y1="162" x2="333" y2="140"></line>
+      <line x1="360" y1="162" x2="384" y2="108"></line>
+      <line x1="400" y1="162" x2="435" y2="82"></line>
+      <line x1="440" y1="162" x2="486" y2="62"></line>
+      <line x1="480" y1="162" x2="537" y2="48"></line>
+      <line x1="520" y1="162" x2="588" y2="40"></line>
+      <line x1="560" y1="162" x2="639" y2="36"></line>
+      <line x1="600" y1="162" x2="600" y2="30"></line>
+      <line x1="640" y1="162" x2="639" y2="36"></line>
+      <line x1="680" y1="162" x2="690" y2="48"></line>
+      <line x1="720" y1="162" x2="714" y2="62"></line>
+      <line x1="760" y1="162" x2="765" y2="82"></line>
+      <line x1="800" y1="162" x2="816" y2="108"></line>
+      <line x1="840" y1="162" x2="867" y2="140"></line>
+    </g>
+
+    
+    <rect x="140" y="162" width="32" height="260" fill="#1B2E4B"></rect>
+    <rect x="140" y="162" width="32" height="6" fill="#10192B"></rect>
+    <rect x="1028" y="162" width="32" height="260" fill="#1B2E4B"></rect>
+    <rect x="1028" y="162" width="32" height="6" fill="#10192B"></rect>
+
+    
+    <rect x="240" y="162" width="10" height="20" fill="#1B2E4B"></rect>
+    <rect x="948" y="162" width="10" height="20" fill="#1B2E4B"></rect>
+  </g>
+
+  
+  <rect x="140" y="362" width="32" height="340" fill="#10192B" opacity="0.55"></rect>
+  <rect x="1028" y="362" width="32" height="340" fill="#10192B" opacity="0.55"></rect>
+
+  
+  <g transform="translate(620, 400)">
+    <path d="M -30 0 Q -20 10 -6 12 L 26 12 Q 40 10 44 0 Z" fill="#F5F0E8"></path>
+    <rect x="-30" y="-4" width="74" height="4" fill="#8B3A2A"></rect>
+    <rect x="-10" y="-22" width="20" height="18" fill="#1B2E4B"></rect>
+    <rect x="-8" y="-18" width="6" height="6" fill="#C9B99A"></rect>
+    <rect x="2" y="-18" width="6" height="6" fill="#C9B99A"></rect>
+    
+  </g>
+  <path d="M 580 418 Q 620 424 680 420 L 640 414 Z" fill="#F5F0E8" opacity="0.5"></path>
+
+  
+  <g fill="#1A1208" opacity="0.7">
+    <path d="M 220 130 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 300 100 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+    <path d="M 960 120 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+  </g>
+
+  
+  <g transform="translate(100, 560)">
+    <rect x="0" y="0" width="140" height="30" fill="#2D6A4F"></rect>
+    <rect x="0" y="0" width="140" height="30" fill="none" stroke="#F5F0E8" stroke-width="1"></rect>
+    <text x="70" y="20" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="13" fill="#F5F0E8">ROUTE 36</text>
+  </g>
+</svg>

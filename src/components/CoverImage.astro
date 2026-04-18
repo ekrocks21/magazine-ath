@@ -1,0 +1,56 @@
+---
+/**
+ * Issue cover image — branches between the Astro `<Image>` pipeline
+ * (raster photos, emits webp + responsive srcset) and a plain `<img>`
+ * tag (for SVGs, which don't need pipeline transforms).
+ *
+ * Used in the landing hero, the archive strip, and the issue page
+ * so every cover is rendered consistently regardless of source format.
+ */
+
+import { Image, type ImageMetadata } from 'astro:assets';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  widths?: number[];
+  sizes?: string;
+  loading?: 'eager' | 'lazy';
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  widths = [360, 560, 720, 960],
+  sizes = '(min-width: 900px) 360px, 80vw',
+  loading = 'lazy',
+  class: className,
+} = Astro.props;
+
+const isSvg = src.format === 'svg';
+---
+
+{
+  isSvg ? (
+    <img
+      src={src.src}
+      alt={alt}
+      width={src.width}
+      height={src.height}
+      loading={loading}
+      decoding="async"
+      class={className}
+    />
+  ) : (
+    <Image
+      src={src}
+      alt={alt}
+      widths={widths}
+      sizes={sizes}
+      loading={loading}
+      decoding="async"
+      class={className}
+    />
+  )
+}

@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="rg-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5F0E8"></stop>
+      <stop offset="1" stop-color="#E0D5C0"></stop>
+    </linearGradient>
+    <linearGradient id="rg-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2A4470"></stop>
+      <stop offset="1" stop-color="#1B2E4B"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#rg-sky)"></rect>
+
+  
+  <g fill="#C9B99A" opacity="0.3">
+    <ellipse cx="160" cy="100" rx="90" ry="6"></ellipse>
+    <ellipse cx="520" cy="130" rx="120" ry="7"></ellipse>
+    <ellipse cx="900" cy="90" rx="100" ry="6"></ellipse>
+  </g>
+
+  
+  <g fill="#1B2E4B" opacity="0.4">
+    <rect x="0" y="358" width="1200" height="4"></rect>
+    <rect x="840" y="330" width="4" height="28"></rect>
+    <rect x="852" y="324" width="5" height="34"></rect>
+    <rect x="866" y="332" width="3" height="26"></rect>
+    <polygon points="878,358 878,308 884,302 890,308 890,358"></polygon>
+    <rect x="902" y="330" width="4" height="28"></rect>
+    <rect x="916" y="316" width="5" height="42"></rect>
+    <rect x="928" y="328" width="3" height="30"></rect>
+    <polygon points="940,358 940,298 948,292 956,298 956,358"></polygon>
+    <rect x="970" y="326" width="4" height="32"></rect>
+    <rect x="984" y="316" width="6" height="42"></rect>
+    <rect x="1000" y="330" width="4" height="28"></rect>
+    <rect x="1014" y="320" width="5" height="38"></rect>
+    <rect x="1028" y="336" width="4" height="22"></rect>
+  </g>
+  <line x1="0" y1="360" x2="1200" y2="360" stroke="#8B3A2A" stroke-width="0.6" opacity="0.35"></line>
+
+  
+  <rect x="0" y="360" width="1200" height="340" fill="url(#rg-water)"></rect>
+
+  
+  <g stroke="#F5F0E8" stroke-width="0.5" fill="none" opacity="0.35">
+    <path d="M 0 395 Q 200 402 400 398 Q 600 394 800 400 Q 1000 404 1200 398"></path>
+    <path d="M 0 440 Q 200 448 400 442 Q 600 436 800 444 Q 1000 450 1200 442"></path>
+    <path d="M 0 500 Q 200 508 400 502 Q 600 496 800 504 Q 1000 510 1200 502"></path>
+    <path d="M 0 570 Q 200 578 400 572 Q 600 566 800 574 Q 1000 580 1200 572"></path>
+    <path d="M 0 650 Q 200 658 400 652 Q 600 646 800 654 Q 1000 660 1200 652"></path>
+  </g>
+
+  
+  
+  <g transform="translate(240, 460)">
+    <line x1="0" y1="0" x2="-8" y2="-170" stroke="#3D3020" stroke-width="2"></line>
+    <path d="M -8 -170 L -4 -14 L 60 -8 Z" fill="#F5F0E8"></path>
+    <path d="M -8 -170 L -4 -14 L 60 -8 Z" fill="none" stroke="#3D3020" stroke-width="1"></path>
+    <text x="16" y="-70" font-family="serif" font-weight="700" font-size="22" fill="#8B3A2A">7</text>
+    <path d="M -6 -156 L -48 -22 L -6 -22 Z" fill="#EDE7D9"></path>
+    <path d="M -56 0 Q -34 16 20 18 Q 56 16 70 0 Z" fill="#1B2E4B"></path>
+    <rect x="-56" y="-4" width="126" height="4" fill="#8B3A2A"></rect>
+    <polygon points="-8,-170 6,-168 -6,-162" fill="#C4583E"></polygon>
+  </g>
+
+  
+  <g transform="translate(460, 478)">
+    <line x1="0" y1="0" x2="-6" y2="-140" stroke="#3D3020" stroke-width="1.8"></line>
+    <path d="M -6 -140 L -2 -12 L 50 -8 Z" fill="#F5F0E8"></path>
+    <path d="M -6 -140 L -2 -12 L 50 -8 Z" fill="none" stroke="#3D3020" stroke-width="0.8"></path>
+    <text x="10" y="-58" font-family="serif" font-weight="700" font-size="16" fill="#1B2E4B">12</text>
+    <path d="M -4 -128 L -38 -18 L -4 -18 Z" fill="#EDE7D9"></path>
+    <path d="M -44 0 Q -28 12 12 14 Q 42 12 54 0 Z" fill="#8B3A2A"></path>
+    <rect x="-44" y="-4" width="98" height="4" fill="#F5F0E8"></rect>
+  </g>
+
+  
+  <g transform="translate(620, 470)">
+    <line x1="0" y1="0" x2="-6" y2="-150" stroke="#3D3020" stroke-width="1.8"></line>
+    <path d="M -6 -150 L -2 -14 L 54 -10 Z" fill="#EDE7D9"></path>
+    <path d="M -6 -150 L -2 -14 L 54 -10 Z" fill="none" stroke="#3D3020" stroke-width="0.8"></path>
+    <text x="12" y="-64" font-family="serif" font-weight="700" font-size="17" fill="#8B3A2A">4</text>
+    <path d="M -4 -138 L -40 -20 L -4 -20 Z" fill="#F5F0E8"></path>
+    <path d="M -48 0 Q -30 12 14 14 Q 46 12 58 0 Z" fill="#2D6A4F"></path>
+    <rect x="-48" y="-4" width="106" height="4" fill="#F5F0E8"></rect>
+  </g>
+
+  
+  <g transform="translate(820, 490)">
+    <line x1="0" y1="0" x2="-4" y2="-110" stroke="#3D3020" stroke-width="1.4"></line>
+    <path d="M -4 -110 L -2 -10 L 40 -8 Z" fill="#F5F0E8"></path>
+    <path d="M -4 -110 L -2 -10 L 40 -8 Z" fill="none" stroke="#3D3020" stroke-width="0.6"></path>
+    <path d="M -4 -100 L -30 -16 L -4 -16 Z" fill="#EDE7D9"></path>
+    <path d="M -36 0 Q -22 8 10 10 Q 32 8 42 0 Z" fill="#1B2E4B"></path>
+    <rect x="-36" y="-3" width="78" height="3" fill="#8B3A2A"></rect>
+  </g>
+
+  
+  <g transform="translate(960, 500)" opacity="0.9">
+    <line x1="0" y1="0" x2="-4" y2="-90" stroke="#3D3020" stroke-width="1.2"></line>
+    <path d="M -4 -90 L -2 -8 L 32 -6 Z" fill="#F5F0E8"></path>
+    <path d="M -4 -90 L -2 -8 L 32 -6 Z" fill="none" stroke="#3D3020" stroke-width="0.5"></path>
+    <path d="M -30 0 Q -16 6 8 8 Q 26 6 34 0 Z" fill="#C4583E"></path>
+  </g>
+
+  
+  <g transform="translate(1100, 500)" opacity="0.8">
+    <line x1="0" y1="0" x2="0" y2="-60" stroke="#3D3020" stroke-width="0.9"></line>
+    <path d="M 0 -60 L 0 -6 L 22 -6 Z" fill="#F5F0E8"></path>
+    <path d="M -16 0 Q -6 4 14 4 Q 22 4 26 0 Z" fill="#1B2E4B"></path>
+  </g>
+
+  
+  <g transform="translate(120, 520)">
+    <line x1="0" y1="-10" x2="0" y2="-40" stroke="#1A1208" stroke-width="1.5"></line>
+    <polygon points="0,-40 30,-36 0,-22" fill="#8B3A2A"></polygon>
+    <ellipse cx="0" cy="-2" rx="14" ry="4" fill="#F5F0E8" opacity="0.5"></ellipse>
+    <path d="M -10 -8 Q 0 -20 10 -8 Q 10 -2 0 -2 Q -10 -2 -10 -8 Z" fill="#C4583E"></path>
+  </g>
+
+  
+  <g fill="#F5F0E8" opacity="0.5">
+    <path d="M 170 480 Q 210 488 280 482 L 240 476 Z"></path>
+    <path d="M 400 496 Q 440 502 500 498 L 470 492 Z" opacity="0.7"></path>
+    <path d="M 570 490 Q 600 494 650 490 L 630 484 Z" opacity="0.6"></path>
+    <path d="M 780 504 Q 810 508 850 504 L 830 498 Z" opacity="0.5"></path>
+  </g>
+
+  
+  <g fill="#1A1208" opacity="0.7">
+    <path d="M 340 210 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 420 180 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+    <path d="M 500 220 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 680 200 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+  </g>
+
+  
+  <g transform="translate(940, 620)" opacity="0.8">
+    <rect x="0" y="0" width="210" height="48" fill="none" stroke="#F5F0E8" stroke-width="0.8"></rect>
+    <text x="105" y="18" text-anchor="middle" font-family="serif" font-size="9" fill="#F5F0E8" letter-spacing="3">NAVESINK REGATTA</text>
+    <text x="105" y="36" text-anchor="middle" font-family="serif" font-style="italic" font-size="11" fill="#F5F0E8">JUNE \u00b7 MMXXVI</text>
+  </g>
+</svg>

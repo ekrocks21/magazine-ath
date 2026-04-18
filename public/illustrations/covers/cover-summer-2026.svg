@@ -1,0 +1,30 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice">
+  <rect width="600" height="800" fill="#F5F0E8"></rect>
+  
+  <line x1="60" y1="60" x2="540" y2="60" stroke="#8B3A2A" stroke-width="3"></line>
+  <line x1="60" y1="740" x2="540" y2="740" stroke="#8B3A2A" stroke-width="3"></line>
+
+  <text x="60" y="100" font-family="DM Mono, monospace" font-size="14" letter-spacing="3" fill="#7A6F5F">
+    NO. 03
+  </text>
+  <text x="540" y="100" text-anchor="end" font-family="DM Mono, monospace" font-size="14" letter-spacing="3" fill="#7A6F5F">
+    SUMMER 2026
+  </text>
+
+  
+  <text x="60" y="380" font-family="Playfair Display, serif" font-weight="700" font-size="96" fill="#1A1208" letter-spacing="-4">Summer</text>
+  <text x="60" y="470" font-family="Playfair Display, serif" font-style="italic" font-weight="400" font-size="74" fill="#8B3A2A" letter-spacing="-2">on the coast</text>
+
+  
+  <g font-family="Source Serif 4, serif" font-size="17" fill="#3D3020">
+    <text x="60" y="560">The bluefish run returns to Sea Bright.</text>
+    <text x="60" y="588">Inside the Twin Lights summer keeper logs.</text>
+    <text x="60" y="616">A day on the Navesink with the last pound-net crew.</text>
+    <text x="60" y="644">What the dunes remember about 1944.</text>
+  </g>
+
+  <text x="60" y="720" font-family="DM Mono, monospace" font-size="12" letter-spacing="3" fill="#8B3A2A">
+    PUBLISHING JULY 2026
+  </text>
+</svg>

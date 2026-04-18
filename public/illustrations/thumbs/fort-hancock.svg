@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ft-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E0D5C0"></stop>
+      <stop offset="1" stop-color="#C9B99A"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#ft-sky)"></rect>
+
+  
+  <g fill="#a89577" opacity="0.3">
+    <circle cx="120" cy="80" r="1"></circle><circle cx="340" cy="150" r="1.2"></circle>
+    <circle cx="580" cy="220" r="1"></circle><circle cx="820" cy="90" r="1"></circle>
+    <circle cx="1080" cy="180" r="1.2"></circle><circle cx="200" cy="420" r="1"></circle>
+    <circle cx="460" cy="520" r="1.2"></circle><circle cx="720" cy="620" r="1"></circle>
+    <circle cx="960" cy="470" r="1.2"></circle>
+  </g>
+
+  
+  <path d="M 0 560 Q 200 550 400 555 Q 600 560 800 553 Q 1000 546 1200 552 L 1200 700 L 0 700 Z" fill="#2a3a2f" opacity="0.85"></path>
+
+  
+  <g transform="translate(200, 380)">
+    
+    <path d="M 0 180 Q 40 130 120 120 L 640 120 Q 720 130 760 180 Z" fill="#8B3A2A" opacity="0.2"></path>
+    <path d="M 0 180 Q 40 130 120 120 L 640 120 Q 720 130 760 180" stroke="#6B2A1D" stroke-width="1" fill="none" opacity="0.5"></path>
+
+    
+    <rect x="60" y="100" width="640" height="80" fill="#C9B99A"></rect>
+    <rect x="60" y="100" width="640" height="4" fill="#8B3A2A"></rect>
+    <rect x="60" y="176" width="640" height="4" fill="#6B2A1D"></rect>
+
+    
+    <g fill="#1A1208">
+      <rect x="110" y="130" width="50" height="30"></rect>
+      <rect x="200" y="130" width="50" height="30"></rect>
+      <rect x="290" y="130" width="50" height="30"></rect>
+      <rect x="380" y="130" width="50" height="30"></rect>
+      <rect x="470" y="130" width="50" height="30"></rect>
+      <rect x="560" y="130" width="50" height="30"></rect>
+      <rect x="650" y="130" width="40" height="30"></rect>
+    </g>
+
+    
+    <g fill="#3D3020">
+      <rect x="128" y="135" width="14" height="8"></rect>
+      <rect x="218" y="135" width="14" height="8"></rect>
+      <rect x="308" y="135" width="14" height="8"></rect>
+      <rect x="398" y="135" width="14" height="8"></rect>
+      <rect x="488" y="135" width="14" height="8"></rect>
+      <rect x="578" y="135" width="14" height="8"></rect>
+    </g>
+
+    
+    <g stroke="#6B2A1D" stroke-width="0.8" opacity="0.4" fill="none">
+      <path d="M 132 160 L 132 178"></path>
+      <path d="M 220 160 L 220 178"></path>
+      <path d="M 310 160 L 310 178"></path>
+      <path d="M 400 160 L 400 178"></path>
+      <path d="M 490 160 L 490 178"></path>
+    </g>
+
+    
+    <g stroke="#2a3a2f" stroke-width="1" fill="none" opacity="0.7">
+      <path d="M 80 100 l -3 -18"></path><path d="M 84 100 l 0 -22"></path><path d="M 88 100 l 3 -16"></path>
+      <path d="M 260 100 l -3 -16"></path><path d="M 264 100 l 0 -20"></path>
+      <path d="M 440 100 l -3 -18"></path><path d="M 444 100 l 0 -14"></path>
+      <path d="M 620 100 l -3 -16"></path><path d="M 624 100 l 0 -22"></path>
+    </g>
+  </g>
+
+  
+  <g transform="translate(560, 440)">
+    <line x1="0" y1="60" x2="0" y2="-120" stroke="#1A1208" stroke-width="2"></line>
+    <rect x="-2" y="-120" width="4" height="6" fill="#C9B99A"></rect>
+    <circle cx="0" cy="-122" r="3" fill="#1A1208"></circle>
+    
+    <path d="M 0 -115 L 56 -112 L 50 -90 L 0 -92 Z" fill="#F5F0E8"></path>
+    <rect x="0" y="-115" width="22" height="12" fill="#1B2E4B"></rect>
+    <rect x="0" y="-103" width="56" height="3" fill="#8B3A2A"></rect>
+    <rect x="0" y="-97" width="56" height="3" fill="#8B3A2A"></rect>
+  </g>
+
+  
+  <g fill="#F5F0E8">
+    <circle cx="566" cy="-108" r="0.8" transform="translate(0,540)"></circle>
+    <circle cx="574" cy="-108" r="0.8" transform="translate(0,540)"></circle>
+    <circle cx="582" cy="-108" r="0.8" transform="translate(0,540)"></circle>
+  </g>
+
+  
+  <g transform="translate(820, 520)">
+    <rect x="-4" y="-30" width="8" height="30" fill="#1B2E4B"></rect>
+    <rect x="-5" y="-10" width="10" height="16" fill="#3D3020"></rect>
+    <circle cx="0" cy="-36" r="5" fill="#C9B99A"></circle>
+    
+    <path d="M -6 -40 L 6 -40 L 6 -34 L -6 -34 Z" fill="#1B2E4B"></path>
+    <rect x="-6" y="-34" width="12" height="2" fill="#8B3A2A"></rect>
+    
+    <line x1="4" y1="-22" x2="18" y2="-44" stroke="#3D3020" stroke-width="1.5"></line>
+  </g>
+
+  
+  <g fill="#1A1208" opacity="0.7">
+    <path d="M 180 200 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+    <path d="M 240 180 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 960 150 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 1020 190 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+  </g>
+
+  
+  <g transform="translate(80, 620)" opacity="0.8">
+    <rect x="0" y="0" width="160" height="36" fill="#8B3A2A"></rect>
+    <rect x="0" y="0" width="160" height="36" fill="none" stroke="#1A1208" stroke-width="0.6"></rect>
+    <text x="80" y="16" text-anchor="middle" font-family="serif" font-size="10" fill="#F5F0E8" letter-spacing="2">FORT HANCOCK</text>
+    <text x="80" y="30" text-anchor="middle" font-family="serif" font-style="italic" font-size="9" fill="#F5F0E8">est. 1895</text>
+  </g>
+</svg>

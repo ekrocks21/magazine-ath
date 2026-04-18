@@ -1,0 +1,36 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="pa-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a2838"></stop>
+      <stop offset="1" stop-color="#0a1220"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="800" fill="url(#pa-bg)"></rect>
+  
+  <circle cx="450" cy="180" r="60" fill="#e8dcc0" opacity="0.85"></circle>
+  <circle cx="450" cy="180" r="60" fill="#c4b89a" opacity="0.15"></circle>
+  
+  <g stroke="#3a4a5e" stroke-width="0.6" fill="none" opacity="0.5">
+    <path d="M 0 420 Q 150 432 300 426 Q 450 420 600 430"></path>
+    <path d="M 0 460 Q 120 470 260 464 Q 400 458 600 470"></path>
+    <path d="M 0 510 Q 180 520 340 514 Q 490 508 600 518"></path>
+    <path d="M 0 560 Q 140 570 280 564 Q 440 558 600 570"></path>
+    <path d="M 0 620 Q 170 630 330 624 Q 480 618 600 628"></path>
+    <path d="M 0 680 Q 150 690 310 684 Q 460 678 600 688"></path>
+  </g>
+  
+  <g fill="#e8dcc0" opacity="0.35">
+    <ellipse cx="450" cy="440" rx="8" ry="2"></ellipse>
+    <ellipse cx="450" cy="480" rx="12" ry="2"></ellipse>
+    <ellipse cx="450" cy="520" rx="16" ry="2"></ellipse>
+    <ellipse cx="450" cy="560" rx="20" ry="2"></ellipse>
+    <ellipse cx="450" cy="610" rx="24" ry="2.5"></ellipse>
+    <ellipse cx="450" cy="660" rx="30" ry="3"></ellipse>
+    <ellipse cx="450" cy="720" rx="36" ry="3"></ellipse>
+  </g>
+  
+  <path d="M 0 390 L 600 380 L 600 420 L 0 420 Z" fill="#0a1018" opacity="0.9"></path>
+  <rect x="220" y="360" width="3" height="30" fill="#0a1018"></rect>
+  <circle cx="221.5" cy="356" r="3" fill="#e8a85c" opacity="0.9"></circle>
+</svg>

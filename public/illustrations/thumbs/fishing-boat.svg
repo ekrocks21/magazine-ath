@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ny-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E0D5C0"></stop>
+      <stop offset="1" stop-color="#F5F0E8"></stop>
+    </linearGradient>
+    <linearGradient id="ny-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a5c4e"></stop>
+      <stop offset="1" stop-color="#2a3a2f"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#ny-sky)"></rect>
+
+  
+  <path d="M 0 380 Q 150 370 320 378 Q 500 388 680 380 Q 860 372 1040 380 Q 1120 384 1200 380 L 1200 400 L 0 400 Z" fill="#2a3a2f" opacity="0.5"></path>
+
+  
+  <g fill="#2a3a2f" opacity="0.7">
+    <path d="M 40 380 l 4 -10 l 4 10 z"></path>
+    <path d="M 100 378 l 4 -12 l 4 12 z"></path>
+    <path d="M 160 382 l 5 -14 l 5 14 z"></path>
+    <path d="M 240 378 l 4 -10 l 4 10 z"></path>
+    <path d="M 320 380 l 5 -13 l 5 13 z"></path>
+    <path d="M 420 378 l 4 -11 l 4 11 z"></path>
+    <path d="M 520 380 l 6 -16 l 6 16 z"></path>
+    <path d="M 620 378 l 4 -10 l 4 10 z"></path>
+    <path d="M 720 380 l 5 -13 l 5 13 z"></path>
+    <path d="M 820 378 l 4 -11 l 4 11 z"></path>
+    <path d="M 920 380 l 6 -14 l 6 14 z"></path>
+    <path d="M 1020 378 l 4 -10 l 4 10 z"></path>
+    <path d="M 1100 380 l 5 -12 l 5 12 z"></path>
+  </g>
+
+  
+  <rect x="0" y="400" width="1200" height="300" fill="url(#ny-water)"></rect>
+
+  
+  <g stroke="#F5F0E8" stroke-width="0.5" fill="none" opacity="0.3">
+    <path d="M 0 430 Q 200 438 400 432 Q 600 426 800 434 Q 1000 440 1200 432"></path>
+    <path d="M 0 470 Q 200 478 400 472 Q 600 466 800 474 Q 1000 480 1200 472"></path>
+    <path d="M 0 520 Q 200 528 400 522 Q 600 516 800 524 Q 1000 530 1200 522"></path>
+    <path d="M 0 580 Q 200 588 400 582 Q 600 576 800 584 Q 1000 590 1200 582"></path>
+    <path d="M 0 640 Q 200 648 400 642 Q 600 636 800 644 Q 1000 650 1200 642"></path>
+  </g>
+
+  
+  <g transform="translate(0, 410)">
+    <rect x="0" y="0" width="260" height="10" fill="#3D3020"></rect>
+    <rect x="0" y="2" width="260" height="2" fill="#1A1208" opacity="0.6"></rect>
+    
+    <rect x="20" y="10" width="8" height="80" fill="#3D3020"></rect>
+    <rect x="80" y="10" width="8" height="80" fill="#3D3020"></rect>
+    <rect x="140" y="10" width="8" height="80" fill="#3D3020"></rect>
+    <rect x="200" y="10" width="8" height="80" fill="#3D3020"></rect>
+    <rect x="248" y="10" width="8" height="80" fill="#3D3020"></rect>
+    
+    <rect x="36" y="-8" width="14" height="8" fill="#1A1208"></rect>
+    <rect x="156" y="-8" width="14" height="8" fill="#1A1208"></rect>
+  </g>
+
+  
+  <g transform="translate(540, 440)">
+    
+    <path d="M -160 0 Q -130 32 -80 40 L 140 40 Q 180 32 200 0 Z" fill="#1B2E4B"></path>
+    <path d="M -160 0 L 200 0" stroke="#8B3A2A" stroke-width="2.5"></path>
+    <rect x="-160" y="-10" width="360" height="10" fill="#F5F0E8"></rect>
+    <rect x="-160" y="-10" width="360" height="2" fill="#8B3A2A"></rect>
+
+    
+    <rect x="-20" y="-70" width="120" height="60" fill="#C9B99A"></rect>
+    <rect x="-20" y="-70" width="120" height="6" fill="#8B3A2A"></rect>
+    <polygon points="-20,-70 40,-85 100,-70" fill="#8B3A2A"></polygon>
+    <g fill="#1B2E4B">
+      <rect x="-10" y="-58" width="22" height="18"></rect>
+      <rect x="18" y="-58" width="22" height="18"></rect>
+      <rect x="46" y="-58" width="22" height="18"></rect>
+      <rect x="74" y="-58" width="22" height="18"></rect>
+    </g>
+    <rect x="40" y="-40" width="14" height="30" fill="#3D3020"></rect>
+
+    
+    <line x1="40" y1="-82" x2="-120" y2="-30" stroke="#3D3020" stroke-width="2"></line>
+    <line x1="40" y1="-82" x2="180" y2="-30" stroke="#3D3020" stroke-width="2"></line>
+    
+    <line x1="-120" y1="-30" x2="-110" y2="-6" stroke="#3D3020" stroke-width="1"></line>
+    <line x1="-100" y1="-20" x2="-90" y2="-6" stroke="#3D3020" stroke-width="1"></line>
+    <line x1="180" y1="-30" x2="170" y2="-6" stroke="#3D3020" stroke-width="1"></line>
+    <line x1="160" y1="-20" x2="150" y2="-6" stroke="#3D3020" stroke-width="1"></line>
+
+    
+    <rect x="60" y="-100" width="14" height="22" fill="#8B3A2A"></rect>
+    <rect x="60" y="-100" width="14" height="4" fill="#6B2A1D"></rect>
+
+    
+    <rect x="-100" y="-6" width="80" height="6" fill="#F5F0E8"></rect>
+    <text x="-60" y="-1" text-anchor="middle" font-family="serif" font-weight="700" font-size="6" fill="#8B3A2A">MISS NAVESINK</text>
+
+    
+    <g transform="translate(-60, -14)">
+      <rect x="-4" y="0" width="8" height="14" fill="#8B3A2A"></rect>
+      <circle cx="0" cy="-6" r="5" fill="#C9B99A"></circle>
+      <polygon points="-8,-6 8,-6 6,-10 -6,-10" fill="#3D3020"></polygon>
+    </g>
+
+    
+    <g fill="#1A1208" opacity="0.7">
+      <path d="M -160 -120 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+      <path d="M -100 -140 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+      <path d="M 200 -130 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    </g>
+  </g>
+
+  
+  <path d="M 340 470 Q 380 478 440 472 L 400 466 Z" fill="#F5F0E8" opacity="0.5"></path>
+  <path d="M 760 470 Q 800 478 860 472 L 820 466 Z" fill="#F5F0E8" opacity="0.4"></path>
+
+  
+  <g fill="#1A1208" opacity="0.6">
+    <path d="M 860 200 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+    <path d="M 940 230 l 6 -2 l 6 2 l -2.5 1.5 l -3.5 -0.8 l -3.5 0.8 l -2.5 -1.5 z"></path>
+    <path d="M 1020 190 l 5 -1.5 l 5 1.5 l -2 1.2 l -3 -0.6 l -3 0.6 l -2 -1.2 z"></path>
+  </g>
+
+  
+  <line x1="0" y1="400" x2="1200" y2="400" stroke="#8B3A2A" stroke-width="0.6" opacity="0.3"></line>
+</svg>
