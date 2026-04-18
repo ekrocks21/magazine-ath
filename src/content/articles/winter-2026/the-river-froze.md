@@ -23,6 +23,19 @@ hero_image_credit: "Eric / Above the Hook"
 publish_date: 2026-03-31
 ---
 
+<figure class="article-video">
+  <div class="article-video-frame">
+    <iframe
+      src="https://www.youtube-nocookie.com/embed/Bae4JJS1ZNc"
+      title="The frozen Navesink, January 2026 — Above the Hook"
+      loading="lazy"
+      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen></iframe>
+  </div>
+  <figcaption>Watching it happen — the frozen Navesink.</figcaption>
+</figure>
+
 You hear about it before you see it. Max calls you at six in the morning. Two words. "River's frozen."
 
 And you know, even before you pull back the curtain, that the world outside is going to look like a different century. Because the Navesink doesn't freeze. Not really. Not like this. Maybe once or twice a decade the edges crust over, and the old-timers nod and say it used to happen every winter.
@@ -56,3 +69,16 @@ People who've lived here for decades still pull over to watch it happen. Visitor
 It's the elevation that does it. You're not looking across at Manhattan. You're looking down at it, across thirty miles of open water, from a vantage point that shouldn't exist on a coast this flat. The Highlands are a geological accident. A sixty-six-million-year-old accident that happens to produce, every clear evening, a fourteen-karat view of the greatest city on earth.
 
 And in winter, with the river frozen below and the snow turning blue in the fading light, that view hits different. It hits like a painting you'd never believe was real if you hadn't seen it yourself.
+
+<figure class="article-video">
+  <div class="article-video-frame">
+    <iframe
+      src="https://www.youtube-nocookie.com/embed/CrpCjiu09xs"
+      title="Ice boats on the Navesink — Above the Hook"
+      loading="lazy"
+      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen></iframe>
+  </div>
+  <figcaption>More from the winter the river remembered.</figcaption>
+</figure>

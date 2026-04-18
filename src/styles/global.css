@@ -528,6 +528,37 @@ img { max-width: 100%; height: auto; display: block; }
 .article-prose li + li { margin-top: 0.5em; }
 .article-prose img { margin-inline: auto; max-width: 100%; height: auto; }
 
+/* Embedded video (YouTube, Vimeo) — drop this markup in Markdown:
+     <figure class="article-video">
+       <div class="article-video-frame"><iframe …></iframe></div>
+       <figcaption>…</figcaption>
+     </figure>
+   Renders a 16:9 responsive embed with a small-caps caption underneath. */
+.article-prose .article-video { margin: 2rem 0; }
+.article-prose .article-video-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  background: var(--ink);
+  overflow: hidden;
+}
+.article-prose .article-video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+.article-prose .article-video figcaption {
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 /* Drop cap — opt-in via .article-prose--drop-cap */
 .article-prose--drop-cap > p:first-of-type::first-letter {
   font-family: var(--font-display);
