@@ -98,3 +98,123 @@ h1, h2, h3, h4, h5, h6 {
 .prose-measure {
   max-width: var(--measure);
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Article body typography — spec §4.4: this is the point.
+   Applied to the wrapper div around Markdown-rendered content.
+   ────────────────────────────────────────────────────────────── */
+
+.article-prose {
+  font-family: var(--font-body);
+  font-size: 1.125rem; /* 18px desktop */
+  line-height: 1.7;
+  color: var(--color-ink);
+  max-width: var(--measure);
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .article-prose {
+    font-size: 1.1875rem; /* 19px desktop */
+    line-height: 1.75;
+  }
+}
+
+.article-prose > * + * {
+  margin-top: 1.5em;
+}
+
+/* Section breaks via horizontal rule in Markdown become a center flourish. */
+.article-prose hr {
+  border: 0;
+  width: 8rem;
+  height: 1px;
+  background: var(--color-rust);
+  opacity: 0.55;
+  margin: 3rem auto;
+}
+
+.article-prose h2 {
+  font-family: var(--font-display);
+  color: var(--color-navy);
+  font-size: 1.75rem;
+  line-height: 1.2;
+  margin-top: 2.5em;
+  margin-bottom: 0.3em;
+  font-variation-settings: 'opsz' 72, 'SOFT' 40, 'WONK' 0;
+}
+
+.article-prose h3 {
+  font-family: var(--font-display);
+  color: var(--color-navy);
+  font-size: 1.375rem;
+  line-height: 1.25;
+  margin-top: 2em;
+  margin-bottom: 0.2em;
+}
+
+.article-prose a {
+  color: var(--color-rust);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.article-prose a:hover {
+  color: var(--color-navy);
+}
+
+.article-prose strong {
+  color: var(--color-navy);
+  font-weight: 600;
+}
+
+.article-prose em {
+  font-style: italic;
+}
+
+.article-prose blockquote {
+  border-left: 2px solid var(--color-rust);
+  padding-left: 1.5rem;
+  margin-left: 0;
+  font-style: italic;
+  color: var(--color-navy);
+}
+
+.article-prose ul,
+.article-prose ol {
+  padding-left: 1.5rem;
+}
+
+.article-prose ul li { list-style-type: disc; }
+.article-prose ol li { list-style-type: decimal; }
+
+.article-prose li + li {
+  margin-top: 0.5em;
+}
+
+.article-prose code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.9em;
+  background: color-mix(in srgb, var(--color-rust) 8%, transparent);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+
+.article-prose img {
+  margin-inline: auto;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Drop cap — opt-in by adding .article-prose--drop-cap to the wrapper */
+.article-prose--drop-cap > p:first-of-type::first-letter {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;
+  float: left;
+  font-size: 4.75em;
+  line-height: 0.85;
+  padding-right: 0.08em;
+  padding-top: 0.08em;
+  color: var(--color-navy);
+}

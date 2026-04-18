@@ -1,0 +1,257 @@
+---
+/**
+ * Archive — /archive
+ *
+ * Spec §4.2. Issue grid + client-side filters (year, season, pillar).
+ * Filters are vanilla JS — no framework island.
+ */
+
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SmallCapsLabel from '../components/SmallCapsLabel.astro';
+
+const includeDrafts =
+  import.meta.env.PUBLIC_INCLUDE_DRAFTS === 'true' ||
+  import.meta.env.DEV === true;
+
+const issues = (await getCollection('issues')).sort((a, b) => {
+  const da = a.data.publish_date?.valueOf() ?? 0;
+  const db = b.data.publish_date?.valueOf() ?? 0;
+  return db - da;
+});
+
+// Gather filter options dynamically
+const years = Array.from(new Set(issues.map((i) => i.data.year))).sort(
+  (a, b) => b - a,
+);
+const seasons = ['winter', 'spring', 'summer', 'fall'] as const;
+
+// Pillar options from all articles (for context; Phase 1 uses issue-level filtering)
+const allArticles = await getCollection('articles', ({ data }) =>
+  includeDrafts ? true : data.status !== 'draft',
+);
+const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
+---
+
+<BaseLayout
+  title="The Archive"
+  description="Every issue of The Local Lookout. Filter by year, season, or content pillar."
+>
+  <section class="px-6 md:px-10 pt-16 md:pt-24 pb-10">
+    <div class="max-w-5xl mx-auto text-center">
+      <SmallCapsLabel tone="rust" items={['The Archive']} />
+      <h1
+        class="mt-4 text-5xl md:text-6xl"
+        style="font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;"
+      >
+        Every issue
+      </h1>
+      <hr class="rust-rule w-24 h-[2px] mt-6 mb-8 mx-auto" />
+      <p
+        class="text-base md:text-lg leading-relaxed text-[var(--color-taupe)] max-w-xl mx-auto"
+        style="font-family: var(--font-body);"
+      >
+        The magazine, in reverse chronological order. Filter below to narrow.
+      </p>
+    </div>
+  </section>
+
+  <!-- Filter bar -->
+  <section class="px-6 md:px-10 py-6 border-y border-[var(--color-ink)]/10">
+    <form
+      id="archive-filters"
+      class="max-w-5xl mx-auto flex flex-wrap items-end gap-6"
+      aria-label="Archive filters"
+      onsubmit="return false;"
+    >
+      <label class="flex flex-col gap-1.5">
+        <span
+          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-taupe)]"
+          style="font-family: var(--font-sans);">Year</span
+        >
+        <select
+          name="year"
+          class="bg-transparent border border-[var(--color-ink)]/20 px-3 py-2 text-sm tracking-wide uppercase focus:outline-2 focus:outline-[var(--color-rust)]"
+          style="font-family: var(--font-sans);"
+        >
+          <option value="">All years</option>
+          {years.map((y) => <option value={y}>{y}</option>)}
+        </select>
+      </label>
+
+      <label class="flex flex-col gap-1.5">
+        <span
+          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-taupe)]"
+          style="font-family: var(--font-sans);">Season</span
+        >
+        <select
+          name="season"
+          class="bg-transparent border border-[var(--color-ink)]/20 px-3 py-2 text-sm tracking-wide uppercase focus:outline-2 focus:outline-[var(--color-rust)]"
+          style="font-family: var(--font-sans);"
+        >
+          <option value="">All seasons</option>
+          {seasons.map((s) => (
+            <option value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+          ))}
+        </select>
+      </label>
+
+      <label class="flex flex-col gap-1.5">
+        <span
+          class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-taupe)]"
+          style="font-family: var(--font-sans);">Pillar (articles)</span
+        >
+        <select
+          name="pillar"
+          class="bg-transparent border border-[var(--color-ink)]/20 px-3 py-2 text-sm tracking-wide uppercase focus:outline-2 focus:outline-[var(--color-rust)]"
+          style="font-family: var(--font-sans);"
+        >
+          <option value="">All pillars</option>
+          {pillars.map((p) => (
+            <option value={p}>
+              {p
+                .split('_')
+                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(' ')}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <button
+        type="button"
+        data-reset
+        class="text-[0.7rem] tracking-[0.25em] uppercase text-[var(--color-rust)] hover:text-[var(--color-navy)] px-3 py-2"
+        style="font-family: var(--font-sans);"
+      >
+        Reset
+      </button>
+    </form>
+  </section>
+
+  <!-- Grid -->
+  <section class="px-6 md:px-10 py-16 md:py-20">
+    <div class="max-w-5xl mx-auto">
+      <ul id="archive-grid" class="list-none m-0 p-0 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+        {
+          issues.map((i) => {
+            const slug = i.id.replace(/\.md$/, '');
+            const season =
+              i.data.season.charAt(0).toUpperCase() + i.data.season.slice(1);
+            const number = String(i.data.issue_number).padStart(2, '0');
+            // Collect unique pillar tags for articles in this issue (for filtering)
+            const issuePillars = Array.from(
+              new Set(
+                allArticles
+                  .filter((a) => a.id.startsWith(`${slug}/`))
+                  .map((a) => a.data.pillar),
+              ),
+            );
+            return (
+              <li
+                data-year={i.data.year}
+                data-season={i.data.season}
+                data-pillars={issuePillars.join(',')}
+              >
+                <a
+                  href={`/issues/${slug}`}
+                  class="block group no-underline h-full"
+                >
+                  <div
+                    class="aspect-[5/7] w-full flex flex-col items-center justify-center gap-3 shadow p-5 text-center transition-transform group-hover:-translate-y-1"
+                    style="background: linear-gradient(135deg, var(--color-navy) 0%, #243e66 100%); color: var(--color-cream); border: 1px solid color-mix(in srgb, var(--color-cream) 15%, transparent);"
+                  >
+                    <p
+                      class="text-[0.55rem] tracking-[0.3em] uppercase text-[var(--color-cream)]/55"
+                      style="font-family: var(--font-sans);"
+                    >
+                      No. {number}
+                    </p>
+                    <p
+                      class="text-2xl md:text-3xl leading-none"
+                      style="font-family: var(--font-display); font-variation-settings: 'opsz' 120, 'SOFT' 50, 'WONK' 0;"
+                    >
+                      {i.data.theme ?? season}
+                    </p>
+                    <hr class="w-10 h-[1px] border-0 bg-[var(--color-rust)]" />
+                    <p
+                      class="text-[0.6rem] tracking-[0.25em] uppercase text-[var(--color-cream)]/70"
+                      style="font-family: var(--font-sans);"
+                    >
+                      {season} {i.data.year}
+                    </p>
+                    {i.data.status === 'in_production' && (
+                      <p
+                        class="text-[0.55rem] tracking-[0.3em] uppercase text-[var(--color-rust)]"
+                        style="font-family: var(--font-sans);"
+                      >
+                        In Production
+                      </p>
+                    )}
+                  </div>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+
+      <p
+        id="archive-empty"
+        class="hidden mt-12 text-center text-[var(--color-taupe)] italic"
+        style="font-family: var(--font-body);"
+      >
+        No issues match those filters.
+      </p>
+
+      <!-- Coming soon state — always visible at tail of grid -->
+      <div class="mt-16 max-w-md mx-auto text-center">
+        <SmallCapsLabel tone="rust" items={['Future Issues']} />
+        <p
+          class="mt-4 text-base text-[var(--color-taupe)] italic"
+          style="font-family: var(--font-body);"
+        >
+          Summer 2026 and onward arrive with their seasons.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    // Vanilla JS archive filters. No framework island.
+    (function () {
+      const form = document.getElementById('archive-filters');
+      const grid = document.getElementById('archive-grid');
+      const empty = document.getElementById('archive-empty');
+      if (!form || !grid || !empty) return;
+
+      const items = Array.from(grid.children);
+
+      function apply() {
+        const data = new FormData(form);
+        const year = data.get('year');
+        const season = data.get('season');
+        const pillar = data.get('pillar');
+        let visible = 0;
+        items.forEach((li) => {
+          const ly = li.getAttribute('data-year') || '';
+          const ls = li.getAttribute('data-season') || '';
+          const lp = (li.getAttribute('data-pillars') || '').split(',');
+          const matchYear = !year || ly === String(year);
+          const matchSeason = !season || ls === season;
+          const matchPillar = !pillar || lp.includes(String(pillar));
+          const match = matchYear && matchSeason && matchPillar;
+          li.style.display = match ? '' : 'none';
+          if (match) visible++;
+        });
+        empty.classList.toggle('hidden', visible > 0);
+      }
+
+      form.addEventListener('change', apply);
+      form.querySelector('[data-reset]').addEventListener('click', () => {
+        form.reset();
+        apply();
+      });
+    })();
+  </script>
+</BaseLayout>

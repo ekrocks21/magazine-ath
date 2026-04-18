@@ -1,0 +1,76 @@
+---
+/**
+ * Base page shell. Every public page should use this.
+ *
+ *   <BaseLayout title="..." description="...">
+ *     ...page content...
+ *   </BaseLayout>
+ *
+ * Renders html/head with SEO tags, then <Masthead /> / <slot /> / <Footer />.
+ */
+
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+import Masthead from '../components/Masthead.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalPath?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  publishedTime?: string;
+  author?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonicalPath,
+  ogImage,
+  ogType,
+  publishedTime,
+  author,
+  noindex,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#1C2E4A" />
+    <SEO
+      title={title}
+      description={description}
+      canonicalPath={canonicalPath}
+      ogImage={ogImage}
+      ogType={ogType}
+      publishedTime={publishedTime}
+      author={author}
+      noindex={noindex}
+    />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <!-- Accessibility skip link. Visible on keyboard focus. -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-[var(--color-cream)] focus:text-[var(--color-navy)] focus:px-4 focus:py-2 focus:rounded focus:outline focus:outline-2 focus:outline-[var(--color-rust)]"
+    >
+      Skip to main content
+    </a>
+
+    <Masthead />
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>

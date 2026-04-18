@@ -1,0 +1,54 @@
+---
+/**
+ * Full-width article hero image with caption + credit in small caps.
+ * Spec §4.4. Optional — article renders without it when frontmatter omits hero_image.
+ */
+
+import { Image } from 'astro:assets';
+
+interface Props {
+  src?: string;
+  alt?: string;
+  caption?: string;
+  credit?: string;
+}
+
+const { src, alt, caption, credit } = Astro.props;
+---
+
+{
+  src && (
+    <figure class="mt-4 mb-12 md:mb-16">
+      <div class="max-w-screen-xl mx-auto">
+        <img
+          src={src}
+          alt={alt ?? caption ?? ''}
+          class="w-full h-auto block"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+
+      {(caption || credit) && (
+        <figcaption class="max-w-3xl mx-auto px-6 md:px-10 mt-4 flex flex-col md:flex-row md:items-baseline gap-2 md:gap-6">
+          {caption && (
+            <span
+              class="text-sm leading-snug text-[var(--color-taupe)] italic flex-1"
+              style="font-family: var(--font-body);"
+            >
+              {caption}
+            </span>
+          )}
+          {credit && (
+            <span
+              class="text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-taupe)]"
+              style="font-family: var(--font-sans);"
+            >
+              {credit}
+            </span>
+          )}
+        </figcaption>
+      )}
+    </figure>
+  )
+}

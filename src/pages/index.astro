@@ -1,37 +1,382 @@
 ---
-import '../styles/global.css';
+/**
+ * Landing — /
+ *
+ * Spec §4.1. Eight sections: masthead (via layout), hero, editor's letter
+ * excerpt, In This Issue, notify-me (disabled in Phase 1 per decisions.md),
+ * archive strip, coming-in-summer teaser, footer (via layout).
+ */
+
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SmallCapsLabel from '../components/SmallCapsLabel.astro';
+
+const includeDrafts =
+  import.meta.env.PUBLIC_INCLUDE_DRAFTS === 'true' ||
+  import.meta.env.DEV === true;
+
+// Current issue: prefer the newest in_production or published issue.
+const issues = (await getCollection('issues')).sort((a, b) => {
+  const da = a.data.publish_date?.valueOf() ?? 0;
+  const db = b.data.publish_date?.valueOf() ?? 0;
+  return db - da;
+});
+
+const current = issues[0];
+const currentSlug = current.id.replace(/\.md$/, '');
+const currentData = current.data;
+
+// Articles for this issue
+const allArticles = await getCollection('articles', ({ data }) =>
+  includeDrafts ? true : data.status !== 'draft',
+);
+
+const currentArticles = allArticles.filter((a) =>
+  a.id.startsWith(`${currentSlug}/`),
+);
+
+const editorsLetter =
+  currentArticles.find((a) => a.data.type === 'editors_letter') ??
+  (currentData.editors_letter
+    ? currentArticles.find(
+        (a) =>
+          a.id === `${currentSlug}/${currentData.editors_letter}.md` ||
+          a.id.replace(/\.md$/, '') ===
+            `${currentSlug}/${currentData.editors_letter}`,
+      )
+    : undefined);
+
+// First 4 non-editor's-letter articles
+const featured = currentArticles
+  .filter((a) => a.id !== editorsLetter?.id)
+  .slice(0, 4);
+
+// Render first 2 paragraphs of editor's letter (approximate)
+let letterExcerpt: string[] = [];
+if (editorsLetter) {
+  // Extract body paragraphs from raw Markdown, ignoring frontmatter and the H1.
+  const raw = editorsLetter.body ?? '';
+  const withoutHeading = raw.replace(/^#\s.*$/m, '').trim();
+  letterExcerpt = withoutHeading
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter((p) => p && !p.startsWith('#'))
+    .slice(0, 2);
+}
+
+// Past issues: everything except the current one
+const pastIssues = issues
+  .slice(1)
+  .slice(0, 4);
+
+const seasonLabel =
+  currentData.season.charAt(0).toUpperCase() + currentData.season.slice(1);
+const currentNumber = String(currentData.issue_number).padStart(2, '0');
+const statusLabel = {
+  planning: 'In Planning',
+  in_production: 'In Production',
+  published: 'Published',
+  archived: 'Archived',
+}[currentData.status];
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content={Astro.generator} />
-    <title>The Local Lookout — magazine.abovethehook.com</title>
-    <meta
-      name="description"
-      content="The quarterly print magazine of Above the Hook. Coastal New Jersey, observed."
-    />
-  </head>
-  <body class="min-h-screen flex items-center justify-center p-8">
-    <main class="max-w-prose text-center space-y-6">
-      <p class="small-caps">
-        <span>Above the Hook</span>
-        <span>Quarterly</span>
-        <span>Issue No. 02</span>
+<BaseLayout
+  title="The Local Lookout"
+  description="The quarterly print magazine of Above the Hook. Coastal New Jersey, observed."
+>
+  <!-- ── Hero ─────────────────────────────────────────────────────── -->
+  <section class="bg-[var(--color-navy)] text-[var(--color-cream)]">
+    <div class="max-w-6xl mx-auto px-6 md:px-10 py-20 md:py-32">
+      <div class="grid md:grid-cols-[auto_1fr] gap-12 md:gap-20 items-center">
+        <!-- Cover art -->
+        <a
+          href={`/issues/${currentSlug}`}
+          class="block w-full max-w-[320px] mx-auto md:mx-0 no-underline group"
+        >
+          {
+            currentData.cover_image ? (
+              <img
+                src={currentData.cover_image}
+                alt={`${currentData.title} cover`}
+                class="w-full h-auto shadow-2xl transition-transform group-hover:-translate-y-1"
+                loading="eager"
+                decoding="async"
+              />
+            ) : (
+              <div
+                class="aspect-[5/7] w-full flex flex-col items-center justify-center gap-4 shadow-2xl p-8 text-center transition-transform group-hover:-translate-y-1"
+                style="background: linear-gradient(135deg, #243e66 0%, var(--color-navy) 100%); border: 1px solid color-mix(in srgb, var(--color-cream) 20%, transparent);"
+              >
+                <p
+                  class="text-[0.6rem] tracking-[0.3em] uppercase text-[var(--color-cream)]/55"
+                  style="font-family: var(--font-sans);"
+                >
+                  Issue No. {currentNumber}
+                </p>
+                <p
+                  class="text-4xl leading-none"
+                  style="font-family: var(--font-display); font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;"
+                >
+                  {currentData.theme ?? seasonLabel}
+                </p>
+                <hr class="w-16 h-[1px] border-0 bg-[var(--color-rust)]" />
+                <p
+                  class="text-xs tracking-[0.25em] uppercase text-[var(--color-cream)]/70"
+                  style="font-family: var(--font-sans);"
+                >
+                  {seasonLabel} {currentData.year}
+                </p>
+                <p
+                  class="mt-2 text-sm italic text-[var(--color-cream)]/55"
+                  style="font-family: var(--font-body);"
+                >
+                  The Local Lookout
+                </p>
+              </div>
+            )
+          }
+        </a>
+
+        <!-- Theme + CTA -->
+        <div>
+          <SmallCapsLabel
+            tone="cream"
+            items={[
+              `Issue No. ${currentNumber}`,
+              `${seasonLabel} ${currentData.year}`,
+              statusLabel,
+            ]}
+          />
+
+          <h1
+            class="mt-6 text-6xl md:text-8xl leading-[0.98] text-[var(--color-cream)]"
+            style="font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;"
+          >
+            {currentData.theme ?? currentData.title}
+          </h1>
+
+          <p
+            class="mt-6 text-lg md:text-xl text-[var(--color-cream)]/70 max-w-md leading-relaxed"
+            style="font-family: var(--font-body);"
+          >
+            The {currentData.title} issue of The Local Lookout.
+          </p>
+
+          <p class="mt-10">
+            <a
+              href={`/issues/${currentSlug}`}
+              class="inline-block px-8 py-3 bg-[var(--color-rust)] text-[var(--color-cream)] text-xs tracking-[0.25em] uppercase no-underline hover:bg-[var(--color-cream)] hover:text-[var(--color-navy)] transition-colors"
+              style="font-family: var(--font-sans);"
+            >
+              Read the Issue
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Editor's letter excerpt ──────────────────────────────────── -->
+  {
+    editorsLetter && letterExcerpt.length > 0 && (
+      <section class="py-20 md:py-28 px-6 md:px-10">
+        <div class="max-w-3xl mx-auto">
+          <SmallCapsLabel tone="rust" items={['From the Editor']} />
+          <h2
+            class="mt-4 text-4xl md:text-5xl leading-tight"
+            style="font-variation-settings: 'opsz' 120, 'SOFT' 50, 'WONK' 0;"
+          >
+            {editorsLetter.data.title}
+          </h2>
+          <hr class="rust-rule w-20 h-[2px] mt-6 mb-10" />
+
+          <div class="article-prose">
+            {letterExcerpt.map((para) => <p>{para}</p>)}
+          </div>
+
+          <p class="mt-10">
+            <a
+              href={`/issues/${currentSlug}/${editorsLetter.id.split('/')[1].replace(/\.md$/, '')}`}
+              class="text-sm tracking-[0.2em] uppercase text-[var(--color-rust)] no-underline hover:text-[var(--color-navy)]"
+              style="font-family: var(--font-sans);"
+            >
+              Continue reading &rarr;
+            </a>
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ── In This Issue ────────────────────────────────────────────── -->
+  {
+    featured.length > 0 && (
+      <section class="py-20 md:py-28 px-6 md:px-10 bg-[color-mix(in_srgb,var(--color-cream)_60%,white)]">
+        <div class="max-w-5xl mx-auto">
+          <SmallCapsLabel tone="rust" items={['In This Issue']} />
+          <h2
+            class="mt-4 text-4xl md:text-5xl"
+            style="font-variation-settings: 'opsz' 120, 'SOFT' 40, 'WONK' 0;"
+          >
+            Four pieces from {currentData.title}
+          </h2>
+          <hr class="rust-rule w-20 h-[2px] mt-6 mb-12" />
+
+          <div class="grid md:grid-cols-2 gap-10 md:gap-14">
+            {featured.map((a) => {
+              const articleSlug = a.id.split('/')[1].replace(/\.md$/, '');
+              const pillarLabel = a.data.pillar
+                .split('_')
+                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(' ');
+              return (
+                <a
+                  href={`/issues/${currentSlug}/${articleSlug}`}
+                  class="block group no-underline"
+                >
+                  <span class="tag-pill">{pillarLabel}</span>
+                  <h3
+                    class="mt-4 text-2xl md:text-3xl leading-tight text-[var(--color-navy)] group-hover:text-[var(--color-rust)] transition-colors"
+                    style="font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 0;"
+                  >
+                    {a.data.title}
+                  </h3>
+                  {a.data.dek && (
+                    <p
+                      class="mt-3 text-base leading-snug text-[var(--color-taupe)] italic"
+                      style="font-family: var(--font-body);"
+                    >
+                      {a.data.dek}
+                    </p>
+                  )}
+                  <p
+                    class="mt-3 text-[0.65rem] tracking-[0.25em] uppercase text-[var(--color-taupe)]"
+                    style="font-family: var(--font-sans);"
+                  >
+                    By {a.data.byline ?? a.data.author}
+                  </p>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ── Notify-me (disabled per Phase 1 decision) ────────────────── -->
+  <section class="py-20 md:py-28 px-6 md:px-10 bg-[var(--color-navy)] text-[var(--color-cream)]">
+    <div class="max-w-2xl mx-auto text-center">
+      <SmallCapsLabel tone="cream" items={['Correspondence']} />
+      <h2
+        class="mt-4 text-4xl md:text-5xl text-[var(--color-cream)]"
+        style="font-variation-settings: 'opsz' 120, 'SOFT' 50, 'WONK' 0;"
+      >
+        Subscriptions open this summer
+      </h2>
+      <hr class="rust-rule w-20 h-[2px] mt-6 mb-10 mx-auto" />
+      <p
+        class="text-lg leading-relaxed text-[var(--color-cream)]/75 max-w-xl mx-auto"
+        style="font-family: var(--font-body);"
+      >
+        The email list opens with them. Until then, everything here is free to
+        read, and you can write to us at
+        <a
+          href="mailto:hello@abovethehook.com"
+          class="underline decoration-[var(--color-rust)] underline-offset-[3px] text-[var(--color-cream)] hover:text-[var(--color-rust)]"
+          >hello@abovethehook.com</a
+        >.
       </p>
-      <h1 class="text-5xl md:text-6xl" style="font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;">
-        The Local Lookout
-      </h1>
-      <hr class="rust-rule w-20 h-[2px] mx-auto" />
-      <p class="text-base md:text-lg leading-relaxed text-[var(--color-taupe)] max-w-md mx-auto">
-        Scaffold in place. Typography approved &mdash; Fraunces, Source Serif 4, Inter.
-        Page templates land next.
+    </div>
+  </section>
+
+  <!-- ── Archive strip ────────────────────────────────────────────── -->
+  {
+    pastIssues.length > 0 && (
+      <section class="py-20 md:py-24 px-6 md:px-10">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex flex-wrap items-baseline justify-between gap-4 mb-10">
+            <div>
+              <SmallCapsLabel tone="rust" items={['The Archive']} />
+              <h2
+                class="mt-3 text-3xl md:text-4xl"
+                style="font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 0;"
+              >
+                Previous issues
+              </h2>
+            </div>
+            <a
+              href="/archive"
+              class="text-xs tracking-[0.2em] uppercase text-[var(--color-rust)] no-underline hover:text-[var(--color-navy)]"
+              style="font-family: var(--font-sans);"
+            >
+              See the full archive &rarr;
+            </a>
+          </div>
+
+          <ul class="list-none m-0 p-0 grid grid-cols-2 md:grid-cols-4 gap-6">
+            {pastIssues.map((i) => {
+              const iSlug = i.id.replace(/\.md$/, '');
+              const iSeason =
+                i.data.season.charAt(0).toUpperCase() +
+                i.data.season.slice(1);
+              const iNumber = String(i.data.issue_number).padStart(2, '0');
+              return (
+                <li>
+                  <a href={`/issues/${iSlug}`} class="block group no-underline">
+                    <div
+                      class="aspect-[5/7] w-full flex flex-col items-center justify-center gap-2 shadow p-4 text-center transition-transform group-hover:-translate-y-1"
+                      style="background: linear-gradient(135deg, var(--color-navy) 0%, #243e66 100%); color: var(--color-cream); border: 1px solid color-mix(in srgb, var(--color-cream) 15%, transparent);"
+                    >
+                      <p
+                        class="text-[0.55rem] tracking-[0.3em] uppercase text-[var(--color-cream)]/55"
+                        style="font-family: var(--font-sans);"
+                      >
+                        No. {iNumber}
+                      </p>
+                      <p
+                        class="text-2xl leading-none"
+                        style="font-family: var(--font-display); font-variation-settings: 'opsz' 120, 'SOFT' 50, 'WONK' 0;"
+                      >
+                        {i.data.theme ?? iSeason}
+                      </p>
+                      <hr class="w-10 h-[1px] border-0 bg-[var(--color-rust)]" />
+                      <p
+                        class="text-[0.6rem] tracking-[0.25em] uppercase text-[var(--color-cream)]/70"
+                        style="font-family: var(--font-sans);"
+                      >
+                        {iSeason} {i.data.year}
+                      </p>
+                    </div>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ── Coming next ──────────────────────────────────────────────── -->
+  <section class="py-20 md:py-24 px-6 md:px-10 bg-[color-mix(in_srgb,var(--color-cream)_60%,white)]">
+    <div class="max-w-3xl mx-auto text-center">
+      <SmallCapsLabel tone="rust" items={['Coming Next']} />
+      <h2
+        class="mt-4 text-3xl md:text-4xl"
+        style="font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 0;"
+      >
+        Summer 2026
+      </h2>
+      <hr class="rust-rule w-16 h-[2px] mt-6 mb-8 mx-auto" />
+      <p
+        class="text-base md:text-lg leading-relaxed text-[var(--color-taupe)] italic max-w-xl mx-auto"
+        style="font-family: var(--font-body);"
+      >
+        The third issue arrives with the summer season. Harbor pilots, the
+        Fort Hancock radar towers, and a long conversation with one of the
+        last Raritan Bay clammers.
       </p>
-      <p class="mt-10">
-        <span class="tag-pill">Phase One &middot; In Development</span>
-      </p>
-    </main>
-  </body>
-</html>
+    </div>
+  </section>
+</BaseLayout>

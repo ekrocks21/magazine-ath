@@ -1,0 +1,74 @@
+---
+/**
+ * Per-page <head> tags: title, description, canonical, Open Graph, Twitter card.
+ * Rendered inside BaseLayout so every page gets consistent SEO metadata.
+ */
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Relative path for canonical URL. Defaults to Astro.url.pathname. */
+  canonicalPath?: string;
+  /** Absolute URL or site-relative path for OG image. */
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  /** Article-specific: publication date as ISO string. */
+  publishedTime?: string;
+  /** Article-specific: author name. */
+  author?: string;
+  /** Hide from search engines (drafts on preview deploys). */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = 'The quarterly print magazine of Above the Hook. Coastal New Jersey, observed.',
+  canonicalPath = Astro.url.pathname,
+  ogImage,
+  ogType = 'website',
+  publishedTime,
+  author,
+  noindex = false,
+} = Astro.props;
+
+const site = Astro.site ?? new URL('https://magazine.abovethehook.com');
+const canonical = new URL(canonicalPath, site).toString();
+const resolvedOgImage = ogImage ? new URL(ogImage, site).toString() : undefined;
+
+const fullTitle =
+  title === 'The Local Lookout' ? title : `${title} — The Local Lookout`;
+---
+
+<!-- Primary -->
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- Open Graph -->
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content="The Local Lookout" />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+{resolvedOgImage && <meta property="og:image" content={resolvedOgImage} />}
+{
+  ogType === 'article' && publishedTime && (
+    <meta property="article:published_time" content={publishedTime} />
+  )
+}
+{ogType === 'article' && author && <meta property="article:author" content={author} />}
+
+<!-- Twitter -->
+<meta name="twitter:card" content={resolvedOgImage ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+{resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
+
+<!-- RSS autodiscovery -->
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title="The Local Lookout — Articles"
+  href={new URL('/rss.xml', site).toString()}
+/>

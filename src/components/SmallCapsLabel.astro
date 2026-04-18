@@ -1,0 +1,37 @@
+---
+/**
+ * Reusable small-caps metadata label with interpunct separators.
+ *
+ * Usage:
+ *   <SmallCapsLabel items={["Issue No. 02", "Spring 2026", "In Production"]} />
+ *   <SmallCapsLabel items={["Sandy Hook History"]} tone="rust" />
+ *
+ * Separator: " · " (middle-dot, per spec §12 typographic rules).
+ */
+
+interface Props {
+  items: string[];
+  /** Color tone. Defaults to taupe; use "rust" for pillar tags, "navy" on cream backgrounds. */
+  tone?: 'taupe' | 'rust' | 'navy' | 'cream';
+  /** Override the HTML tag (default <p>). */
+  as?: 'p' | 'span' | 'div';
+  class?: string;
+}
+
+const { items, tone = 'taupe', as: Tag = 'p', class: className = '' } = Astro.props;
+
+const toneClass = {
+  taupe: 'text-[var(--color-taupe)]',
+  rust: 'text-[var(--color-rust)]',
+  navy: 'text-[var(--color-navy)]',
+  cream: 'text-[var(--color-cream)]',
+}[tone];
+---
+
+<Tag class={`small-caps ${toneClass} ${className}`.trim()}>
+  {
+    items.map((item) => (
+      <span>{item}</span>
+    ))
+  }
+</Tag>

@@ -1,0 +1,178 @@
+---
+/**
+ * Article page — /issues/[issue-slug]/[article-slug]
+ *
+ * Editorial reader. Typography is the point of this template. Spec §4.4.
+ */
+
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ArticleHeader from '../../../components/ArticleHeader.astro';
+import ArticleHeroImage from '../../../components/ArticleHeroImage.astro';
+import SmallCapsLabel from '../../../components/SmallCapsLabel.astro';
+
+// ── Static paths ──────────────────────────────────────────────────────
+// Each article under src/content/articles/[issue]/[article].md becomes
+// a route: /issues/[issue]/[article]. Drafts are hidden on production;
+// PUBLIC_INCLUDE_DRAFTS is set via Netlify contexts (see netlify.toml).
+
+export async function getStaticPaths() {
+  const includeDrafts =
+    import.meta.env.PUBLIC_INCLUDE_DRAFTS === 'true' ||
+    import.meta.env.DEV === true;
+
+  const all = await getCollection('articles', ({ data }) =>
+    includeDrafts ? true : data.status !== 'draft',
+  );
+
+  return all.map((article) => {
+    // The entry `id` is the path from the content base, e.g.
+    //   "spring-2026/a-very-good-land-to-fall-with.md"
+    // Split into [issue, article].
+    const [issueSlug, articleFile] = article.id.split('/');
+    const articleSlug = articleFile.replace(/\.md$/, '');
+
+    return {
+      params: { issue: issueSlug, article: articleSlug },
+      props: { article },
+    };
+  });
+}
+
+interface Props {
+  article: CollectionEntry<'articles'>;
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+const data = article.data;
+
+// ── Related articles (same issue, exclude self, max 3) ─────────────────
+
+const siblings = (await getCollection('articles'))
+  .filter((a) => a.id.startsWith(`${data.issue}/`) && a.id !== article.id)
+  .slice(0, 3);
+
+// ── Reading time ──────────────────────────────────────────────────────
+const readingTime = data.word_count
+  ? `${Math.max(1, Math.round(data.word_count / 220))} min read`
+  : undefined;
+
+// ── Drop-cap heuristic ────────────────────────────────────────────────
+// Turn drop-cap on for long features; skip editor's letters and short pieces.
+const useDropCap = data.type === 'feature';
+
+// ── Issue title for breadcrumb ─────────────────────────────────────────
+const issues = await getCollection('issues');
+const issue = issues.find((i) => i.id.replace(/\.md$/, '') === data.issue);
+const issueTitle = issue?.data.title ?? data.issue;
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.dek || undefined}
+  ogType="article"
+  ogImage={data.hero_image}
+  publishedTime={data.publish_date?.toISOString()}
+  author={data.author}
+  noindex={data.status === 'draft'}
+>
+  <article>
+    <!-- Breadcrumb: Issue → Article -->
+    <nav
+      aria-label="Breadcrumb"
+      class="max-w-3xl mx-auto px-6 md:px-10 pt-10"
+    >
+      <SmallCapsLabel
+        items={[issueTitle, `Issue No. ${String(data.issue_number ?? '').padStart(2, '0')}`]}
+      />
+    </nav>
+
+    <ArticleHeader
+      title={data.title}
+      dek={data.dek}
+      author={data.author}
+      byline={data.byline}
+      pillar={data.pillar}
+      publishDate={data.publish_date}
+      readingTime={readingTime}
+    />
+
+    <ArticleHeroImage
+      src={data.hero_image}
+      alt={data.hero_image_caption}
+      caption={data.hero_image_caption}
+      credit={data.hero_image_credit}
+    />
+
+    <!-- Body -->
+    <div class="px-6 md:px-10 pb-16 md:pb-24">
+      <div class:list={['article-prose', useDropCap && 'article-prose--drop-cap']}>
+        <Content />
+      </div>
+    </div>
+
+    <!-- End-of-article: tags + related articles from same issue -->
+    <footer
+      class="max-w-3xl mx-auto px-6 md:px-10 pb-24 border-t border-[var(--color-ink)]/10 pt-10"
+    >
+      {
+        data.tags.length > 0 && (
+          <div class="flex flex-wrap gap-2 mb-12">
+            {data.tags.map((t) => (
+              <span class="tag-pill">{t.replace(/_/g, ' ')}</span>
+            ))}
+          </div>
+        )
+      }
+
+      {
+        siblings.length > 0 && (
+          <div>
+            <p class="small-caps text-[var(--color-taupe)] mb-4">
+              <span>More from {issueTitle}</span>
+            </p>
+            <ul class="list-none m-0 p-0 space-y-6">
+              {siblings.map((s) => {
+                const [iSlug, fFile] = s.id.split('/');
+                const aSlug = fFile.replace(/\.md$/, '');
+                const href = `/issues/${iSlug}/${aSlug}`;
+                return (
+                  <li>
+                    <a
+                      href={href}
+                      class="block group no-underline"
+                    >
+                      <span class="small-caps text-[var(--color-rust)]">
+                        <span>
+                          {s.data.pillar
+                            .split('_')
+                            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                            .join(' ')}
+                        </span>
+                      </span>
+                      <h3
+                        class="mt-2 text-2xl md:text-3xl leading-tight text-[var(--color-navy)] group-hover:text-[var(--color-rust)] transition-colors"
+                        style="font-variation-settings: 'opsz' 72, 'SOFT' 30, 'WONK' 0;"
+                      >
+                        {s.data.title}
+                      </h3>
+                      {s.data.dek && (
+                        <p
+                          class="mt-2 text-base leading-snug text-[var(--color-taupe)] italic"
+                          style="font-family: var(--font-body);"
+                        >
+                          {s.data.dek}
+                        </p>
+                      )}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )
+      }
+    </footer>
+  </article>
+</BaseLayout>

@@ -1,0 +1,50 @@
+---
+/**
+ * About — /about
+ *
+ * Spec §4.5. Renders src/content/pages/about.md through the article-prose
+ * stylesheet so the essay reads like a magazine article.
+ */
+
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SmallCapsLabel from '../components/SmallCapsLabel.astro';
+
+const entry = await getEntry('pages', 'about');
+
+if (!entry) {
+  throw new Error(
+    'Missing src/content/pages/about.md — required for /about route.',
+  );
+}
+
+const { Content } = await render(entry);
+const { data } = entry;
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+>
+  <header class="px-6 md:px-10 pt-16 md:pt-24 pb-10 border-b border-[var(--color-ink)]/10">
+    <div class="max-w-3xl mx-auto text-center">
+      <SmallCapsLabel
+        tone="rust"
+        items={['About The Local Lookout']}
+      />
+      <h1
+        class="mt-4 text-5xl md:text-6xl lg:text-7xl leading-[1.05] text-balance"
+        style="font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;"
+      >
+        A quarterly of coastal New Jersey
+      </h1>
+      <hr class="rust-rule w-24 h-[2px] mt-8 mx-auto" />
+    </div>
+  </header>
+
+  <section class="px-6 md:px-10 py-16 md:py-20">
+    <div class="article-prose">
+      <Content />
+    </div>
+  </section>
+</BaseLayout>
