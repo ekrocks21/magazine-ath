@@ -559,6 +559,150 @@ img { max-width: 100%; height: auto; display: block; }
   color: var(--muted);
 }
 
+/* ── Gallery ───────────────────────────────────────────────────────
+   Rendered by <Gallery /> from article frontmatter. 3-col grid with
+   click-to-lightbox on each cell. Falls to 2-col → 1-col responsively. */
+.article-gallery {
+  margin: 4rem auto;
+  max-width: 1100px;
+  padding: 0 var(--space-6, 24px);
+}
+.article-gallery-title {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 28px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.article-gallery-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--sand);
+}
+.article-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.article-gallery-cell {
+  display: block;
+  background: var(--ink);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  cursor: zoom-in;
+  transition: transform 0.25s ease;
+}
+.article-gallery-cell:hover {
+  transform: translateY(-2px);
+}
+.article-gallery-cell img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+.article-gallery-caption {
+  padding: 10px 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--on-dark-3);
+  background: var(--ink);
+  line-height: 1.4;
+}
+.article-gallery-credit {
+  color: var(--on-dark-4);
+}
+@media (max-width: 900px) {
+  .article-gallery-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 540px) {
+  .article-gallery-grid { grid-template-columns: 1fr; }
+}
+
+/* Lightbox overlay injected by Gallery's script. */
+.ath-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 10, 6, 0.94);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  cursor: zoom-out;
+}
+.ath-lightbox img {
+  max-width: min(100%, 1600px);
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+}
+.ath-lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  font-family: var(--font-mono);
+}
+.ath-lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* ── Pull quote ────────────────────────────────────────────────────
+   Inline in markdown via raw HTML:
+     <aside class="article-pullquote">
+       <blockquote>Quoted line here.</blockquote>
+       <cite>— Attribution, optional</cite>
+     </aside>
+   Rust left rule, large Playfair italic, DM Mono attribution. */
+.article-prose .article-pullquote {
+  margin: 3.5rem auto;
+  max-width: 720px;
+  padding-left: 28px;
+  border-left: 2px solid var(--rust);
+}
+.article-prose .article-pullquote blockquote {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  line-height: 1.3;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+.article-prose .article-pullquote blockquote::before,
+.article-prose .article-pullquote blockquote::after {
+  content: none;
+}
+.article-prose .article-pullquote cite {
+  display: block;
+  margin-top: 18px;
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 /* Drop cap — opt-in via .article-prose--drop-cap */
 .article-prose--drop-cap > p:first-of-type::first-letter {
   font-family: var(--font-display);

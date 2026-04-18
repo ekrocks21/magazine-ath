@@ -178,6 +178,20 @@ const articles = defineCollection({
         hero_image_caption: z.string().optional(),
         hero_image_credit: z.string().optional(),
 
+        // Optional gallery — grid of supporting frames rendered after the body.
+        // Each item goes through the image pipeline (responsive WebP).
+        gallery: z
+          .array(
+            z.object({
+              src: image(),
+              alt: z.string(),
+              caption: z.string().optional(),
+              credit: z.string().optional(),
+            }),
+          )
+          .default([]),
+        gallery_title: z.string().optional(),
+
         publish_date: z.coerce.date().optional(),
       }),
     ),

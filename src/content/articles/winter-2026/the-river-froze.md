@@ -20,6 +20,20 @@ tags:
 hero_image: ./iceboat-sunrise.jpg
 hero_image_alt: "An ice boat on the frozen Navesink River at sunrise."
 hero_image_credit: "Eric / Above the Hook"
+gallery_title: "The winter the river remembered"
+gallery:
+  - src: ./iceboat-solo.jpg
+    alt: "A lone iceboat carves across the frozen Navesink."
+    caption: "Solo run, mid-morning"
+    credit: "Eric / Above the Hook"
+  - src: ./iceboat-fleet.jpg
+    alt: "Iceboats drawn up on the ice waiting for wind."
+    caption: "The fleet at rest"
+    credit: "Eric / Above the Hook"
+  - src: ./manhattan-gold-hour.jpg
+    alt: "Manhattan catching golden hour from Mount Mitchill."
+    caption: "Golden hour from Mount Mitchill"
+    credit: "Eric / Above the Hook"
 publish_date: 2026-03-31
 ---
 

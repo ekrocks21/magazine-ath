@@ -1,0 +1,223 @@
+---
+/**
+ * /next — The next issue preview page
+ *
+ * Shows the nearest future issue (publish_date > today). If no future issue
+ * exists, we still render a quiet "next issue in progress" page so the link
+ * from the masthead never 404s.
+ */
+
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CoverImage from '../components/CoverImage.astro';
+
+const issues = await getCollection('issues');
+const NOW = Date.now();
+
+const futureIssues = issues
+  .filter((i) => (i.data.publish_date?.valueOf() ?? 0) > NOW)
+  .sort(
+    (a, b) =>
+      (a.data.publish_date?.valueOf() ?? 0) -
+      (b.data.publish_date?.valueOf() ?? 0),
+  );
+
+const nextIssue = futureIssues[0];
+const data = nextIssue?.data;
+
+const nextNumber = data ? String(data.issue_number).padStart(2, '0') : '—';
+const seasonLabel = data
+  ? data.season.charAt(0).toUpperCase() + data.season.slice(1)
+  : '';
+const publishLabel = data?.publish_date
+  ? data.publish_date.toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    })
+  : '';
+
+// Parse planned stories from the body as simple paragraphs.
+const body = (nextIssue?.body ?? '').replace(/^---[\s\S]*?---/, '').trim();
+const bodyParagraphs = body
+  .split(/\n\s*\n/)
+  .map((p) => p.trim())
+  .filter(Boolean);
+---
+
+<BaseLayout
+  title={data ? `Coming next — ${seasonLabel} ${data.year}` : 'Coming next'}
+  description={data?.tagline ?? 'The next issue of The Local Lookout.'}
+  ogImage={data?.cover_image?.src}
+>
+  <section style="padding: 72px 0 96px;">
+    <div class="mag-container next-hero">
+      <div>
+        <div class="meta-dotted" style="margin-bottom: 24px;">
+          Coming next<span class="dot">·</span>Issue No. {nextNumber}
+          {data && (
+            <>
+              <span class="dot">·</span>
+              <span class="rust">{seasonLabel} {data.year}</span>
+            </>
+          )}
+        </div>
+
+        <h1
+          style="font-family: var(--font-display); font-weight: 700; font-size: clamp(2.6rem, 5.2vw, 4.4rem); line-height: 1.04; letter-spacing: -0.025em; color: var(--ink); margin-bottom: 24px;"
+        >
+          {data?.theme ?? 'Next issue in progress.'}
+        </h1>
+
+        {data?.tagline && (
+          <p
+            style="font-family: var(--font-display); font-style: italic; font-size: 20px; line-height: 1.55; color: var(--ink-soft); max-width: 540px; margin-bottom: 40px;"
+          >
+            {data.tagline}
+          </p>
+        )}
+
+        <div
+          style="display: flex; flex-wrap: wrap; gap: 48px; padding-top: 28px; border-top: 1px solid var(--sand);"
+        >
+          <div>
+            <div
+              style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;"
+            >
+              Publishing
+            </div>
+            <div
+              style="font-family: var(--font-display); font-size: 18px; color: var(--ink); letter-spacing: -0.01em;"
+            >
+              {publishLabel || 'To be announced'}
+            </div>
+          </div>
+          <div>
+            <div
+              style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;"
+            >
+              Status
+            </div>
+            <div
+              style="font-family: var(--font-display); font-size: 18px; color: var(--ink); letter-spacing: -0.01em;"
+            >
+              {data?.status === 'planning' ? 'In planning' : 'In production'}
+            </div>
+          </div>
+          <div>
+            <div
+              style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;"
+            >
+              Access
+            </div>
+            <div
+              style="font-family: var(--font-display); font-size: 18px; color: var(--ink); letter-spacing: -0.01em;"
+            >
+              Subscriber preview
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="next-cover-wrap">
+        <div
+          class="issue-cover"
+          style="max-width: 420px; margin-left: auto; transform: rotate(-1deg);"
+        >
+          {data?.cover_image ? (
+            <CoverImage
+              src={data.cover_image}
+              alt={data.cover_image_alt ?? `${data.title} cover`}
+              widths={[360, 560, 720, 960]}
+              sizes="(min-width: 900px) 420px, 80vw"
+              loading="eager"
+            />
+          ) : (
+            <svg viewBox="0 0 420 560" role="img" aria-label="Next issue cover">
+              <rect width="420" height="560" fill="#FDFAF5" />
+              <text x="210" y="290" text-anchor="middle" font-family="'Playfair Display', serif" font-size="72" fill="#C9B99A">—</text>
+            </svg>
+          )}
+        </div>
+        <div
+          style="position: absolute; right: -12px; top: -12px; background: var(--rust); color: #fff; padding: 8px 14px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; transform: rotate(2deg); box-shadow: 0 6px 16px rgba(139,58,42,0.3);"
+        >
+          Subscriber preview
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {bodyParagraphs.length > 0 && (
+    <section
+      style="background: var(--cream-dark); padding: 88px 0; border-top: 1px solid var(--sand-light); border-bottom: 1px solid var(--sand-light);"
+    >
+      <div class="mag-container-narrow">
+        <div class="meta-dotted" style="margin-bottom: 20px; text-align: center;">
+          What the issue carries
+        </div>
+        <h2
+          style="font-family: var(--font-display); font-size: clamp(1.8rem, 3.4vw, 2.4rem); text-align: center; letter-spacing: -0.02em; color: var(--ink); font-weight: 700; margin-bottom: 40px;"
+        >
+          A quick look at what's coming.
+        </h2>
+        <div class="next-body">
+          {bodyParagraphs.map((p, i) => (
+            <p
+              style={`font-family: var(--font-body); font-size: 17px; line-height: 1.75; color: ${i === 0 ? 'var(--ink)' : 'var(--ink-soft)'}; margin-bottom: 20px;`}
+            >
+              {p}
+            </p>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section style="padding: 96px 0;">
+    <div class="mag-container-narrow" style="text-align: center;">
+      <div class="meta-dotted" style="margin-bottom: 16px; justify-content: center;">
+        Subscribe
+      </div>
+      <h2
+        style="font-family: var(--font-display); font-weight: 700; font-size: clamp(1.8rem, 3.4vw, 2.4rem); letter-spacing: -0.02em; color: var(--ink); margin-bottom: 16px;"
+      >
+        Previews of future issues are held for subscribers.
+      </h2>
+      <p
+        style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--ink-soft); max-width: 520px; margin: 0 auto 28px;"
+      >
+        Subscriptions open later in 2026. Until then, everything already
+        published on The Local Lookout is free to read.
+      </p>
+      <a href="/subscribe" class="btn-primary">
+        See the tiers <span class="arrow">→</span>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .next-hero {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 88px;
+    align-items: center;
+  }
+  .next-cover-wrap {
+    position: relative;
+    padding-left: 24px;
+  }
+  .next-body p:first-child {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  @media (max-width: 900px) {
+    .next-hero { grid-template-columns: 1fr; gap: 48px; }
+    .next-cover-wrap { padding-left: 0; }
+  }
+</style>

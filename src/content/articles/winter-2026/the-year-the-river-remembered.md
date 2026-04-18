@@ -59,4 +59,7 @@ Cold enough to stop a ferry.
 
 Cold enough to race a sail on ice. Cold enough to make you stand on top of Mount Mitchill at sunset and watch Manhattan turn to gold across thirty miles of frozen silence and think:
 
-This is the most beautiful place we have ever been cold.
+<aside class="article-pullquote">
+  <blockquote>This is the most beautiful place we have ever been cold.</blockquote>
+  <cite>— From the hilltop, January 2026</cite>
+</aside>

@@ -1,0 +1,409 @@
+---
+/**
+ * /subscribe — Tier page
+ *
+ * Phase 1 is visual-only: no Stripe, no email capture, no accounts.
+ * The page exists so the masthead CTA and "See the tiers" links do not 404
+ * and so the tier story has a permanent home. The notify-me form is a
+ * disabled placeholder.
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Subscribe — The Local Lookout"
+  description="Four issues a year, and the whole archive, for less than a tank of gas. Subscriptions open later in 2026."
+>
+  <!-- Hero -->
+  <section style="padding: 96px 0 56px;">
+    <div class="mag-container-narrow" style="text-align: center;">
+      <div class="meta-dotted" style="margin-bottom: 20px; justify-content: center;">
+        Subscribe<span class="dot">·</span>Opens later in 2026
+      </div>
+      <h1
+        style="font-family: var(--font-display); font-weight: 700; font-size: clamp(2.6rem, 5.2vw, 4rem); letter-spacing: -0.025em; color: var(--ink); line-height: 1.05; margin-bottom: 24px;"
+      >
+        Four issues a year, <em style="font-weight: 400; color: var(--rust);">and the whole archive.</em>
+      </h1>
+      <p
+        style="font-family: var(--font-display); font-style: italic; font-size: 20px; line-height: 1.55; color: var(--ink-soft); max-width: 620px; margin: 0 auto;"
+      >
+        The Local Lookout publishes quarterly. Until subscriptions open,
+        everything here is free to read. Pick a tier to see what comes
+        with it when the doors open.
+      </p>
+    </div>
+  </section>
+
+  <!-- Tier cards -->
+  <section style="padding: 40px 0 96px;">
+    <div class="mag-container">
+      <div class="tier-cards">
+        <!-- Free -->
+        <div class="tier-card">
+          <div class="tier-card-kicker" style="color: var(--muted);">Free</div>
+          <div class="tier-card-price">
+            $0
+          </div>
+          <div class="tier-card-cadence">Forever</div>
+          <p class="tier-card-desc">
+            For readers new to The Lookout. Everything you can already read
+            here today — editor's letters, free features, the archive from
+            Winter 2026 forward.
+          </p>
+          <ul class="tier-list">
+            <li>Editor's letter every issue</li>
+            <li>One free feature per issue</li>
+            <li>Full archive of past free stories</li>
+            <li>RSS feed</li>
+          </ul>
+          <span class="tier-cta tier-cta--disabled">Currently what you have</span>
+        </div>
+
+        <!-- Digital (featured) -->
+        <div class="tier-card tier-card--featured">
+          <div class="tier-badge">Most read</div>
+          <div class="tier-card-kicker" style="color: var(--rust);">Digital</div>
+          <div class="tier-card-price">
+            $48<span class="tier-card-unit"> / year</span>
+          </div>
+          <div class="tier-card-cadence">Billed annually</div>
+          <p class="tier-card-desc">
+            Everything we publish online. Subscriber-only features, the
+            preview of every future issue, and every story once it leaves
+            the front window.
+          </p>
+          <ul class="tier-list">
+            <li>All features and subscriber essays</li>
+            <li>Previews of future issues</li>
+            <li>Audio narration of every story</li>
+            <li>Gift one issue a year to a friend</li>
+          </ul>
+          <span class="tier-cta tier-cta--disabled">Opens later in 2026</span>
+        </div>
+
+        <!-- Print + Digital -->
+        <div class="tier-card">
+          <div class="tier-card-kicker" style="color: var(--muted);">Print + Digital</div>
+          <div class="tier-card-price">
+            $96<span class="tier-card-unit"> / year</span>
+          </div>
+          <div class="tier-card-cadence">Billed annually</div>
+          <p class="tier-card-desc">
+            Four issues delivered by mail. Thick paper, real ink, wide
+            margins. Everything in Digital, plus the printed edition in
+            your hands the week it ships.
+          </p>
+          <ul class="tier-list">
+            <li>Everything in Digital</li>
+            <li>Four printed issues a year</li>
+            <li>Mailed from Highlands, NJ</li>
+            <li>Subscriber-only cover variants</li>
+          </ul>
+          <span class="tier-cta tier-cta--disabled">Opens later in 2026</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Notify placeholder -->
+  <section style="background: var(--navy); color: var(--on-dark-1); padding: 80px 0;">
+    <div class="mag-container-narrow" style="text-align: center;">
+      <div
+        style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand-light); margin-bottom: 20px;"
+      >
+        <span style="color: var(--rust-light);">—</span>&nbsp;&nbsp;Notify me when it opens
+      </div>
+      <h2
+        style="font-family: var(--font-display); font-size: clamp(1.8rem, 3.4vw, 2.4rem); color: #fff; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px;"
+      >
+        We'll tell you once, when the doors open.
+      </h2>
+      <p
+        style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--on-dark-3); max-width: 540px; margin: 0 auto 32px;"
+      >
+        No newsletter, no drip, no holiday discounts. One email when
+        subscriptions are live, and that's it.
+      </p>
+      <form class="notify-form" onsubmit="return false;" aria-disabled="true">
+        <input
+          type="email"
+          placeholder="your@email.com"
+          class="notify-input"
+          disabled
+          aria-label="Email address"
+        />
+        <button type="submit" class="notify-button" disabled>
+          Notify me <span class="arrow">→</span>
+        </button>
+      </form>
+      <p
+        style="margin-top: 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand);"
+      >
+        Form opens later in 2026
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section style="padding: 96px 0;">
+    <div class="mag-container-narrow">
+      <div class="meta-dotted" style="margin-bottom: 16px; justify-content: center;">
+        Questions we get
+      </div>
+      <h2
+        style="font-family: var(--font-display); font-size: clamp(1.8rem, 3.4vw, 2.4rem); font-weight: 700; letter-spacing: -0.02em; text-align: center; margin-bottom: 48px;"
+      >
+        A few things to know.
+      </h2>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <h3 class="faq-q">When do subscriptions actually open?</h3>
+          <p class="faq-a">
+            Later in 2026. We are publishing the print magazine four times
+            a year starting now; the subscriber flow comes online once
+            fulfillment is set up. If you want the announcement, use the
+            notify form above when it goes live.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-q">Can I buy a single issue in print?</h3>
+          <p class="faq-a">
+            Yes. Single print copies are sold at select shops in
+            Highlands, Atlantic Highlands, and Red Bank, and by mail at
+            cost. Write to us using the address below if you'd like one
+            shipped.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-q">What happens to the free version once subscriptions open?</h3>
+          <p class="faq-a">
+            Nothing changes. The editor's letter, one free feature per
+            issue, and the archive of past free stories stay free. The
+            Digital tier is additive — subscriber features, previews, and
+            audio — not a paywall dropping in front of what you already
+            read.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-q">Who is behind the magazine?</h3>
+          <p class="faq-a">
+            The Local Lookout is the quarterly print publication of Above
+            the Hook, a place-based coastal storytelling brand founded in
+            2025 by Eric Kane and Mary McKiever, based in Highlands, New
+            Jersey.
+          </p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 56px;">
+        <p
+          style="font-family: var(--font-body); font-size: 16px; line-height: 1.65; color: var(--ink-soft);"
+        >
+          Still have a question? Write us at
+          <a
+            href="mailto:hello@abovethehook.com"
+            style="color: var(--rust); text-decoration: underline; text-underline-offset: 3px;"
+            >hello@abovethehook.com</a
+          >.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .tier-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  .tier-card {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--sand);
+    padding: 40px 32px 32px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tier-card--featured {
+    border: 2px solid var(--rust);
+    background: var(--cream-dark, var(--paper));
+    transform: translateY(-12px);
+  }
+
+  .tier-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--rust);
+    color: #fff;
+    padding: 6px 14px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .tier-card-kicker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .tier-card-price {
+    font-family: var(--font-display);
+    font-size: 52px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .tier-card-unit {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    font-weight: 400;
+    margin-left: 6px;
+  }
+
+  .tier-card-cadence {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .tier-card-desc {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .tier-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 28px;
+    border-top: 1px solid var(--sand);
+  }
+  .tier-list li {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--sand);
+  }
+  .tier-list li::before {
+    content: '·';
+    color: var(--rust);
+    margin-right: 10px;
+    font-weight: 700;
+  }
+
+  .tier-cta {
+    display: block;
+    text-align: center;
+    padding: 14px 18px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: auto;
+  }
+
+  .tier-cta--disabled {
+    background: var(--sand-light, #e8e0cd);
+    color: var(--muted);
+    cursor: not-allowed;
+    border: 1px solid var(--sand);
+  }
+
+  /* Notify form */
+  .notify-form {
+    display: flex;
+    gap: 12px;
+    max-width: 520px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+  .notify-input {
+    flex: 1;
+    min-width: 220px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #fff;
+    padding: 14px 16px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    opacity: 0.6;
+  }
+  .notify-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .notify-button {
+    background: var(--rust);
+    color: #fff;
+    border: 0;
+    padding: 14px 24px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* FAQ */
+  .faq-list {
+    display: grid;
+    gap: 8px;
+  }
+  .faq-item {
+    padding: 28px 0;
+    border-top: 1px solid var(--sand);
+  }
+  .faq-item:last-child {
+    border-bottom: 1px solid var(--sand);
+  }
+  .faq-q {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+  .faq-a {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 640px;
+  }
+
+  @media (max-width: 900px) {
+    .tier-cards { grid-template-columns: 1fr; gap: 16px; }
+    .tier-card--featured { transform: none; }
+  }
+</style>

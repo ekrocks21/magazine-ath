@@ -62,7 +62,11 @@ What the thirteen-shilling price suggests — and here the historical reading ge
 
 In seventeenth-century English law, a sale of land was a transfer of exclusive, inheritable ownership in perpetuity. The seller gave up the right to use, occupy, or return to the land. The buyer acquired the right to exclude. This was the meaning of *property*, and it was the meaning of *deed*, and it was, in the English legal imagination, the entire point of the transaction.
 
-In Lenape thinking — as far as we can reconstruct it from the historical and ethnographic record — land was not alienable in this way. What could be transferred was the right to use land: to plant on it, to hunt on it, to build on it, to share it with another people. The idea of a piece of land permanently leaving a community, never to return, was not so much rejected as unimaginable. The land was part of the community. The community was part of the land. You might as well sell the wind.
+In Lenape thinking — as far as we can reconstruct it from the historical and ethnographic record — land was not alienable in this way. What could be transferred was the right to use land: to plant on it, to hunt on it, to build on it, to share it with another people. The idea of a piece of land permanently leaving a community, never to return, was not so much rejected as unimaginable. The land was part of the community. The community was part of the land.
+
+<aside class="article-pullquote">
+  <blockquote>You might as well sell the wind.</blockquote>
+</aside>
 
 When the Navesink signatories put their marks to Hartshorne's deed in April 1680, they were almost certainly understanding the transaction as a use-right agreement. Thirteen shillings, in goods or its equivalent, was perhaps a generous gift in acknowledgement of an ongoing accommodation — the kind of gift a new neighbor might give for the privilege of grazing stock on the Hook through the summer.
 

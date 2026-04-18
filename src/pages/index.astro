@@ -28,9 +28,40 @@ const issues = (await getCollection('issues')).sort((a, b) => {
   return db - da;
 });
 
-const current = issues[0];
+// Split by publish_date vs. today: "current" is the most recent issue whose
+// publish_date is in the past (or today); "next" is the nearest future issue.
+const NOW = Date.now();
+const publishedIssues = issues.filter(
+  (i) => (i.data.publish_date?.valueOf() ?? 0) <= NOW,
+);
+const futureIssues = issues
+  .filter((i) => (i.data.publish_date?.valueOf() ?? 0) > NOW)
+  .sort(
+    (a, b) =>
+      (a.data.publish_date?.valueOf() ?? 0) -
+      (b.data.publish_date?.valueOf() ?? 0),
+  );
+
+const current = publishedIssues[0] ?? issues[0];
 const currentSlug = current.id.replace(/\.md$/, '');
 const currentData = current.data;
+
+const nextIssue = futureIssues[0];
+const nextSlug = nextIssue?.id.replace(/\.md$/, '');
+const nextData = nextIssue?.data;
+const nextNumber = nextData
+  ? String(nextData.issue_number).padStart(2, '0')
+  : '03';
+const nextSeasonLabel = nextData
+  ? nextData.season.charAt(0).toUpperCase() + nextData.season.slice(1)
+  : 'Summer';
+const nextPublishLabel = nextData?.publish_date
+  ? new Date(nextData.publish_date).toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    })
+  : 'July 2026';
 
 const allArticles = await getCollection('articles', ({ data }) =>
   includeDrafts ? true : data.status !== 'draft',
@@ -92,8 +123,8 @@ const editorsLetterDate = editorsLetter?.data.publication_date
     })
   : 'April 1';
 
-// Past issues (skip current)
-const pastIssues = issues.slice(1);
+// Past issues (skip current; exclude future)
+const pastIssues = publishedIssues.slice(1);
 const currentNumber = String(currentData.issue_number).padStart(2, '0');
 
 // Pillar → kicker label
@@ -113,6 +144,7 @@ const statusWord = {
 <BaseLayout
   title="The Local Lookout"
   description="The quarterly print magazine of Above the Hook. Coastal New Jersey, observed slowly."
+  ogImage={currentData.cover_image?.src}
 >
   <!-- ── 1. Story-forward hero ───────────────────────────────────── -->
   <section style="padding: 72px 0 96px;">
@@ -543,65 +575,79 @@ const statusWord = {
   </section>
 
   <!-- ── 6. Coming Next ──────────────────────────────────────────── -->
-  <section style="padding: 72px 0 96px;">
-    <div class="mag-container">
-      <div class="next-card">
-        <div
-          style="position: absolute; top: 0; left: 0; height: 2px; width: 80px; background: var(--rust);"
-        ></div>
-        <div class="issue-cover" style="max-width: 280px;">
-          <svg viewBox="0 0 280 400" role="img" aria-label="Summer 2026 cover">
-            <rect width="280" height="400" fill="#FDFAF5" />
-            <circle cx="210" cy="150" r="30" fill="#C4583E" opacity="0.4" />
-            <path d="M0 260 Q 70 240 140 248 Q 210 256 280 242 L 280 320 L 0 320 Z" fill="#2A4470" opacity="0.18" />
-            <text x="140" y="72" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">ABOVE THE HOOK</text>
-            <text x="140" y="184" text-anchor="middle" font-family="'Playfair Display', serif" font-size="32" font-weight="700" fill="#1A1208">The Local</text>
-            <text x="140" y="222" text-anchor="middle" font-family="'Playfair Display', serif" font-size="32" font-style="italic" fill="#8B3A2A">Lookout</text>
-            <text x="140" y="360" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-style="italic" fill="#3D3020">Summer on the coast</text>
-            <text x="140" y="384" text-anchor="middle" font-family="'DM Mono', monospace" font-size="7" letter-spacing="3" fill="#7A6F5F">NO. 03 · SUMMER 2026</text>
-          </svg>
-        </div>
-        <div>
-          <div class="meta-dotted" style="margin-bottom: 14px;">
-            Coming next<span class="dot">·</span>Issue No. 03<span class="dot">·</span>
-            <span class="rust">Summer 2026</span>
-          </div>
-          <h3
-            style="font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.02em; color: var(--navy); margin-bottom: 20px; line-height: 1.1;"
-          >
-            Summer on the coast.
-          </h3>
-          <p
-            style="font-family: var(--font-body); font-size: 16px; line-height: 1.65; color: var(--ink-soft); margin-bottom: 24px; max-width: 520px;"
-          >
-            The bluefish run returns to Sea Bright. Inside the Twin Lights
-            summer keeper logs. A day on the Navesink with the last pound-net
-            crew. What the dunes remember about 1944.
-          </p>
-          <div
-            style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;"
-          >
+  {nextData && (
+    <section style="padding: 72px 0 96px;">
+      <div class="mag-container">
+        <a href={nextSlug ? `/next` : '#'} class="next-card-link">
+          <div class="next-card">
             <div
-              style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px;"
-            >
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                <path d="M4 7V5a4 4 0 0 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z" />
-              </svg>
-              Subscriber preview
+              style="position: absolute; top: 0; left: 0; height: 2px; width: 80px; background: var(--rust);"
+            ></div>
+            <div class="issue-cover" style="max-width: 280px;">
+              {nextData.cover_image ? (
+                <CoverImage
+                  src={nextData.cover_image}
+                  alt={nextData.cover_image_alt ?? `${nextData.title} cover`}
+                  widths={[240, 360, 480]}
+                  sizes="(min-width: 900px) 280px, 60vw"
+                  loading="lazy"
+                />
+              ) : (
+                <svg viewBox="0 0 280 400" role="img" aria-label={`${nextData.title} cover`}>
+                  <rect width="280" height="400" fill="#FDFAF5" />
+                  <circle cx="210" cy="150" r="30" fill="#C4583E" opacity="0.4" />
+                  <path d="M0 260 Q 70 240 140 248 Q 210 256 280 242 L 280 320 L 0 320 Z" fill="#2A4470" opacity="0.18" />
+                  <text x="140" y="72" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">ABOVE THE HOOK</text>
+                  <text x="140" y="184" text-anchor="middle" font-family="'Playfair Display', serif" font-size="32" font-weight="700" fill="#1A1208">The Local</text>
+                  <text x="140" y="222" text-anchor="middle" font-family="'Playfair Display', serif" font-size="32" font-style="italic" fill="#8B3A2A">Lookout</text>
+                  <text x="140" y="360" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-style="italic" fill="#3D3020">{nextData.theme ?? '—'}</text>
+                  <text x="140" y="384" text-anchor="middle" font-family="'DM Mono', monospace" font-size="7" letter-spacing="3" fill="#7A6F5F">NO. {nextNumber} · {nextSeasonLabel.toUpperCase()} {nextData.year}</text>
+                </svg>
+              )}
             </div>
-            <a href="/subscribe" class="btn-dark">
-              Subscribe to preview <span class="arrow">→</span>
-            </a>
+            <div>
+              <div class="meta-dotted" style="margin-bottom: 14px;">
+                Coming next<span class="dot">·</span>Issue No. {nextNumber}<span class="dot">·</span>
+                <span class="rust">{nextSeasonLabel} {nextData.year}</span>
+              </div>
+              <h3
+                style="font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.02em; color: var(--navy); margin-bottom: 20px; line-height: 1.1;"
+              >
+                {nextData.theme ?? nextData.title}.
+              </h3>
+              {nextData.tagline && (
+                <p
+                  style="font-family: var(--font-body); font-size: 16px; line-height: 1.65; color: var(--ink-soft); margin-bottom: 24px; max-width: 520px;"
+                >
+                  {nextData.tagline}
+                </p>
+              )}
+              <div
+                style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;"
+              >
+                <div
+                  style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px;"
+                >
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M4 7V5a4 4 0 0 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z" />
+                  </svg>
+                  Subscriber preview
+                </div>
+                <span class="btn-dark">
+                  See the preview <span class="arrow">→</span>
+                </span>
+              </div>
+              <div
+                style="margin-top: 24px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand);"
+              >
+                Publishing {nextPublishLabel}
+              </div>
+            </div>
           </div>
-          <div
-            style="margin-top: 24px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand);"
-          >
-            Publishing July 2026
-          </div>
-        </div>
+        </a>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 </BaseLayout>
 
 <style>
@@ -661,6 +707,14 @@ const statusWord = {
     letter-spacing: -0.01em;
   }
 
+  .next-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .next-card-link:hover .next-card {
+    border-color: var(--rust);
+  }
   .next-card {
     background: var(--paper);
     border: 1px solid var(--sand);
@@ -670,6 +724,7 @@ const statusWord = {
     gap: 64px;
     align-items: center;
     position: relative;
+    transition: border-color 0.2s ease;
   }
 
   @media (max-width: 1000px) {

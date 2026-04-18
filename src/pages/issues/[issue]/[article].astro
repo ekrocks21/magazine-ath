@@ -10,6 +10,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ArticleHeader from '../../../components/ArticleHeader.astro';
 import ArticleHeroImage from '../../../components/ArticleHeroImage.astro';
 import SmallCapsLabel from '../../../components/SmallCapsLabel.astro';
+import Gallery from '../../../components/Gallery.astro';
 
 // ── Static paths ──────────────────────────────────────────────────────
 // Each article under src/content/articles/[issue]/[article].md becomes
@@ -66,13 +67,17 @@ const useDropCap = data.type === 'feature';
 const issues = await getCollection('issues');
 const issue = issues.find((i) => i.id.replace(/\.md$/, '') === data.issue);
 const issueTitle = issue?.data.title ?? data.issue;
+
+// ── OG image: article hero → issue cover (seasonal) → default ──────────
+const ogImageResolved =
+  data.hero_image?.src ?? issue?.data.cover_image?.src ?? undefined;
 ---
 
 <BaseLayout
   title={data.title}
   description={data.dek || undefined}
   ogType="article"
-  ogImage={data.hero_image?.src}
+  ogImage={ogImageResolved}
   publishedTime={data.publish_date?.toISOString()}
   author={data.author}
   noindex={data.status === 'draft'}
@@ -110,6 +115,10 @@ const issueTitle = issue?.data.title ?? data.issue;
       <div class:list={['article-prose', useDropCap && 'article-prose--drop-cap']}>
         <Content />
       </div>
+
+      {data.gallery && data.gallery.length > 0 && (
+        <Gallery items={data.gallery} title={data.gallery_title ?? 'From the day'} />
+      )}
     </div>
 
     <!-- End-of-article: tags + related articles from same issue -->

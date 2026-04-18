@@ -1,0 +1,118 @@
+---
+/**
+ * Gallery — 3-column responsive grid of pipeline-optimized article frames.
+ *
+ * Rendered by the article template when frontmatter has a `gallery: [...]`
+ * array. Each item goes through the Astro image pipeline. A small inline
+ * script wires up a no-dependency lightbox that opens the full-resolution
+ * frame on click.
+ */
+
+import { Image } from 'astro:assets';
+
+type ImgMeta = {
+  src: string;
+  width: number;
+  height: number;
+  format?: string;
+};
+
+export interface GalleryItem {
+  src: ImgMeta;
+  alt: string;
+  caption?: string;
+  credit?: string;
+}
+
+interface Props {
+  items: GalleryItem[];
+  title?: string;
+}
+
+const { items, title } = Astro.props;
+---
+
+{items.length > 0 && (
+  <figure class="article-gallery">
+    {title && (
+      <figcaption class="article-gallery-title">
+        <span class="article-gallery-rule" aria-hidden="true"></span>
+        <span>{title}</span>
+        <span class="article-gallery-rule" aria-hidden="true"></span>
+      </figcaption>
+    )}
+    <div class="article-gallery-grid" data-gallery-grid>
+      {items.map((item) => (
+        <a
+          class="article-gallery-cell"
+          href={item.src.src}
+          data-lightbox
+          aria-label={item.alt}
+        >
+          <Image
+            src={item.src as any}
+            alt={item.alt}
+            widths={[360, 640, 900]}
+            sizes="(min-width: 900px) 32vw, (min-width: 640px) 46vw, 90vw"
+            loading="lazy"
+            decoding="async"
+          />
+          {(item.caption || item.credit) && (
+            <div class="article-gallery-caption">
+              {item.caption && <span>{item.caption}</span>}
+              {item.credit && (
+                <span class="article-gallery-credit"> · {item.credit}</span>
+              )}
+            </div>
+          )}
+        </a>
+      ))}
+    </div>
+  </figure>
+)}
+
+<script>
+  // Lightweight lightbox, no dependencies. Attaches once per page.
+  (function () {
+    if (typeof document === 'undefined') return;
+    if ((window as any).__athLightboxBound) return;
+    (window as any).__athLightboxBound = true;
+
+    function openLightbox(href: string, label: string) {
+      const overlay = document.createElement('div');
+      overlay.className = 'ath-lightbox';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-label', label);
+      overlay.innerHTML =
+        '<button class="ath-lightbox-close" aria-label="Close">\u00d7</button>' +
+        '<img src="' + href + '" alt="' + label.replace(/"/g, '&quot;') + '" />';
+      document.body.appendChild(overlay);
+      document.body.style.overflow = 'hidden';
+
+      function close() {
+        overlay.remove();
+        document.body.style.overflow = '';
+        document.removeEventListener('keydown', onKey);
+      }
+      function onKey(e: KeyboardEvent) {
+        if (e.key === 'Escape') close();
+      }
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay || (e.target as HTMLElement).classList.contains('ath-lightbox-close')) {
+          close();
+        }
+      });
+      document.addEventListener('keydown', onKey);
+    }
+
+    document.addEventListener('click', function (e) {
+      const target = e.target as HTMLElement;
+      const link = target.closest('a[data-lightbox]') as HTMLAnchorElement | null;
+      if (!link) return;
+      e.preventDefault();
+      const label = link.getAttribute('aria-label') || '';
+      openLightbox(link.href, label);
+    });
+  })();
+</script>

@@ -3,15 +3,33 @@
  * Navy masthead with two-line wordmark (Above the Hook · Quarterly /
  * The Local <em>Lookout</em>), primary nav, subscribe chip, thin rust
  * divider beneath. Matches the prototype `.mag-masthead`.
+ *
+ * "Current Issue" resolves dynamically to the latest published issue so
+ * the link tracks forward as new issues ship.
  */
+
+import { getCollection } from 'astro:content';
 
 interface NavItem {
   label: string;
   href: string;
 }
 
+const NOW = Date.now();
+const allIssues = await getCollection('issues');
+const currentIssue = allIssues
+  .filter((i) => (i.data.publish_date?.valueOf() ?? 0) <= NOW)
+  .sort(
+    (a, b) =>
+      (b.data.publish_date?.valueOf() ?? 0) -
+      (a.data.publish_date?.valueOf() ?? 0),
+  )[0];
+const currentIssueHref = currentIssue
+  ? `/issues/${currentIssue.id.replace(/\.md$/, '')}`
+  : '/archive';
+
 const nav: NavItem[] = [
-  { label: 'Current Issue', href: '/issues/spring-2026' },
+  { label: 'Current Issue', href: currentIssueHref },
   { label: 'Archive', href: '/archive' },
   { label: 'Next Issue', href: '/next' },
   { label: 'About', href: '/about' },
