@@ -8,7 +8,7 @@ year: 2026
 author: Eric
 byline: "Eric, from the hill"
 dek: ""
-status: draft
+status: published
 word_count: 560
 access: free
 pillar: editors_letter

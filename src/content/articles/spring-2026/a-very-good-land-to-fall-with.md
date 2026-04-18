@@ -8,7 +8,7 @@ year: 2026
 author: Eric
 byline: "Eric"
 dek: "In September 1609, an English mariner wrote the first known description of the Navesink Highlands. The land has been answering back ever since."
-status: draft
+status: published
 word_count: 1640
 access: free
 pillar: historical_storytelling
