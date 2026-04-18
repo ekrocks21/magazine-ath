@@ -1,30 +1,38 @@
+/* ──────────────────────────────────────────────────────────────
+   The Local Lookout — global stylesheet
+   Palette per spec §12. Typography approved 2026-04-18:
+   Fraunces (display) / Source Serif 4 (body) / Inter (small caps + UI).
+   All three are variable fonts self-hosted via @fontsource-variable.
+   ────────────────────────────────────────────────────────────── */
+
+/* Variable font imports. 'full' includes the wght + opsz + SOFT + WONK axes
+   for Fraunces so display can use the chunky inked setting and body can
+   use quieter values. */
+@import "@fontsource-variable/fraunces/index.css";
+@import "@fontsource-variable/source-serif-4/index.css";
+@import "@fontsource-variable/inter/index.css";
+
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* ──────────────────────────────────────────────────────────────
-   The Local Lookout — global design tokens
-   Palette per spec §12. Typography tokens wire in Step 2
-   once font families are approved.
-   ────────────────────────────────────────────────────────────── */
-
 @theme {
+  /* Palette (spec §12) */
   --color-navy: #1C2E4A;
   --color-cream: #F5EFE4;
   --color-rust: #C14D2E;
   --color-ink: #1A1A1A;
   --color-taupe: #6B655C;
 
-  /* Typography variables — placeholder values until Step 2 approval.
-     Do NOT use these in components yet; they will change. */
-  --font-display: "Georgia", serif;
-  --font-body: "Georgia", serif;
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  /* Typography */
+  --font-display: "Fraunces Variable", "Fraunces", Georgia, serif;
+  --font-body: "Source Serif 4 Variable", "Source Serif 4", Georgia, serif;
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
 
   /* Editorial measure for article body */
   --measure: 65ch;
 }
 
-/* Base body reset — safe to keep; font families swap in Step 2 */
+/* Base body reset */
 body {
   background: var(--color-cream);
   color: var(--color-ink);
@@ -32,4 +40,61 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* Headings default to display serif. Individual templates can override. */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--color-navy);
+  /* Let Fraunces breathe: tighter tracking, slightly denser leading. */
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+/* Small-caps metadata treatment — pervasive across the site per spec §12.
+   Used for issue number · season · year, pillar tags, section labels. */
+.small-caps {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-taupe);
+}
+
+/* Interpunct separator between small-caps items, e.g.
+   SANDY HOOK · HIGHLANDS · THE NEW JERSEY COAST */
+.small-caps > * + *::before {
+  content: " · ";
+  margin: 0 0.25em;
+  color: var(--color-taupe);
+}
+
+/* Thin rust divider rule — used under mastheads and as section flourishes. */
+.rust-rule {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--color-rust);
+  border: 0;
+}
+
+/* Tag pill: thin stroke, never filled (spec §12 typographic rules). */
+.tag-pill {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--color-rust);
+  color: var(--color-rust);
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  line-height: 1;
+}
+
+/* Measured editorial body: ~65ch line length for article text. */
+.prose-measure {
+  max-width: var(--measure);
 }
