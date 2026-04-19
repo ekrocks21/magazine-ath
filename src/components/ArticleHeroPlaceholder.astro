@@ -1,0 +1,105 @@
+---
+/**
+ * ArticleHeroPlaceholder — seasonal stand-in for articles that don't yet
+ * have a `hero_image` assigned. Renders the issue's seasonal cover SVG
+ * inside a branded frame with "Cover art stands in for photography"
+ * micro-kicker so it reads as intentional, not broken.
+ *
+ * Swap for <ArticleHeroImage> as soon as a real hero is wired.
+ */
+
+import CoverImage from './CoverImage.astro';
+
+type ImgMeta = {
+  src: string;
+  width: number;
+  height: number;
+  format?: string;
+};
+
+interface Props {
+  cover: ImgMeta;
+  coverAlt?: string;
+  issueTitle: string;
+  theme?: string;
+}
+
+const { cover, coverAlt, issueTitle, theme } = Astro.props;
+---
+
+<figure class="article-hero-placeholder">
+  <div class="article-hero-placeholder-frame">
+    <div class="article-hero-placeholder-cover">
+      <CoverImage
+        src={cover}
+        alt={coverAlt ?? `${issueTitle} cover`}
+        widths={[240, 360, 480]}
+        sizes="(min-width: 900px) 320px, 60vw"
+        loading="eager"
+      />
+    </div>
+    <div class="article-hero-placeholder-band">
+      <div class="article-hero-placeholder-kicker">
+        From the cover<span class="sep">·</span>{issueTitle}
+        {theme && (
+          <>
+            <span class="sep">·</span>
+            <em class="rust-text">{theme}</em>
+          </>
+        )}
+      </div>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .article-hero-placeholder {
+    margin: 0 0 56px;
+  }
+  .article-hero-placeholder-frame {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .article-hero-placeholder-cover {
+    max-width: 280px;
+    width: 100%;
+    box-shadow: 0 24px 48px rgba(26, 18, 8, 0.18);
+    transform: rotate(-1deg);
+  }
+  .article-hero-placeholder-cover :global(img),
+  .article-hero-placeholder-cover :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .article-hero-placeholder-band {
+    text-align: center;
+  }
+  .article-hero-placeholder-kicker {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .article-hero-placeholder-kicker .sep {
+    margin: 0 0.5em;
+    color: var(--sand);
+  }
+  .article-hero-placeholder-kicker .rust-text {
+    color: var(--rust);
+    font-style: italic;
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+  @media (max-width: 640px) {
+    .article-hero-placeholder-frame { padding: 0 24px; }
+  }
+</style>

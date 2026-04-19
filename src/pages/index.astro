@@ -17,7 +17,12 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CardIllustration from '../components/CardIllustration.astro';
 import CoverImage from '../components/CoverImage.astro';
+import StructuredData from '../components/StructuredData.astro';
 import { articleRoute } from '../utils/article-route';
+import {
+  siteWebSite,
+  siteOrganization,
+} from '../utils/structured-data';
 
 const includeDrafts =
   import.meta.env.PUBLIC_INCLUDE_DRAFTS === 'true' ||
@@ -145,8 +150,9 @@ const statusWord = {
 <BaseLayout
   title="The Local Lookout"
   description="The quarterly print magazine of Above the Hook. Coastal New Jersey, observed slowly."
-  ogImage={currentData.cover_image?.src}
+  ogImage="/og/default.png"
 >
+  <StructuredData data={[siteWebSite(), siteOrganization()]} slot="head" />
   <!-- ── 1. Story-forward hero ───────────────────────────────────── -->
   <section style="padding: 72px 0 96px;">
     <div class="mag-container hero-grid">

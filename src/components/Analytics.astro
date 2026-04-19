@@ -1,0 +1,26 @@
+---
+/**
+ * Analytics — Plausible, loaded only when PUBLIC_ANALYTICS_DOMAIN is set.
+ *
+ * On Netlify, set PUBLIC_ANALYTICS_DOMAIN to the domain registered in
+ * Plausible (e.g. "magazine.abovethehook.com"). Leave unset in dev or
+ * preview contexts to skip the script entirely — no pageview pollution.
+ *
+ * If you switch to Umami or a different analytics vendor later, this
+ * is the one file to change.
+ */
+
+const domain = import.meta.env.PUBLIC_ANALYTICS_DOMAIN;
+const scriptSrc =
+  import.meta.env.PUBLIC_ANALYTICS_SCRIPT ??
+  'https://plausible.io/js/script.js';
+---
+
+{domain && (
+  <script
+    is:inline
+    defer
+    data-domain={domain}
+    src={scriptSrc}
+  ></script>
+)}

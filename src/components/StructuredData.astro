@@ -1,0 +1,21 @@
+---
+/**
+ * Emits a <script type="application/ld+json"> tag with the provided
+ * schema.org document. Accepts a single object or an array of objects.
+ */
+
+interface Props {
+  data: unknown | unknown[];
+}
+
+const { data } = Astro.props;
+const documents = Array.isArray(data) ? data : [data];
+---
+
+{documents.map((doc) => (
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(doc)}
+    is:inline
+  />
+))}

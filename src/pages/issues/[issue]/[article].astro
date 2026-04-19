@@ -9,9 +9,14 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ArticleHeader from '../../../components/ArticleHeader.astro';
 import ArticleHeroImage from '../../../components/ArticleHeroImage.astro';
+import ArticleHeroPlaceholder from '../../../components/ArticleHeroPlaceholder.astro';
 import SmallCapsLabel from '../../../components/SmallCapsLabel.astro';
 import Gallery from '../../../components/Gallery.astro';
+import CompanionCallout from '../../../components/CompanionCallout.astro';
+import StructuredData from '../../../components/StructuredData.astro';
 import { articleRoute } from '../../../utils/article-route';
+import { getCompanion } from '../../../data/companions';
+import { articleSchema, breadcrumbSchema } from '../../../utils/structured-data';
 
 // ── Static paths ──────────────────────────────────────────────────────
 // Each article under src/content/articles/[issue]/[article].md becomes
@@ -64,9 +69,37 @@ const issues = await getCollection('issues');
 const issue = issues.find((i) => i.id.replace(/\.md$/, '') === data.issue);
 const issueTitle = issue?.data.title ?? data.issue;
 
-// ── OG image: article hero → issue cover (seasonal) → default ──────────
-const ogImageResolved =
-  data.hero_image?.src ?? issue?.data.cover_image?.src ?? undefined;
+// ── OG image: sharp-generated composite per article ────────────────────
+const ogImageResolved = `/og/${data.issue}/${articleRoute(article).articleSlug}.png`;
+
+// ── Companion artifact (video/podcast/film) ────────────────────────────
+const companion = getCompanion(data.companion_to);
+
+// ── Structured data ────────────────────────────────────────────────────
+const SITE_ORIGIN = 'https://magazine.abovethehook.com';
+const canonicalUrl = `${SITE_ORIGIN}${articleRoute(article).href}`;
+const absoluteOgImage = ogImageResolved
+  ? new URL(ogImageResolved, SITE_ORIGIN).toString()
+  : undefined;
+const jsonLd = [
+  articleSchema({
+    title: data.title,
+    description: data.dek || undefined,
+    url: canonicalUrl,
+    image: absoluteOgImage,
+    datePublished: data.publish_date,
+    author: data.author,
+    pillar: data.pillar,
+    tags: data.tags,
+    wordCount: data.word_count,
+    issueTitle: issueTitle,
+  }),
+  breadcrumbSchema([
+    { name: 'Archive', url: `${SITE_ORIGIN}/archive` },
+    { name: issueTitle, url: `${SITE_ORIGIN}/issues/${data.issue}` },
+    { name: data.title, url: canonicalUrl },
+  ]),
+];
 ---
 
 <BaseLayout
@@ -78,6 +111,7 @@ const ogImageResolved =
   author={data.author}
   noindex={data.status === 'draft'}
 >
+  <StructuredData data={jsonLd} slot="head" />
   <article>
     <!-- Breadcrumb: Issue → Article -->
     <nav
@@ -99,12 +133,23 @@ const ogImageResolved =
       readingTime={readingTime}
     />
 
-    <ArticleHeroImage
-      src={data.hero_image}
-      alt={data.hero_image_alt ?? data.hero_image_caption}
-      caption={data.hero_image_caption}
-      credit={data.hero_image_credit}
-    />
+    {data.hero_image ? (
+      <ArticleHeroImage
+        src={data.hero_image}
+        alt={data.hero_image_alt ?? data.hero_image_caption}
+        caption={data.hero_image_caption}
+        credit={data.hero_image_credit}
+      />
+    ) : (
+      issue?.data.cover_image && (
+        <ArticleHeroPlaceholder
+          cover={issue.data.cover_image}
+          coverAlt={issue.data.cover_image_alt}
+          issueTitle={issue.data.title}
+          theme={issue.data.theme}
+        />
+      )
+    )}
 
     <!-- Body -->
     <div class="px-6 md:px-10 pb-16 md:pb-24">
@@ -115,6 +160,8 @@ const ogImageResolved =
       {data.gallery && data.gallery.length > 0 && (
         <Gallery items={data.gallery} title={data.gallery_title ?? 'From the day'} />
       )}
+
+      {companion && <CompanionCallout companion={companion} />}
     </div>
 
     <!-- End-of-article: tags + related articles from same issue -->

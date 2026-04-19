@@ -48,7 +48,7 @@ const bodyParagraphs = body
 <BaseLayout
   title={data ? `Coming next — ${seasonLabel} ${data.year}` : 'Coming next'}
   description={data?.tagline ?? 'The next issue of The Local Lookout.'}
-  ogImage={data?.cover_image?.src}
+  ogImage={nextIssue ? `/og/${nextIssue.id.replace(/\.md$/, '')}.png` : '/og/default.png'}
 >
   <section style="padding: 72px 0 96px;">
     <div class="mag-container next-hero">

@@ -12,7 +12,9 @@ import SmallCapsLabel from '../../components/SmallCapsLabel.astro';
 import IssuePartners from '../../components/IssuePartners.astro';
 import IssueColophon from '../../components/IssueColophon.astro';
 import CoverImage from '../../components/CoverImage.astro';
+import StructuredData from '../../components/StructuredData.astro';
 import { articleRoute } from '../../utils/article-route';
+import { issueSchema, breadcrumbSchema } from '../../utils/structured-data';
 
 // Partner-pool images (Winter 2026 only right now; add future issues as needed)
 import winterBayside from '../../assets/issues/winter-2026/bayside-sunset.jpg';
@@ -103,6 +105,27 @@ const dateLabel = data.publish_date
     })
   : undefined;
 
+// ── Structured data ────────────────────────────────────────────────────
+const SITE_ORIGIN = 'https://magazine.abovethehook.com';
+const issueUrl = `${SITE_ORIGIN}/issues/${slug}`;
+const coverUrl = data.cover_image?.src
+  ? new URL(data.cover_image.src, SITE_ORIGIN).toString()
+  : undefined;
+const jsonLd = [
+  issueSchema({
+    title: data.title,
+    issueNumber: data.issue_number,
+    url: issueUrl,
+    description: data.tagline,
+    datePublished: data.publish_date,
+    coverImage: coverUrl,
+  }),
+  breadcrumbSchema([
+    { name: 'Archive', url: `${SITE_ORIGIN}/archive` },
+    { name: data.title, url: issueUrl },
+  ]),
+];
+
 // Winter 2026 gets the partner gallery; add mappings here when future
 // issues include one.
 type PartnerProps = Parameters<typeof IssuePartners>[0];
@@ -161,8 +184,9 @@ const issueLabel = `${seasonLabel} ${data.year}`;
     data.tagline ??
     `The ${data.title} issue of The Local Lookout${data.theme ? ` — ${data.theme}.` : '.'}`
   }
-  ogImage={data.cover_image?.src}
+  ogImage={`/og/${slug}.png`}
 >
+  <StructuredData data={jsonLd} slot="head" />
   <!-- Issue hero: navy, cover left, metadata right -->
   <section class="issue-hero">
     <div class="mag-container issue-hero-grid">

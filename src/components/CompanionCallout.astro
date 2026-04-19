@@ -1,0 +1,134 @@
+---
+/**
+ * CompanionCallout — cross-link to a paired video/podcast/film.
+ *
+ * Rendered at the foot of an article when its frontmatter has
+ * `companion_to: <slug>` and the slug is registered in data/companions.ts.
+ * Silent otherwise.
+ */
+
+import type { Companion } from '../data/companions';
+
+interface Props {
+  companion: Companion;
+}
+
+const { companion } = Astro.props;
+
+const platformLabel = {
+  youtube: 'Video',
+  vimeo: 'Film',
+  podcast: 'Audio',
+  film: 'Film',
+}[companion.platform];
+---
+
+<aside class="companion-callout">
+  <a href={companion.url} target="_blank" rel="noopener noreferrer" class="companion-link">
+    <div class="companion-icon" aria-hidden="true">
+      {companion.platform === 'youtube' || companion.platform === 'vimeo' || companion.platform === 'film' ? (
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M15 10l-6 4V6l6 4z" fill="currentColor" />
+        </svg>
+      )}
+    </div>
+    <div class="companion-body">
+      <div class="companion-kicker">
+        Companion {platformLabel}
+        {companion.duration && (
+          <>
+            <span class="companion-dot">·</span>
+            {companion.duration}
+          </>
+        )}
+      </div>
+      <div class="companion-title">{companion.title}</div>
+      <div class="companion-cta">
+        {companion.kicker}
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M7 13l6-6M8 7h5v5" />
+        </svg>
+      </div>
+    </div>
+  </a>
+</aside>
+
+<style>
+  .companion-callout {
+    max-width: 720px;
+    margin: 3rem auto;
+  }
+  .companion-link {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 20px;
+    align-items: center;
+    padding: 24px 28px;
+    background: var(--navy);
+    color: var(--on-dark-1);
+    text-decoration: none;
+    border-left: 2px solid var(--rust);
+    transition: background 0.2s ease;
+  }
+  .companion-link:hover {
+    background: var(--navy-light);
+  }
+  .companion-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--rust);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .companion-icon svg {
+    width: 28px;
+    height: 28px;
+    margin-left: 3px; /* optical center for play triangle */
+  }
+  .companion-kicker {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--sand-light);
+    margin-bottom: 6px;
+  }
+  .companion-dot {
+    margin: 0 0.5em;
+    color: var(--sand);
+  }
+  .companion-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #fff;
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+  .companion-cta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rust-light);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  @media (max-width: 540px) {
+    .companion-link {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .companion-icon { margin: 0 auto; }
+  }
+</style>
