@@ -6,11 +6,14 @@
  * somewhere to link to for existing subscribers. Shares the main
  * /subscribe page for full tier context and sign-in UI; this page
  * is the short version.
+ *
+ * Because this is a STATIC Astro page, we can't branch server-side on
+ * ?sent=1 — that would evaluate at build time, not request time. Both
+ * states are rendered, and a tiny inline script flips between them
+ * based on `location.search` at load.
  */
 
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-const sent = Astro.url.searchParams.get('sent') === '1';
 ---
 
 <BaseLayout
@@ -26,63 +29,75 @@ const sent = Astro.url.searchParams.get('sent') === '1';
         <span style="color: var(--rust-light);">—</span>&nbsp;&nbsp;Sign in
       </div>
 
-      {sent ? (
-        <>
-          <h1
-            style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); color: #fff; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px;"
-          >
-            Check your email.
-          </h1>
-          <p
-            style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--on-dark-3); max-width: 540px; margin: 0 auto 28px;"
-          >
-            We sent you a sign-in link. It expires in 15 minutes.
-            Close this tab and click the link in your inbox.
-          </p>
-          <p
-            style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand);"
-          >
-            Didn't arrive? Check your spam folder or
-            <a href="/signin" style="color: var(--rust-light); text-decoration: underline;">try again</a>.
-          </p>
-        </>
-      ) : (
-        <>
-          <h1
-            style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); color: #fff; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px;"
-          >
-            Sign in with a magic link.
-          </h1>
-          <p
-            style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--on-dark-3); max-width: 540px; margin: 0 auto 32px;"
-          >
-            Type the email you subscribed with. We'll send a one-click
-            sign-in link — no password, no newsletter.
-          </p>
-          <form class="signin-form" method="POST" action="/api/login-request">
-            <input
-              type="email"
-              name="email"
-              required
-              autocomplete="email"
-              placeholder="your@email.com"
-              class="signin-input"
-              aria-label="Email address"
-              autofocus
-            />
-            <button type="submit" class="signin-button">
-              Send sign-in link <span class="arrow">→</span>
-            </button>
-          </form>
-          <p
-            style="margin-top: 20px; font-family: var(--font-body); font-size: 14px; color: var(--on-dark-3);"
-          >
-            Not a subscriber yet? <a href="/subscribe" style="color: var(--rust-light); text-decoration: underline;">See the tiers</a>.
-          </p>
-        </>
-      )}
+      <div data-signin-state="sent" hidden>
+        <h1
+          style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); color: #fff; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px;"
+        >
+          Check your email.
+        </h1>
+        <p
+          style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--on-dark-3); max-width: 540px; margin: 0 auto 28px;"
+        >
+          We sent you a sign-in link. It expires in 15 minutes.
+          Close this tab and click the link in your inbox.
+        </p>
+        <p
+          style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand);"
+        >
+          Didn't arrive? Check your spam folder or
+          <a href="/signin" style="color: var(--rust-light); text-decoration: underline;">try again</a>.
+        </p>
+      </div>
+
+      <div data-signin-state="form">
+        <h1
+          style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); color: #fff; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px;"
+        >
+          Sign in with a magic link.
+        </h1>
+        <p
+          style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--on-dark-3); max-width: 540px; margin: 0 auto 32px;"
+        >
+          Type the email you subscribed with. We'll send a one-click
+          sign-in link — no password, no newsletter.
+        </p>
+        <form class="signin-form" method="POST" action="/api/login-request">
+          <input
+            type="email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder="your@email.com"
+            class="signin-input"
+            aria-label="Email address"
+            autofocus
+          />
+          <button type="submit" class="signin-button">
+            Send sign-in link <span class="arrow">→</span>
+          </button>
+        </form>
+        <p
+          style="margin-top: 20px; font-family: var(--font-body); font-size: 14px; color: var(--on-dark-3);"
+        >
+          Not a subscriber yet? <a href="/subscribe" style="color: var(--rust-light); text-decoration: underline;">See the tiers</a>.
+        </p>
+      </div>
     </div>
   </section>
+
+  <script is:inline>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var isSent = params.get('sent') === '1';
+      var sentEl = document.querySelector('[data-signin-state="sent"]');
+      var formEl = document.querySelector('[data-signin-state="form"]');
+      if (!sentEl || !formEl) return;
+      if (isSent) {
+        sentEl.removeAttribute('hidden');
+        formEl.setAttribute('hidden', '');
+      }
+    })();
+  </script>
 </BaseLayout>
 
 <style>
