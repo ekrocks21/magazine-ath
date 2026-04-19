@@ -317,20 +317,22 @@ const issueLabel = `${seasonLabel} ${data.year}`;
       <div class="mag-container-narrow">
         <div class="order-print-card">
           <SmallCapsLabel tone="rust" items={['The Print Edition']} />
-          <h3 class="order-print-title">Order the printed issue</h3>
+          <h3 class="order-print-title">Order this printed issue</h3>
           <p class="order-print-body">
-            Eighty pages, uncoated stock, shipped in time with the season it covers.
-            {data.print_price_cents && ` $${(data.print_price_cents / 100).toFixed(0)} plus shipping.`}
+            Eighty pages, uncoated stock, shipped from Highlands. One
+            hundred dollars includes the mailed copy and digital
+            access to this issue.
           </p>
-          <p class="order-print-cta">
-            <a
-              href={`mailto:hello@abovethehook.com?subject=Order ${data.title} print`}
-              class="btn-primary"
-            >
-              Write to us <span class="arrow">→</span>
-            </a>
+          <form method="POST" action="/api/checkout" class="order-print-cta">
+            <input type="hidden" name="tier" value="single" />
+            <input type="hidden" name="issue" value={slug} />
+            <button type="submit" class="btn-primary">
+              Buy this issue — $100 <span class="arrow">→</span>
+            </button>
+          </form>
+          <p class="order-print-note">
+            Already a print subscriber? Your copy ships automatically.
           </p>
-          <p class="order-print-note">Online checkout opens Phase Two</p>
         </div>
       </div>
     </section>

@@ -55,10 +55,13 @@ Digital editions of each issue are available at this site.
 
 ## Subscriptions
 
-Subscriptions open in the summer of 2026. Until then, every article is
-freely readable here. If you would like to be told when subscriptions open,
-the form on the landing page will notify you — no promises about cadence
-beyond "when we have something worth saying."
+Three tiers, one magazine. Digital is ten dollars a month — everything
+we publish online, subscriber-only features, and previews of future
+issues. Print is seventy-five a quarter — the Digital subscription plus
+four mailed issues a year, from Highlands. If you only want one specific
+issue, a hundred dollars buys that one, printed and digital.
+
+Sign in with an email, no password. Cancel anytime from your account.
 
 ## Submissions and correspondence
 
