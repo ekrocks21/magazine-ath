@@ -110,6 +110,8 @@ const jsonLd = [
   publishedTime={data.publish_date?.toISOString()}
   author={data.author}
   noindex={data.status === 'draft'}
+  dataAccess={data.access}
+  dataArticleIssue={data.issue}
 >
   <StructuredData data={jsonLd} slot="head" />
   <article>

@@ -1,26 +1,42 @@
 ---
 /**
- * /subscribe — Tier page
+ * /subscribe — Tier page.
  *
- * Phase 1 is visual-only: no Stripe, no email capture, no accounts.
- * The page exists so the masthead CTA and "See the tiers" links do not 404
- * and so the tier story has a permanent home. The notify-me form is a
- * disabled placeholder.
+ * Live commerce. Three tiers plus single-issue purchase, all posting
+ * to /api/checkout (handled by the Cloudflare Worker). Sign-in form
+ * posts to /api/login-request (magic link via Resend).
  */
 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Enumerate available single-issue purchases.
+const allIssues = await getCollection('issues');
+const singleIssueOptions = allIssues
+  .filter((i) => i.data.order_print === true)
+  .sort((a, b) => {
+    const aDate = a.data.publish_date ? new Date(a.data.publish_date).getTime() : 0;
+    const bDate = b.data.publish_date ? new Date(b.data.publish_date).getTime() : 0;
+    return bDate - aDate;
+  })
+  .map((i) => ({
+    slug: i.id.replace(/\.md$/, ''),
+    title: i.data.title,
+    issue_number: i.data.issue_number,
+    theme: i.data.theme,
+  }));
 ---
 
 <BaseLayout
   title="Subscribe — The Local Lookout"
-  description="Four issues a year, and the whole archive, for less than a tank of gas. Subscriptions open later in 2026."
+  description="Four issues a year, and the whole archive. Ten dollars a month for digital, seventy-five a quarter for print, one hundred for a single issue."
   ogImage="/og/default.png"
 >
   <!-- Hero -->
   <section style="padding: 96px 0 56px;">
     <div class="mag-container-narrow" style="text-align: center;">
       <div class="meta-dotted" style="margin-bottom: 20px; justify-content: center;">
-        Subscribe<span class="dot">·</span>Opens later in 2026
+        Subscribe<span class="dot">·</span>Three tiers, one magazine
       </div>
       <h1
         style="font-family: var(--font-display); font-weight: 700; font-size: clamp(2.6rem, 5.2vw, 4rem); letter-spacing: -0.025em; color: var(--ink); line-height: 1.05; margin-bottom: 24px;"
@@ -30,15 +46,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <p
         style="font-family: var(--font-display); font-style: italic; font-size: 20px; line-height: 1.55; color: var(--ink-soft); max-width: 620px; margin: 0 auto;"
       >
-        The Local Lookout publishes quarterly. Until subscriptions open,
-        everything here is free to read. Pick a tier to see what comes
-        with it when the doors open.
+        The Local Lookout publishes quarterly. Pick the tier that
+        matches how you read — on a screen, in the mail, or once, for
+        the one issue that pulled you in.
       </p>
     </div>
   </section>
 
   <!-- Tier cards -->
-  <section style="padding: 40px 0 96px;">
+  <section style="padding: 40px 0 56px;">
     <div class="mag-container">
       <div class="tier-cards">
         <!-- Free -->
@@ -49,9 +65,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
           <div class="tier-card-cadence">Forever</div>
           <p class="tier-card-desc">
-            For readers new to The Lookout. Everything you can already read
-            here today — editor's letters, free features, the archive from
-            Winter 2026 forward.
+            For readers new to The Lookout. Editor's letters, one free
+            feature per issue, and the archive of past free stories.
           </p>
           <ul class="tier-list">
             <li>Editor's letter every issue</li>
@@ -67,34 +82,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="tier-badge">Most read</div>
           <div class="tier-card-kicker" style="color: var(--rust);">Digital</div>
           <div class="tier-card-price">
-            $48<span class="tier-card-unit"> / year</span>
+            $10<span class="tier-card-unit"> / month</span>
           </div>
-          <div class="tier-card-cadence">Billed annually</div>
+          <div class="tier-card-cadence">Billed monthly</div>
           <p class="tier-card-desc">
             Everything we publish online. Subscriber-only features, the
-            preview of every future issue, and every story once it leaves
-            the front window.
+            preview of every future issue, and every story once it
+            leaves the front window.
           </p>
           <ul class="tier-list">
             <li>All features and subscriber essays</li>
             <li>Previews of future issues</li>
             <li>Audio narration of every story</li>
-            <li>Gift one issue a year to a friend</li>
+            <li>Cancel anytime from your account</li>
           </ul>
-          <span class="tier-cta tier-cta--disabled">Opens later in 2026</span>
+          <form method="POST" action="/api/checkout" class="tier-form">
+            <input type="hidden" name="tier" value="digital" />
+            <button type="submit" class="tier-cta tier-cta--live">
+              Subscribe — $10 / mo
+            </button>
+          </form>
         </div>
 
         <!-- Print + Digital -->
         <div class="tier-card">
           <div class="tier-card-kicker" style="color: var(--muted);">Print + Digital</div>
           <div class="tier-card-price">
-            $96<span class="tier-card-unit"> / year</span>
+            $75<span class="tier-card-unit"> / quarter</span>
           </div>
-          <div class="tier-card-cadence">Billed annually</div>
+          <div class="tier-card-cadence">Billed quarterly</div>
           <p class="tier-card-desc">
             Four issues delivered by mail. Thick paper, real ink, wide
-            margins. Everything in Digital, plus the printed edition in
-            your hands the week it ships.
+            margins. Includes everything in Digital, plus the printed
+            edition mailed the week it ships.
           </p>
           <ul class="tier-list">
             <li>Everything in Digital</li>
@@ -102,47 +122,96 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <li>Mailed from Highlands, NJ</li>
             <li>Subscriber-only cover variants</li>
           </ul>
-          <span class="tier-cta tier-cta--disabled">Opens later in 2026</span>
+          <form method="POST" action="/api/checkout" class="tier-form">
+            <input type="hidden" name="tier" value="print" />
+            <button type="submit" class="tier-cta tier-cta--live">
+              Subscribe — $75 / quarter
+            </button>
+          </form>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Notify placeholder -->
-  <section style="background: var(--navy); color: var(--on-dark-1); padding: 80px 0;">
+  <!-- Single-issue row -->
+  <section style="padding: 0 0 96px;">
+    <div class="mag-container-narrow">
+      <div class="single-issue">
+        <div class="single-issue-hdr">
+          <div>
+            <div class="single-issue-kicker">One issue at a time</div>
+            <h3 class="single-issue-title">
+              Buy a single issue — <em>$100</em>
+            </h3>
+            <p class="single-issue-desc">
+              One printed copy, plus digital access to that issue.
+              For readers who want one specific issue without a
+              subscription, or to gift the magazine one time.
+            </p>
+          </div>
+        </div>
+        <div class="single-issue-grid">
+          {singleIssueOptions.length === 0 ? (
+            <p class="single-issue-empty">No issues available for single purchase yet.</p>
+          ) : (
+            singleIssueOptions.map((i) => (
+              <form method="POST" action="/api/checkout" class="single-issue-card">
+                <input type="hidden" name="tier" value="single" />
+                <input type="hidden" name="issue" value={i.slug} />
+                <div class="single-issue-card-num">
+                  Issue No. {String(i.issue_number ?? '').padStart(2, '0')}
+                </div>
+                <div class="single-issue-card-title">{i.title}</div>
+                {i.theme && (
+                  <div class="single-issue-card-theme">{i.theme}</div>
+                )}
+                <button type="submit" class="single-issue-card-cta">
+                  Buy — $100 →
+                </button>
+              </form>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sign-in -->
+  <section id="signin" style="background: var(--navy); color: var(--on-dark-1); padding: 80px 0;">
     <div class="mag-container-narrow" style="text-align: center;">
       <div
         style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand-light); margin-bottom: 20px;"
       >
-        <span style="color: var(--rust-light);">—</span>&nbsp;&nbsp;Notify me when it opens
+        <span style="color: var(--rust-light);">—</span>&nbsp;&nbsp;Already subscribed
       </div>
       <h2
         style="font-family: var(--font-display); font-size: clamp(1.8rem, 3.4vw, 2.4rem); color: #fff; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px;"
       >
-        We'll tell you once, when the doors open.
+        Sign in to read.
       </h2>
       <p
         style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--on-dark-3); max-width: 540px; margin: 0 auto 32px;"
       >
-        No newsletter, no drip, no holiday discounts. One email when
-        subscriptions are live, and that's it.
+        Type your email and we'll send a one-click sign-in link. No
+        password to forget, no newsletter to unsubscribe from.
       </p>
-      <form class="notify-form" onsubmit="return false;" aria-disabled="true">
+      <form class="signin-form" method="POST" action="/api/login-request">
         <input
           type="email"
+          name="email"
+          required
           placeholder="your@email.com"
-          class="notify-input"
-          disabled
+          class="signin-input"
           aria-label="Email address"
         />
-        <button type="submit" class="notify-button" disabled>
-          Notify me <span class="arrow">→</span>
+        <button type="submit" class="signin-button">
+          Send sign-in link <span class="arrow">→</span>
         </button>
       </form>
       <p
         style="margin-top: 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand);"
       >
-        Form opens later in 2026
+        The link expires in 15 minutes
       </p>
     </div>
   </section>
@@ -161,43 +230,51 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <div class="faq-list">
         <div class="faq-item">
-          <h3 class="faq-q">When do subscriptions actually open?</h3>
+          <h3 class="faq-q">Can I cancel?</h3>
           <p class="faq-a">
-            Later in 2026. We are publishing the print magazine four times
-            a year starting now; the subscriber flow comes online once
-            fulfillment is set up. If you want the announcement, use the
-            notify form above when it goes live.
+            Anytime, from your account page. Digital cancels end at the
+            close of the current billing month; print cancels end at
+            the close of the current quarter. You keep access through
+            whatever you already paid for.
           </p>
         </div>
 
         <div class="faq-item">
-          <h3 class="faq-q">Can I buy a single issue in print?</h3>
-          <p class="faq-a">
-            Yes. Single print copies are sold at select shops in
-            Highlands, Atlantic Highlands, and Red Bank, and by mail at
-            cost. Write to us using the address below if you'd like one
-            shipped.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-q">What happens to the free version once subscriptions open?</h3>
+          <h3 class="faq-q">What happens to the free version?</h3>
           <p class="faq-a">
             Nothing changes. The editor's letter, one free feature per
             issue, and the archive of past free stories stay free. The
-            Digital tier is additive — subscriber features, previews, and
-            audio — not a paywall dropping in front of what you already
-            read.
+            Digital tier is additive — subscriber features, previews,
+            and audio — not a paywall dropping in front of what you
+            already read.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-q">Does the print subscription include digital?</h3>
+          <p class="faq-a">
+            Yes. Print is a superset of Digital. You get the mailed
+            magazine and everything online, signed in with the same
+            email.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-q">How does the single-issue purchase work?</h3>
+          <p class="faq-a">
+            Pick an issue, pay $100 once, give us a shipping address.
+            We mail the printed copy from Highlands, and the digital
+            version of that issue unlocks for you right away.
           </p>
         </div>
 
         <div class="faq-item">
           <h3 class="faq-q">Who is behind the magazine?</h3>
           <p class="faq-a">
-            The Local Lookout is the quarterly print publication of Above
-            the Hook, a place-based coastal storytelling brand founded in
-            2025 by Eric Kane and Mary McKiever, based in Highlands, New
-            Jersey.
+            The Local Lookout is the quarterly print publication of
+            Above the Hook, a place-based coastal storytelling brand
+            founded in 2025 by Eric Kane and Mary McKiever, based in
+            Highlands, New Jersey.
           </p>
         </div>
       </div>
@@ -321,6 +398,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-weight: 700;
   }
 
+  .tier-form {
+    margin-top: auto;
+  }
+
   .tier-cta {
     display: block;
     text-align: center;
@@ -330,6 +411,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     letter-spacing: 0.2em;
     text-transform: uppercase;
     margin-top: auto;
+    border: 0;
+    cursor: pointer;
+    width: 100%;
   }
 
   .tier-cta--disabled {
@@ -339,29 +423,136 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     border: 1px solid var(--sand);
   }
 
-  /* Notify form */
-  .notify-form {
+  .tier-cta--live {
+    background: var(--rust);
+    color: #fff;
+    transition: background 0.15s ease-out;
+  }
+  .tier-cta--live:hover {
+    background: var(--rust-light, #C4583E);
+  }
+
+  /* Single issue */
+  .single-issue {
+    background: var(--paper);
+    border: 1px solid var(--sand);
+    padding: 44px 48px;
+  }
+  .single-issue-hdr {
+    margin-bottom: 32px;
+  }
+  .single-issue-kicker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 12px;
+  }
+  .single-issue-title {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+  .single-issue-title em {
+    font-style: normal;
+    color: var(--rust);
+  }
+  .single-issue-desc {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0;
+  }
+  .single-issue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .single-issue-card {
+    border: 1px solid var(--sand);
+    padding: 24px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: #fff;
+  }
+  .single-issue-card-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .single-issue-card-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .single-issue-card-theme {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .single-issue-card-cta {
+    background: transparent;
+    border: 1px solid var(--rust);
+    color: var(--rust);
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background 0.15s ease-out, color 0.15s ease-out;
+  }
+  .single-issue-card-cta:hover {
+    background: var(--rust);
+    color: #fff;
+  }
+  .single-issue-empty {
+    font-family: var(--font-body);
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  /* Sign-in form */
+  .signin-form {
     display: flex;
     gap: 12px;
     max-width: 520px;
     margin: 0 auto;
     flex-wrap: wrap;
   }
-  .notify-input {
+  .signin-input {
     flex: 1;
     min-width: 220px;
     background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     color: #fff;
     padding: 14px 16px;
     font-family: var(--font-body);
     font-size: 15px;
-    opacity: 0.6;
   }
-  .notify-input::placeholder {
+  .signin-input::placeholder {
     color: rgba(255, 255, 255, 0.5);
   }
-  .notify-button {
+  .signin-input:focus {
+    outline: 2px solid var(--rust-light, #C4583E);
+    outline-offset: -1px;
+  }
+  .signin-button {
     background: var(--rust);
     color: #fff;
     border: 0;
@@ -370,8 +561,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-size: 11px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    opacity: 0.5;
-    cursor: not-allowed;
+    cursor: pointer;
+    transition: background 0.15s ease-out;
+  }
+  .signin-button:hover {
+    background: var(--rust-light, #C4583E);
   }
 
   /* FAQ */
@@ -406,5 +600,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   @media (max-width: 900px) {
     .tier-cards { grid-template-columns: 1fr; gap: 16px; }
     .tier-card--featured { transform: none; }
+    .single-issue { padding: 28px 20px; }
   }
 </style>

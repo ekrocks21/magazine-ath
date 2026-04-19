@@ -25,6 +25,14 @@ interface Props {
   publishedTime?: string;
   author?: string;
   noindex?: boolean;
+  /** Rendered as data-access="..." on <body>. Used by the Cloudflare
+   *  paywall Worker to decide whether to gate the response. Leave
+   *  unset on non-article pages. */
+  dataAccess?: 'free' | 'subscriber';
+  /** Rendered as data-article-issue="..." on <body>. The issue slug
+   *  the article belongs to, so the Worker can honor single-issue
+   *  entitlements. */
+  dataArticleIssue?: string;
 }
 
 const {
@@ -36,6 +44,8 @@ const {
   publishedTime,
   author,
   noindex,
+  dataAccess,
+  dataArticleIssue,
 } = Astro.props;
 ---
 
@@ -60,7 +70,11 @@ const {
     <slot name="head" />
     <Analytics />
   </head>
-  <body class="min-h-screen flex flex-col">
+  <body
+    class="min-h-screen flex flex-col"
+    data-access={dataAccess}
+    data-article-issue={dataArticleIssue}
+  >
     <!-- Accessibility skip link. Visible on keyboard focus. -->
     <a
       href="#main-content"

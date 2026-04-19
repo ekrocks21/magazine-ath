@@ -60,8 +60,33 @@ function isActiveFor(href: string): boolean {
           {item.label}
         </a>
       ))}
-      <a href="/subscribe" class="mag-subscribe-btn">Subscribe</a>
+      {/* Default Subscribe chip is swapped to Account by the IIFE below
+          if /api/me reports an active session. Rendered both ways so
+          the cold page renders correctly when the Worker isn't in front. */}
+      <a href="/subscribe" class="mag-subscribe-btn" data-mag-subscribe-cta>Subscribe</a>
+      <a href="/api/account" class="mag-subscribe-btn" data-mag-account-cta hidden>Account</a>
     </nav>
   </div>
   <div class="mag-rust-rule"></div>
 </header>
+
+<script>
+  /* Swap the Subscribe chip for Account when a session cookie is
+     present. /api/me is served by the paywall Worker and returns
+     { signedIn: true, email, entitlements[] } when the reader has a
+     valid magazine_session cookie. */
+  (function () {
+    var subscribeCta = document.querySelector('[data-mag-subscribe-cta]');
+    var accountCta = document.querySelector('[data-mag-account-cta]');
+    if (!subscribeCta || !accountCta) return;
+    fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (data && data.signedIn) {
+          subscribeCta.setAttribute('hidden', '');
+          accountCta.removeAttribute('hidden');
+        }
+      })
+      .catch(function () { /* offline / Worker not in front — keep defaults */ });
+  })();
+</script>
