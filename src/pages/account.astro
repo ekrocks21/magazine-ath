@@ -137,10 +137,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <a href="/api/account/payment-portal" class="btn-primary">Update card on file</a>
         </div>
 
+        <!-- Banner: on Print but no shipping address yet -->
+        <div class="account-banner account-banner--warning" data-when="print-needs-shipping" hidden>
+          <strong>Add a shipping address so we can mail your next issue.</strong>
+          <button type="button" class="btn-inline" data-action="edit-shipping">Add address</button>
+        </div>
+
         <!-- Shipping address (print subscribers and anyone with a Stripe customer) -->
         <div class="account-section-block" data-when="show-shipping" hidden>
-          <h2 class="section-heading">Shipping address</h2>
-          <p class="section-lead">
+          <h2 class="section-heading" data-field="shipping-heading">Shipping address</h2>
+          <p class="section-lead" data-field="shipping-lead">
             Where your printed issues arrive. This is what we use for
             the next shipment, so please keep it current if you move.
           </p>
@@ -161,48 +167,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <button type="button" class="btn-primary" data-action="edit-shipping">Add shipping address</button>
           </div>
 
-          <!-- Edit mode -->
+          <!-- Edit mode: Stripe Address Element (autocomplete + validation) -->
           <form class="shipping-form" data-shipping-mode="edit" hidden>
-            <div class="shipping-row">
-              <label>
-                <span>Full name</span>
-                <input type="text" name="name" required autocomplete="name" />
-              </label>
-            </div>
-            <div class="shipping-row">
-              <label>
-                <span>Street address</span>
-                <input type="text" name="line1" required autocomplete="address-line1" />
-              </label>
-            </div>
-            <div class="shipping-row">
-              <label>
-                <span>Apt, suite, etc. (optional)</span>
-                <input type="text" name="line2" autocomplete="address-line2" />
-              </label>
-            </div>
-            <div class="shipping-row shipping-row--split">
-              <label>
-                <span>City</span>
-                <input type="text" name="city" required autocomplete="address-level2" />
-              </label>
-              <label>
-                <span>State</span>
-                <input type="text" name="state" required maxlength="2" autocomplete="address-level1" style="text-transform:uppercase;" />
-              </label>
-              <label>
-                <span>ZIP</span>
-                <input type="text" name="postal_code" required pattern="[0-9]{5}(-[0-9]{4})?" autocomplete="postal-code" />
-              </label>
-            </div>
-            <div class="shipping-row">
-              <label>
-                <span>Phone (optional, for delivery questions)</span>
-                <input type="tel" name="phone" autocomplete="tel" />
-              </label>
+            <div id="stripe-address-mount" class="stripe-mount">
+              <p class="stripe-loading">Loading address form…</p>
             </div>
             <div class="shipping-actions">
-              <button type="submit" class="btn-primary">Save address</button>
+              <button type="submit" class="btn-primary" data-field="shipping-save-btn">Save address</button>
               <button type="button" class="btn-ghost" data-action="cancel-edit-shipping">Cancel</button>
             </div>
           </form>
@@ -263,11 +234,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         digital: '$10 / month',
         print:   '$75 / quarter',
       };
+      // Publishable Stripe key — safe to expose in client JS. This is
+      // the same key bound to the Worker as STRIPE_PUBLISHABLE_KEY.
+      var STRIPE_PK = 'pk_live_51Ln2ElKglwHHJWzMZCsB03rbZfvHCCRXNB1CSRw8S3cr5C02voSnjA5r7V25AYFLAhQ69FpiUoTOudERirSu0nw6009AoOOuFt';
 
       var root = document.querySelector('.account-container');
       if (!root) return;
 
-      var pendingTierChange = null; // holds the tier string during confirmation
+      var pendingTierChange = null; // tier string, set while we gate on shipping
+      var shippingGateReason = null; // 'tier-change' when opened as a gate
+      var latestShipping = null;     // last shipping object from /status
+      var stripeAddressElement = null;
+      var stripePromise = null;
+      var addressElementReady = false;
 
       refresh();
 
@@ -283,13 +262,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         if (action === 'change-tier') {
           var tier = t.getAttribute('data-tier');
           if (!tier) return;
-          // Skip confirm if this is the current tier (button is a no-op).
+          // Skip if this is the current tier (button is a no-op).
           if (root.getAttribute('data-current-tier') === tier) return;
           pendingTierChange = tier;
-          showConfirm('change-tier', {
-            'confirm-tier-label': TIER_LABEL[tier] || tier,
-            'confirm-tier-price': ' (' + (TIER_PRICE[tier] || '') + ')',
-          });
+          // Gate Print on having a shipping address. If missing, open
+          // the shipping form first; once saved we'll resume with the
+          // tier-change confirm.
+          if (tier === 'print' && !hasShippingOnFile()) {
+            shippingGateReason = 'tier-change';
+            openShippingEdit();
+            return;
+          }
+          showTierConfirm(tier);
         } else if (action === 'change-tier-confirm') {
           if (!pendingTierChange) return;
           doChangeTier(pendingTierChange);
@@ -312,22 +296,50 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
       });
 
-      // Separate submit handler for the shipping form.
+      // Separate submit handler for the shipping form — reads from the
+      // Stripe Address Element and POSTs to our Worker.
       document.addEventListener('submit', function (ev) {
         var form = ev.target;
         if (!form || !form.classList || !form.classList.contains('shipping-form')) return;
         ev.preventDefault();
-        var data = {};
-        var inputs = form.querySelectorAll('input[name]');
-        for (var i = 0; i < inputs.length; i++) {
-          data[inputs[i].name] = inputs[i].value;
-        }
-        postForm('/api/account/shipping', data)
-          .then(function () {
+        if (!stripeAddressElement) return;
+        var saveBtn = form.querySelector('[data-field="shipping-save-btn"]');
+        if (saveBtn) saveBtn.disabled = true;
+        stripeAddressElement.getValue().then(function (res) {
+          if (!res.complete) {
+            showError('Please fill in the required address fields.');
+            if (saveBtn) saveBtn.disabled = false;
+            return;
+          }
+          var v = res.value;
+          var a = v.address || {};
+          var body = {
+            name: v.name || '',
+            line1: a.line1 || '',
+            line2: a.line2 || '',
+            city: a.city || '',
+            state: a.state || '',
+            postal_code: a.postal_code || '',
+            country: a.country || 'US',
+            phone: v.phone || '',
+          };
+          return postForm('/api/account/shipping', body).then(function () {
+            // If we opened the form as a gate before a tier change,
+            // resume that flow; otherwise just return to display.
+            var queuedTier = shippingGateReason === 'tier-change' ? pendingTierChange : null;
+            shippingGateReason = null;
             closeShippingEdit();
-            refresh();
-          })
-          .catch(function (err) { showError('Address save failed: ' + err.message); });
+            if (queuedTier) {
+              // Status refresh happens inside closeShippingEdit already
+              // — wait a tick so hasShippingOnFile() sees the new data.
+              setTimeout(function () { showTierConfirm(queuedTier); }, 250);
+            }
+          });
+        }).catch(function (err) {
+          showError('Address save failed: ' + (err && err.message ? err.message : err));
+        }).finally(function () {
+          if (saveBtn) saveBtn.disabled = false;
+        });
       });
 
       // ── API calls ───────────────────────────────────────────────
@@ -361,7 +373,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       function doChangeTier(tier) {
         postForm('/api/account/change-tier', { tier: tier })
           .then(function () { hideConfirms(); pendingTierChange = null; refresh(); })
-          .catch(function (err) { showError('Plan change failed: ' + err.message); });
+          .catch(function (err) {
+            // Worker backstop: if shipping was missing on the Stripe
+            // customer, open the shipping form as a gate and try again
+            // after save. Normally the client-side check catches this
+            // first, but we defend in depth.
+            if (err && err.message && err.message.indexOf('shipping_required') !== -1) {
+              hideConfirms();
+              shippingGateReason = 'tier-change';
+              pendingTierChange = tier;
+              openShippingEdit();
+              return;
+            }
+            showError('Plan change failed: ' + err.message);
+          });
       }
 
       function postJson(url, body) {
@@ -472,57 +497,159 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         // buyer who may want to update it before the next order).
         var showShipping = data.tier === 'print' || !!data.shipping;
         toggle('[data-when="show-shipping"]', showShipping);
+        latestShipping = data.shipping || null;
+
+        // Warning banner: print subscriber without shipping address.
+        var needsAddress = data.tier === 'print' && !hasShippingOnFile();
+        toggle('[data-when="print-needs-shipping"]', needsAddress);
+
         if (showShipping) {
-          var ship = data.shipping;
-          var mode = ship && ship.line1 ? 'display' : 'empty';
+          var mode = hasShippingOnFile() ? 'display' : 'empty';
           toggle('[data-shipping-mode="display"]', mode === 'display');
           toggle('[data-shipping-mode="empty"]', mode === 'empty');
           toggle('[data-shipping-mode="edit"]', false);
-          if (ship && ship.line1) {
+          if (hasShippingOnFile()) {
+            var ship = latestShipping;
             setText('[data-field="ship-name"]', ship.name || '—');
             var addrHtml =
-              ship.line1 +
+              escapeHtml(ship.line1) +
               (ship.line2 ? '<br>' + escapeHtml(ship.line2) : '') +
               '<br>' +
-              (ship.city || '') + ', ' + (ship.state || '') + ' ' + (ship.postal_code || '') +
+              escapeHtml((ship.city || '') + ', ' + (ship.state || '') + ' ' + (ship.postal_code || '')) +
               (ship.country && ship.country !== 'US' ? '<br>' + escapeHtml(ship.country) : '');
             var lines = root.querySelector('[data-field="ship-lines"]');
             if (lines) lines.innerHTML = addrHtml;
             setText('[data-field="ship-phone"]', ship.phone || '');
-            // Also prefill the form in case the user clicks Edit.
-            prefillShippingForm(ship);
-          } else {
-            prefillShippingForm(null);
           }
         }
+
+        // If a shipping gate is open, re-apply the gate context copy.
+        applyShippingGateCopy();
+      }
+
+      function hasShippingOnFile() {
+        var s = latestShipping;
+        return !!(s && s.line1 && s.city && s.state && s.postal_code);
+      }
+
+      function showTierConfirm(tier) {
+        showConfirm('change-tier', {
+          'confirm-tier-label': TIER_LABEL[tier] || tier,
+          'confirm-tier-price': ' (' + (TIER_PRICE[tier] || '') + ')',
+        });
       }
 
       function openShippingEdit() {
         toggle('[data-shipping-mode="display"]', false);
         toggle('[data-shipping-mode="empty"]', false);
         toggle('[data-shipping-mode="edit"]', true);
-        var first = root.querySelector('.shipping-form input[name="name"]');
-        if (first) first.focus();
+        applyShippingGateCopy();
+        mountStripeAddressElement().catch(function (err) {
+          showError('Address form failed to load: ' + (err && err.message ? err.message : err));
+        });
       }
 
       function closeShippingEdit() {
         toggle('[data-shipping-mode="edit"]', false);
-        // Display vs empty decision will re-sync on next refresh.
+        // Reset any gate state. The tier-change retry path clears this
+        // itself before calling in, so this only fires for plain cancels.
+        if (shippingGateReason === 'tier-change') {
+          pendingTierChange = null;
+        }
+        shippingGateReason = null;
+        applyShippingGateCopy();
         refresh();
       }
 
-      function prefillShippingForm(ship) {
-        var form = root.querySelector('.shipping-form');
-        if (!form) return;
-        var fields = ['name', 'line1', 'line2', 'city', 'state', 'postal_code', 'phone'];
-        for (var i = 0; i < fields.length; i++) {
-          var el = form.querySelector('[name="' + fields[i] + '"]');
-          if (el) el.value = (ship && ship[fields[i]]) || '';
+      function applyShippingGateCopy() {
+        var h = root.querySelector('[data-field="shipping-heading"]');
+        var p = root.querySelector('[data-field="shipping-lead"]');
+        if (!h || !p) return;
+        if (shippingGateReason === 'tier-change') {
+          h.textContent = 'Add a shipping address';
+          p.textContent =
+            'Print subscribers need a mailing address. Save it below, ' +
+            'then we\'ll switch your plan.';
+        } else {
+          h.textContent = 'Shipping address';
+          p.textContent =
+            'Where your printed issues arrive. This is what we use for ' +
+            'the next shipment, so please keep it current if you move.';
         }
       }
 
+      // ── Stripe Address Element ──────────────────────────────────
+      function loadStripeSdk() {
+        if (stripePromise) return stripePromise;
+        stripePromise = new Promise(function (resolve, reject) {
+          if (typeof window.Stripe === 'function') { resolve(window.Stripe); return; }
+          var s = document.createElement('script');
+          s.src = 'https://js.stripe.com/v3/';
+          s.onload = function () { resolve(window.Stripe); };
+          s.onerror = function () { reject(new Error('Stripe.js failed to load')); };
+          document.head.appendChild(s);
+        });
+        return stripePromise;
+      }
+
+      function mountStripeAddressElement() {
+        return loadStripeSdk().then(function (StripeFactory) {
+          var stripe = StripeFactory(STRIPE_PK);
+          var elements = stripe.elements({
+            mode: 'setup',
+            currency: 'usd',
+            appearance: {
+              theme: 'stripe',
+              variables: {
+                fontFamily: 'Source Serif 4, Georgia, serif',
+                colorPrimary: '#A0452E',
+                colorText: '#1A1208',
+                colorBackground: '#F5F0E8',
+                borderRadius: '0px',
+                fontSizeBase: '15px',
+              },
+            },
+          });
+          var defaults = mapShippingToStripeDefaults(latestShipping);
+          // Destroy any previous mount (we re-create on each open so the
+          // defaults reflect the latest status).
+          if (stripeAddressElement) {
+            try { stripeAddressElement.destroy(); } catch (_) {}
+            stripeAddressElement = null;
+          }
+          stripeAddressElement = elements.create('address', {
+            mode: 'shipping',
+            allowedCountries: ['US'],
+            fields: { phone: 'always' },
+            validation: { phone: { required: 'never' } },
+            defaultValues: defaults,
+            display: { name: 'full' },
+          });
+          var mount = document.getElementById('stripe-address-mount');
+          if (mount) mount.innerHTML = '';
+          stripeAddressElement.mount('#stripe-address-mount');
+          addressElementReady = true;
+        });
+      }
+
+      function mapShippingToStripeDefaults(ship) {
+        if (!ship) return { address: { country: 'US' } };
+        return {
+          name: ship.name || '',
+          phone: ship.phone || '',
+          address: {
+            line1: ship.line1 || '',
+            line2: ship.line2 || '',
+            city: ship.city || '',
+            state: ship.state || '',
+            postal_code: ship.postal_code || '',
+            country: ship.country || 'US',
+          },
+        };
+      }
+
       function escapeHtml(s) {
-        return String(s).replace(/[&<>"']/g, function (c) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
           return c === '&' ? '&amp;'
             : c === '<' ? '&lt;'
             : c === '>' ? '&gt;'
@@ -669,6 +796,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .account-banner--cancelling {
     background: #FCEEE6;
     border-color: var(--rust);
+    color: var(--ink);
+  }
+  .account-banner--warning {
+    background: #FFF6E0;
+    border-color: #D4A13E;
     color: var(--ink);
   }
   .account-banner strong { display: inline; }
@@ -909,6 +1041,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     background: #fff;
     border: 1px solid var(--sand);
     padding: 24px 24px 20px;
+  }
+  .stripe-mount {
+    min-height: 80px;
+    margin-bottom: 20px;
+  }
+  .stripe-loading {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0;
+    padding: 12px 0;
   }
   .shipping-row { margin-bottom: 14px; }
   .shipping-row--split {
