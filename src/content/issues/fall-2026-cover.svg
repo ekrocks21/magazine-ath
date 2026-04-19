@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="os-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1B2E4B"></stop>
+      <stop offset="0.6" stop-color="#8B3A2A"></stop>
+      <stop offset="1" stop-color="#C4583E"></stop>
+    </linearGradient>
+    <linearGradient id="os-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6B2A1D"></stop>
+      <stop offset="1" stop-color="#2a3a2f"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#os-sky)"></rect>
+
+  
+  <g fill="#1B2E4B" opacity="0.45">
+    <ellipse cx="200" cy="140" rx="140" ry="10"></ellipse>
+    <ellipse cx="420" cy="180" rx="100" ry="7"></ellipse>
+    <ellipse cx="700" cy="120" rx="120" ry="9"></ellipse>
+    <ellipse cx="980" cy="160" rx="110" ry="8"></ellipse>
+  </g>
+
+  
+  <circle cx="600" cy="420" r="70" fill="#F5F0E8" opacity="0.6"></circle>
+  <circle cx="600" cy="420" r="50" fill="#C4583E" opacity="0.8"></circle>
+
+  
+  <line x1="0" y1="420" x2="1200" y2="420" stroke="#1A1208" stroke-width="0.8" opacity="0.6"></line>
+
+  
+  <rect x="0" y="420" width="1200" height="280" fill="url(#os-water)"></rect>
+
+  
+  <g fill="#C4583E" opacity="0.5">
+    <ellipse cx="600" cy="440" rx="60" ry="3"></ellipse>
+    <ellipse cx="600" cy="465" rx="80" ry="3.5"></ellipse>
+    <ellipse cx="600" cy="495" rx="100" ry="4"></ellipse>
+    <ellipse cx="600" cy="535" rx="120" ry="5"></ellipse>
+    <ellipse cx="600" cy="580" rx="140" ry="5"></ellipse>
+    <ellipse cx="600" cy="640" rx="170" ry="6"></ellipse>
+  </g>
+
+  
+  <g transform="translate(880, 360)">
+    
+    <rect x="-12" y="0" width="4" height="6" fill="#10192B"></rect>
+    
+    <polygon points="-10,0 10,0 14,-10 14,-85 10,-92 -10,-92 -14,-85 -14,-10" fill="#F5F0E8"></polygon>
+    <polygon points="-10,0 10,0 14,-10 14,-85 10,-92 -10,-92 -14,-85 -14,-10" fill="none" stroke="#3D3020" stroke-width="0.6"></polygon>
+    
+    <rect x="-2" y="-30" width="4" height="8" fill="#1B2E4B"></rect>
+    <rect x="-2" y="-52" width="4" height="8" fill="#1B2E4B"></rect>
+    <rect x="-2" y="-74" width="4" height="8" fill="#1B2E4B"></rect>
+    
+    <rect x="-18" y="-97" width="36" height="6" fill="#1B2E4B"></rect>
+    
+    <rect x="-10" y="-112" width="20" height="15" fill="#C9B99A"></rect>
+    
+    <polygon points="-12,-112 12,-112 0,-126" fill="#1B2E4B"></polygon>
+    <line x1="0" y1="-126" x2="0" y2="-138" stroke="#1A1208" stroke-width="0.8"></line>
+    
+    <circle cx="0" cy="-104" r="24" fill="#F5F0E8" opacity="0.5"></circle>
+    <circle cx="0" cy="-104" r="12" fill="#C4583E" opacity="0.6"></circle>
+  </g>
+
+  
+  <path d="M 0 540 Q 200 530 400 540 Q 600 552 800 546 L 1200 540 L 1200 700 L 0 700 Z" fill="#3D3020" opacity="0.6"></path>
+  <path d="M 0 560 Q 200 550 400 560 Q 600 572 800 566 L 1200 560" stroke="#C4583E" stroke-width="0.8" fill="none" opacity="0.5"></path>
+
+  
+  <g fill="#10192B">
+    <g transform="translate(300, 580)">
+      <rect x="-3" y="0" width="6" height="20"></rect>
+      <circle cx="0" cy="-6" r="4"></circle>
+      <rect x="-8" y="20" width="4" height="8"></rect>
+      <rect x="4" y="20" width="4" height="8"></rect>
+    </g>
+    <g transform="translate(324, 584)">
+      <rect x="-3" y="0" width="6" height="16"></rect>
+      <circle cx="0" cy="-4" r="3"></circle>
+      <rect x="-6" y="16" width="3" height="6"></rect>
+      <rect x="3" y="16" width="3" height="6"></rect>
+    </g>
+  </g>
+
+  
+  <g transform="translate(340, 420)">
+    <line x1="0" y1="0" x2="0" y2="-50" stroke="#10192B" stroke-width="1"></line>
+    <path d="M 0 -50 L 0 -10 L 20 -10 Z" fill="#10192B"></path>
+    <path d="M -16 0 Q -6 4 14 4 Q 24 4 28 0 Z" fill="#10192B"></path>
+  </g>
+  <g transform="translate(160, 432)" opacity="0.8">
+    <line x1="0" y1="0" x2="0" y2="-34" stroke="#10192B" stroke-width="0.8"></line>
+    <path d="M 0 -34 L 0 -8 L 14 -8 Z" fill="#10192B"></path>
+    <path d="M -10 0 Q -4 3 10 3 Q 18 3 20 0 Z" fill="#10192B"></path>
+  </g>
+
+  
+  <g stroke="#10192B" stroke-width="1.2" fill="none" opacity="0.8">
+    <path d="M 180 200 l 8 -4 l 8 4"></path>
+    <path d="M 220 185 l 7 -3 l 7 3"></path>
+    <path d="M 260 195 l 6 -3 l 6 3"></path>
+    <path d="M 240 215 l 7 -3 l 7 3"></path>
+    <path d="M 200 225 l 6 -3 l 6 3"></path>
+  </g>
+</svg>

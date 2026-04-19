@@ -5,6 +5,7 @@ season: summer
 year: 2026
 status: planning
 publish_date: 2026-07-01
+ship_date: 2026-09-30
 theme: "Summer on the coast"
 tagline: "The bluefish run, the last pound-net crew, and what the dunes remember about 1944."
 cover_image: ./summer-2026-cover.svg

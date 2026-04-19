@@ -133,15 +133,18 @@ const editorsLetterDate = editorsLetter?.data.publication_date
 const pastIssues = publishedIssues.slice(1);
 const currentNumber = String(currentData.issue_number).padStart(2, '0');
 
-// Archive strip on the home page reads left-to-right as the magazine
-// grew ("Every issue, from the first forward"). Past + current +
-// future issues are all included so readers see what's ahead, sorted
-// ascending by issue number. Each card carries a status for tag UI:
-//   past    — already shipped, not the latest
-//   current — the most recently published issue (pops on the strip)
-//   future  — announced but publish_date > today
-const ARCHIVE_STRIP_SLOTS = 5;
-const archiveStripEntries = [...publishedIssues, ...futureIssues]
+// Archive strip shows this year's four seasonal issues in order:
+// Winter, Spring, Summer, Fall. Each carries a status tag:
+//   past    — already shipped
+//   current — most recently published issue (pops on the strip)
+//   next    — the soonest upcoming issue
+//   later   — future issues further out than "next"
+// Current-year filter uses the issue's `year` frontmatter field.
+const ARCHIVE_STRIP_SLOTS = 4;
+const CURRENT_YEAR = new Date().getFullYear();
+
+const archiveStripEntries = [...issues]
+  .filter((i) => i.data.year === CURRENT_YEAR)
   .sort((a, b) => (a.data.issue_number ?? 0) - (b.data.issue_number ?? 0))
   .slice(0, ARCHIVE_STRIP_SLOTS)
   .map((issue) => {
@@ -154,6 +157,35 @@ const archiveStripEntries = [...publishedIssues, ...futureIssues]
         : 'past';
     return { issue, status };
   });
+
+// Among the "future" cards, the soonest one is "next"; any after it
+// are "later". This lets the UI distinguish what's actively up next
+// vs. what's further out on the calendar.
+const firstFutureIdx = archiveStripEntries.findIndex((e) => e.status === 'future');
+const archiveStripCards = archiveStripEntries.map((entry, idx) => {
+  if (entry.status !== 'future') return { ...entry, variant: entry.status };
+  const variant: 'next' | 'later' = idx === firstFutureIdx ? 'next' : 'later';
+  return { ...entry, variant };
+});
+
+/**
+ * Format a ship_date for the archive strip. Returns either
+ * "SHIPPED MAR 31, 2026" (past) or "ANTICIPATED JUN 30" (future).
+ * Year is omitted on anticipated dates when they're in the current
+ * year to keep the label compact.
+ */
+function formatShipLabel(date: Date | undefined, isFuture: boolean): string | null {
+  if (!date) return null;
+  const month = date.toLocaleDateString('en-US', { month: 'short' });
+  const day = date.getDate();
+  const year = date.getFullYear();
+  if (isFuture) {
+    return year === CURRENT_YEAR
+      ? `Anticipated ${month} ${day}`
+      : `Anticipated ${month} ${day}, ${year}`;
+  }
+  return `Shipped ${month} ${day}, ${year}`;
+}
 
 // Pillar → kicker label
 function pillarLabel(p: string): string {
@@ -534,19 +566,23 @@ const statusWord = {
       </div>
 
       <div class="archive-grid">
-        {archiveStripEntries.map(({ issue: i, status }) => {
+        {archiveStripCards.map(({ issue: i, status, variant }) => {
           const iSlug = i.id.replace(/\.md$/, '');
           const iSeason = i.data.season.charAt(0).toUpperCase() + i.data.season.slice(1);
           const iNumber = String(i.data.issue_number).padStart(2, '0');
           const statusLabel =
-            status === 'current' ? 'Current' :
-            status === 'future'  ? 'Next'    : 'Past';
+            variant === 'current' ? 'Current' :
+            variant === 'next'    ? 'Next'    :
+            variant === 'later'   ? 'Later'   : 'Past';
+          const isFuture = status === 'future';
+          const shipLabel = formatShipLabel(i.data.ship_date, isFuture);
           return (
             <a
               href={`/issues/${iSlug}`}
               class:list={[
                 'archive-card',
                 `archive-card--${status}`,
+                `archive-card--variant-${variant}`,
                 `archive-card--season-${i.data.season}`,
               ]}
             >
@@ -554,7 +590,7 @@ const statusWord = {
                 <span
                   class:list={[
                     'archive-status-tag',
-                    `archive-status-tag--${status}`,
+                    `archive-status-tag--${variant}`,
                     `archive-status-tag--season-${i.data.season}`,
                   ]}
                 >
@@ -565,7 +601,7 @@ const statusWord = {
                     src={i.data.cover_image}
                     alt={i.data.cover_image_alt ?? `${i.data.title} cover`}
                     widths={[240, 360, 480]}
-                    sizes="(min-width: 1200px) 220px, (min-width: 640px) 22vw, 40vw"
+                    sizes="(min-width: 1200px) 260px, (min-width: 640px) 22vw, 40vw"
                     loading="lazy"
                   />
                 ) : (
@@ -582,12 +618,18 @@ const statusWord = {
                 No. {iNumber}<span style="margin: 0 0.5em; color: var(--sand);">·</span>{iSeason} {i.data.year}
               </div>
               <div class="archive-theme">{i.data.theme ?? '—'}</div>
+              {shipLabel && (
+                <div class:list={['archive-ship', isFuture ? 'archive-ship--future' : 'archive-ship--past']}>
+                  {shipLabel}
+                </div>
+              )}
             </a>
           );
         })}
 
-        {/* Pad remaining slots with placeholders so the strip always fills 5 cols */}
-        {Array.from({ length: Math.max(0, ARCHIVE_STRIP_SLOTS - archiveStripEntries.length) }).map(() => (
+        {/* Pad remaining slots with placeholders — typically a no-op
+            once all four seasonal issues exist for the current year. */}
+        {Array.from({ length: Math.max(0, ARCHIVE_STRIP_SLOTS - archiveStripCards.length) }).map(() => (
           <div class="archive-card archive-card--placeholder" style="pointer-events: none;">
             <div class="issue-cover issue-cover-small" style="opacity: 0.24; filter: grayscale(0.8);">
               <svg viewBox="0 0 300 400" role="img" aria-label="Future issue">
@@ -716,8 +758,8 @@ const statusWord = {
 
   .archive-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 28px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
   }
   .archive-card {
     text-decoration: none;
@@ -741,8 +783,10 @@ const statusWord = {
   .archive-card--current .archive-meta { color: var(--ink); }
   .archive-card--current .archive-theme { font-weight: 600; }
 
-  .archive-card--future .issue-cover-small { opacity: 0.78; }
+  .archive-card--future .issue-cover-small { opacity: 0.85; }
   .archive-card--future .archive-theme { font-style: italic; color: var(--ink-soft); }
+  /* "Later" is further out than "Next" — push it back visually too. */
+  .archive-card--variant-later .issue-cover-small { opacity: 0.65; }
 
   .archive-card--placeholder { transform: none; }
 
@@ -795,11 +839,28 @@ const statusWord = {
     font-size: 10px;
     box-shadow: 0 2px 8px rgba(26, 18, 8, 0.18);
   }
-  /* Future: dashed outline, more translucent */
-  .archive-status-tag--future {
+  /* Next: dashed outline (soonest upcoming) */
+  .archive-status-tag--next {
     border-style: dashed;
     background: rgba(255, 255, 255, 0.72);
   }
+  /* Later: most restrained — no bg, softened text */
+  .archive-status-tag--later {
+    border-style: dashed;
+    background: transparent;
+    opacity: 0.78;
+  }
+
+  /* Ship-date line beneath the card (mono, small, rust for future) */
+  .archive-ship {
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .archive-ship--future { color: var(--rust); }
 
   .next-card-link {
     display: block;

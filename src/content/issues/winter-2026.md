@@ -5,6 +5,7 @@ season: winter
 year: 2026
 status: published
 publish_date: 2026-03-31
+ship_date: 2026-03-31
 theme: "The Gateway to the World"
 tagline: "The inaugural issue of The Local Lookout."
 cover_image: ./winter-2026-cover.svg

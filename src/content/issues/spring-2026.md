@@ -5,6 +5,7 @@ season: spring
 year: 2026
 status: in_production
 publish_date: 2026-04-15
+ship_date: 2026-06-30
 theme: "Return"
 tagline: "The return of the ospreys, thirteen shillings paid to the Lenape, and seven stories from the second issue."
 cover_image: ./spring-2026-cover.svg

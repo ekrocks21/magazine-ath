@@ -124,6 +124,12 @@ const issues = defineCollection({
         year: z.number().int(),
         status: z.enum(ISSUE_STATUSES).default('planning'),
         publish_date: z.coerce.date().optional(),
+        /**
+         * Actual (past) or anticipated (future) mail-shipping date.
+         * Target is end-of-season: winter→end of March, spring→end of
+         * June, summer→end of September, fall→end of December.
+         */
+        ship_date: z.coerce.date().optional(),
         theme: z.string().optional(),
         tagline: z.string().optional(),
 
