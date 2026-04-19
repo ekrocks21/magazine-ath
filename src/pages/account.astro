@@ -137,6 +137,77 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <a href="/api/account/payment-portal" class="btn-primary">Update card on file</a>
         </div>
 
+        <!-- Shipping address (print subscribers and anyone with a Stripe customer) -->
+        <div class="account-section-block" data-when="show-shipping" hidden>
+          <h2 class="section-heading">Shipping address</h2>
+          <p class="section-lead">
+            Where your printed issues arrive. This is what we use for
+            the next shipment, so please keep it current if you move.
+          </p>
+
+          <!-- Display mode -->
+          <div class="shipping-display" data-shipping-mode="display" hidden>
+            <div class="shipping-card">
+              <div class="shipping-name" data-field="ship-name"></div>
+              <div class="shipping-lines" data-field="ship-lines"></div>
+              <div class="shipping-phone" data-field="ship-phone"></div>
+            </div>
+            <button type="button" class="btn-ghost" data-action="edit-shipping">Edit address</button>
+          </div>
+
+          <!-- Empty state -->
+          <div class="shipping-empty" data-shipping-mode="empty" hidden>
+            <p>We don't have a shipping address on file yet.</p>
+            <button type="button" class="btn-primary" data-action="edit-shipping">Add shipping address</button>
+          </div>
+
+          <!-- Edit mode -->
+          <form class="shipping-form" data-shipping-mode="edit" hidden>
+            <div class="shipping-row">
+              <label>
+                <span>Full name</span>
+                <input type="text" name="name" required autocomplete="name" />
+              </label>
+            </div>
+            <div class="shipping-row">
+              <label>
+                <span>Street address</span>
+                <input type="text" name="line1" required autocomplete="address-line1" />
+              </label>
+            </div>
+            <div class="shipping-row">
+              <label>
+                <span>Apt, suite, etc. (optional)</span>
+                <input type="text" name="line2" autocomplete="address-line2" />
+              </label>
+            </div>
+            <div class="shipping-row shipping-row--split">
+              <label>
+                <span>City</span>
+                <input type="text" name="city" required autocomplete="address-level2" />
+              </label>
+              <label>
+                <span>State</span>
+                <input type="text" name="state" required maxlength="2" autocomplete="address-level1" style="text-transform:uppercase;" />
+              </label>
+              <label>
+                <span>ZIP</span>
+                <input type="text" name="postal_code" required pattern="[0-9]{5}(-[0-9]{4})?" autocomplete="postal-code" />
+              </label>
+            </div>
+            <div class="shipping-row">
+              <label>
+                <span>Phone (optional, for delivery questions)</span>
+                <input type="tel" name="phone" autocomplete="tel" />
+              </label>
+            </div>
+            <div class="shipping-actions">
+              <button type="submit" class="btn-primary">Save address</button>
+              <button type="button" class="btn-ghost" data-action="cancel-edit-shipping">Cancel</button>
+            </div>
+          </form>
+        </div>
+
         <!-- Issue purchases (if any) -->
         <div class="account-section-block" data-when="has-issue-entitlements" hidden>
           <h2 class="section-heading">Single-issue purchases</h2>
@@ -234,7 +305,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           pendingTierChange = null;
         } else if (action === 'dismiss-error') {
           hide('[data-account-error]');
+        } else if (action === 'edit-shipping') {
+          openShippingEdit();
+        } else if (action === 'cancel-edit-shipping') {
+          closeShippingEdit();
         }
+      });
+
+      // Separate submit handler for the shipping form.
+      document.addEventListener('submit', function (ev) {
+        var form = ev.target;
+        if (!form || !form.classList || !form.classList.contains('shipping-form')) return;
+        ev.preventDefault();
+        var data = {};
+        var inputs = form.querySelectorAll('input[name]');
+        for (var i = 0; i < inputs.length; i++) {
+          data[inputs[i].name] = inputs[i].value;
+        }
+        postForm('/api/account/shipping', data)
+          .then(function () {
+            closeShippingEdit();
+            refresh();
+          })
+          .catch(function (err) { showError('Address save failed: ' + err.message); });
       });
 
       // ── API calls ───────────────────────────────────────────────
@@ -373,6 +466,69 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
           }
         }
+
+        // Shipping section. Show for print subscribers, or for anyone
+        // who already has a shipping address on file (e.g. single-issue
+        // buyer who may want to update it before the next order).
+        var showShipping = data.tier === 'print' || !!data.shipping;
+        toggle('[data-when="show-shipping"]', showShipping);
+        if (showShipping) {
+          var ship = data.shipping;
+          var mode = ship && ship.line1 ? 'display' : 'empty';
+          toggle('[data-shipping-mode="display"]', mode === 'display');
+          toggle('[data-shipping-mode="empty"]', mode === 'empty');
+          toggle('[data-shipping-mode="edit"]', false);
+          if (ship && ship.line1) {
+            setText('[data-field="ship-name"]', ship.name || '—');
+            var addrHtml =
+              ship.line1 +
+              (ship.line2 ? '<br>' + escapeHtml(ship.line2) : '') +
+              '<br>' +
+              (ship.city || '') + ', ' + (ship.state || '') + ' ' + (ship.postal_code || '') +
+              (ship.country && ship.country !== 'US' ? '<br>' + escapeHtml(ship.country) : '');
+            var lines = root.querySelector('[data-field="ship-lines"]');
+            if (lines) lines.innerHTML = addrHtml;
+            setText('[data-field="ship-phone"]', ship.phone || '');
+            // Also prefill the form in case the user clicks Edit.
+            prefillShippingForm(ship);
+          } else {
+            prefillShippingForm(null);
+          }
+        }
+      }
+
+      function openShippingEdit() {
+        toggle('[data-shipping-mode="display"]', false);
+        toggle('[data-shipping-mode="empty"]', false);
+        toggle('[data-shipping-mode="edit"]', true);
+        var first = root.querySelector('.shipping-form input[name="name"]');
+        if (first) first.focus();
+      }
+
+      function closeShippingEdit() {
+        toggle('[data-shipping-mode="edit"]', false);
+        // Display vs empty decision will re-sync on next refresh.
+        refresh();
+      }
+
+      function prefillShippingForm(ship) {
+        var form = root.querySelector('.shipping-form');
+        if (!form) return;
+        var fields = ['name', 'line1', 'line2', 'city', 'state', 'postal_code', 'phone'];
+        for (var i = 0; i < fields.length; i++) {
+          var el = form.querySelector('[name="' + fields[i] + '"]');
+          if (el) el.value = (ship && ship[fields[i]]) || '';
+        }
+      }
+
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return c === '&' ? '&amp;'
+            : c === '<' ? '&lt;'
+            : c === '>' ? '&gt;'
+            : c === '"' ? '&quot;'
+            : '&#39;';
+        });
       }
 
       // ── UI helpers ──────────────────────────────────────────────
@@ -722,7 +878,76 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .btn-danger.btn-primary { background: #C9462D; color: #fff; }
   .btn-danger.btn-ghost:hover { background: #C9462D; color: #fff; }
 
+  /* Shipping */
+  .shipping-card {
+    background: #fff;
+    border: 1px solid var(--sand);
+    padding: 20px 24px;
+    margin-bottom: 14px;
+    line-height: 1.55;
+    font-family: var(--font-body);
+    font-size: 15px;
+  }
+  .shipping-name { font-weight: 700; font-family: var(--font-display); font-size: 17px; color: var(--ink); margin-bottom: 6px; }
+  .shipping-lines { color: var(--ink); }
+  .shipping-phone {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .shipping-phone:empty { display: none; }
+
+  .shipping-empty p {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin: 0 0 16px;
+  }
+
+  .shipping-form {
+    background: #fff;
+    border: 1px solid var(--sand);
+    padding: 24px 24px 20px;
+  }
+  .shipping-row { margin-bottom: 14px; }
+  .shipping-row--split {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+  }
+  .shipping-form label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .shipping-form label > span { display: block; margin-bottom: 4px; }
+  .shipping-form input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--sand);
+    background: var(--paper);
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .shipping-form input:focus {
+    outline: 2px solid var(--rust);
+    outline-offset: -1px;
+    background: #fff;
+  }
+  .shipping-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
   @media (max-width: 640px) {
     .account-plan-options { grid-template-columns: 1fr; }
+    .shipping-row--split { grid-template-columns: 1fr; }
   }
 </style>
