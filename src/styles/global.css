@@ -340,6 +340,11 @@ img { max-width: 100%; height: auto; display: block; }
   box-shadow: 0 30px 60px rgba(26,18,8,0.18), 0 10px 20px rgba(26,18,8,0.08);
   line-height: 0;
   overflow: hidden;
+  /* Lock all covers to 3:4 portrait so varied source art (landscape,
+     square, or portrait SVGs) all render the same shape in grids.
+     Each cover SVG sets preserveAspectRatio="xMidYMid slice" so the
+     centered composition is preserved and the edges are cropped. */
+  aspect-ratio: 3 / 4;
 }
 .issue-cover::after {
   content: "";
@@ -348,7 +353,13 @@ img { max-width: 100%; height: auto; display: block; }
   box-shadow: inset 0 0 0 1px rgba(26,18,8,0.08);
   pointer-events: none;
 }
-.issue-cover img, .issue-cover svg { display: block; width: 100%; height: auto; }
+.issue-cover img, .issue-cover svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
 .issue-cover-small {
   box-shadow: 0 12px 28px rgba(26,18,8,0.14), 0 4px 10px rgba(26,18,8,0.06);
 }
