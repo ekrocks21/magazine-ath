@@ -134,12 +134,26 @@ const pastIssues = publishedIssues.slice(1);
 const currentNumber = String(currentData.issue_number).padStart(2, '0');
 
 // Archive strip on the home page reads left-to-right as the magazine
-// grew ("Every issue, from the first forward") — so sort ascending
-// by issue number and show up to five slots.
+// grew ("Every issue, from the first forward"). Past + current +
+// future issues are all included so readers see what's ahead, sorted
+// ascending by issue number. Each card carries a status for tag UI:
+//   past    — already shipped, not the latest
+//   current — the most recently published issue (pops on the strip)
+//   future  — announced but publish_date > today
 const ARCHIVE_STRIP_SLOTS = 5;
-const archiveStripIssues = [...publishedIssues]
+const archiveStripEntries = [...publishedIssues, ...futureIssues]
   .sort((a, b) => (a.data.issue_number ?? 0) - (b.data.issue_number ?? 0))
-  .slice(0, ARCHIVE_STRIP_SLOTS);
+  .slice(0, ARCHIVE_STRIP_SLOTS)
+  .map((issue) => {
+    const isFuture = (issue.data.publish_date?.valueOf() ?? 0) > NOW;
+    const isCurrent = !isFuture && issue.id === current.id;
+    const status: 'past' | 'current' | 'future' = isFuture
+      ? 'future'
+      : isCurrent
+        ? 'current'
+        : 'past';
+    return { issue, status };
+  });
 
 // Pillar → kicker label
 function pillarLabel(p: string): string {
@@ -520,13 +534,32 @@ const statusWord = {
       </div>
 
       <div class="archive-grid">
-        {archiveStripIssues.map((i) => {
+        {archiveStripEntries.map(({ issue: i, status }) => {
           const iSlug = i.id.replace(/\.md$/, '');
           const iSeason = i.data.season.charAt(0).toUpperCase() + i.data.season.slice(1);
           const iNumber = String(i.data.issue_number).padStart(2, '0');
+          const statusLabel =
+            status === 'current' ? 'Current' :
+            status === 'future'  ? 'Next'    : 'Past';
           return (
-            <a href={`/issues/${iSlug}`} class="archive-card">
-              <div class="issue-cover issue-cover-small" style="opacity: 1;">
+            <a
+              href={`/issues/${iSlug}`}
+              class:list={[
+                'archive-card',
+                `archive-card--${status}`,
+                `archive-card--season-${i.data.season}`,
+              ]}
+            >
+              <div class="issue-cover issue-cover-small">
+                <span
+                  class:list={[
+                    'archive-status-tag',
+                    `archive-status-tag--${status}`,
+                    `archive-status-tag--season-${i.data.season}`,
+                  ]}
+                >
+                  {statusLabel}
+                </span>
                 {i.data.cover_image ? (
                   <CoverImage
                     src={i.data.cover_image}
@@ -554,8 +587,8 @@ const statusWord = {
         })}
 
         {/* Pad remaining slots with placeholders so the strip always fills 5 cols */}
-        {Array.from({ length: Math.max(0, ARCHIVE_STRIP_SLOTS - archiveStripIssues.length) }).map(() => (
-          <div class="archive-card" style="pointer-events: none;">
+        {Array.from({ length: Math.max(0, ARCHIVE_STRIP_SLOTS - archiveStripEntries.length) }).map(() => (
+          <div class="archive-card archive-card--placeholder" style="pointer-events: none;">
             <div class="issue-cover issue-cover-small" style="opacity: 0.24; filter: grayscale(0.8);">
               <svg viewBox="0 0 300 400" role="img" aria-label="Future issue">
                 <rect width="300" height="400" fill="#EDE7D9" />
@@ -686,7 +719,33 @@ const statusWord = {
     grid-template-columns: repeat(5, 1fr);
     gap: 28px;
   }
-  .archive-card { text-decoration: none; color: inherit; display: block; }
+  .archive-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 200ms ease-out;
+  }
+  .archive-card .issue-cover-small {
+    transition: box-shadow 200ms ease-out, opacity 200ms ease-out;
+  }
+
+  /* Status-driven emphasis */
+  .archive-card--current {
+    transform: translateY(-6px);
+  }
+  .archive-card--current .issue-cover-small {
+    box-shadow:
+      0 22px 40px rgba(26, 18, 8, 0.22),
+      0 8px 14px rgba(26, 18, 8, 0.10);
+  }
+  .archive-card--current .archive-meta { color: var(--ink); }
+  .archive-card--current .archive-theme { font-weight: 600; }
+
+  .archive-card--future .issue-cover-small { opacity: 0.78; }
+  .archive-card--future .archive-theme { font-style: italic; color: var(--ink-soft); }
+
+  .archive-card--placeholder { transform: none; }
+
   .archive-meta {
     margin-top: 14px;
     font-family: var(--font-mono);
@@ -701,6 +760,45 @@ const statusWord = {
     color: var(--ink);
     margin-top: 4px;
     letter-spacing: -0.01em;
+  }
+
+  /* ── Status tag (current / past / future) ───────────────────────
+     Rendered on top of each cover. Colored by season, styled by
+     status: current pops (filled), past is an outline, future is
+     dashed + most restrained. */
+  .archive-status-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    padding: 4px 9px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 1;
+    background: rgba(255, 255, 255, 0.88);
+    color: var(--season);
+    border: 1px solid var(--season);
+    --season: var(--ink);
+  }
+  .archive-status-tag--season-spring { --season: #5F7E59; }  /* fresh sage */
+  .archive-status-tag--season-summer { --season: #BC8A3C; }  /* warm gold */
+  .archive-status-tag--season-fall   { --season: #A0452E; }  /* rust */
+  .archive-status-tag--season-winter { --season: #3D5873; }  /* slate blue */
+
+  /* Current: filled + slightly larger */
+  .archive-status-tag--current {
+    background: var(--season);
+    color: #fff;
+    padding: 5px 11px;
+    font-size: 10px;
+    box-shadow: 0 2px 8px rgba(26, 18, 8, 0.18);
+  }
+  /* Future: dashed outline, more translucent */
+  .archive-status-tag--future {
+    border-style: dashed;
+    background: rgba(255, 255, 255, 0.72);
   }
 
   .next-card-link {
