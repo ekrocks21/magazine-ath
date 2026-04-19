@@ -345,17 +345,30 @@ const statusWord = {
             const isFree = a.data.access === 'free' || i === 0;
             const readingMin = Math.max(1, Math.round((a.data.word_count ?? 0) / 220));
             return (
-              <a href={`/issues/${currentSlug}/${articleSlug}`} class="ed-card">
+              <a
+                href={`/issues/${currentSlug}/${articleSlug}`}
+                class="ed-card"
+                data-access={isFree ? 'free' : 'subscriber'}
+                data-article-issue={currentSlug}
+              >
                 <div class="ed-card-img">
                   {isFree ? (
                     <div class="free-chip">Free</div>
                   ) : (
-                    <div class="lock-chip">
-                      <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path d="M4 7V5a4 4 0 0 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z" />
-                      </svg>
-                      Subscriber
-                    </div>
+                    <>
+                      <div class="lock-chip" data-chip-state="locked">
+                        <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                          <path d="M4 7V5a4 4 0 0 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z" />
+                        </svg>
+                        Subscriber
+                      </div>
+                      <div class="lock-chip lock-chip--unlocked" data-chip-state="unlocked" hidden>
+                        <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                          <path d="M3 8.5l3.2 3.2L13 5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Unlocked
+                      </div>
+                    </>
                   )}
                   {a.data.hero_image ? (
                     <Image

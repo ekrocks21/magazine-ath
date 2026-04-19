@@ -435,6 +435,11 @@ img { max-width: 100%; height: auto; display: block; }
   gap: 6px;
   z-index: 2;
 }
+/* Shown to signed-in readers whose entitlement covers this article. */
+.lock-chip--unlocked {
+  background: var(--rust);
+  color: #fff;
+}
 
 /* ──────────────────────────────────────────────────────────────
    Pull quote

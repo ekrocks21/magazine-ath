@@ -71,22 +71,52 @@ function isActiveFor(href: string): boolean {
 </header>
 
 <script>
-  /* Swap the Subscribe chip for Account when a session cookie is
-     present. /api/me is served by the paywall Worker and returns
+  /* /api/me is served by the paywall Worker and returns
      { signedIn: true, email, entitlements[] } when the reader has a
-     valid magazine_session cookie. */
+     valid magazine_session cookie. One fetch drives two UI decisions:
+       1. Swap the Subscribe chip for Account.
+       2. Flip any "Subscriber" lock chips on gated article cards to
+          "Unlocked" when the reader's entitlements cover them. */
   (function () {
     var subscribeCta = document.querySelector('[data-mag-subscribe-cta]');
     var accountCta = document.querySelector('[data-mag-account-cta]');
-    if (!subscribeCta || !accountCta) return;
+
     fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
-        if (data && data.signedIn) {
+        if (!data || !data.signedIn) return;
+        if (subscribeCta && accountCta) {
           subscribeCta.setAttribute('hidden', '');
           accountCta.removeAttribute('hidden');
         }
+        unlockGatedCards(data.entitlements || []);
       })
       .catch(function () { /* offline / Worker not in front — keep defaults */ });
+
+    /* For each subscriber-only card, decide if the reader's active
+       entitlements cover the card's issue. Digital and print are
+       blanket; issue:<slug> is per-issue. */
+    function unlockGatedCards(entitlements) {
+      var cards = document.querySelectorAll('[data-access="subscriber"][data-article-issue]');
+      if (!cards.length) return;
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var issueSlug = card.getAttribute('data-article-issue');
+        if (!hasAccess(entitlements, issueSlug)) continue;
+        var lockedChip = card.querySelector('[data-chip-state="locked"]');
+        var unlockedChip = card.querySelector('[data-chip-state="unlocked"]');
+        if (lockedChip) lockedChip.setAttribute('hidden', '');
+        if (unlockedChip) unlockedChip.removeAttribute('hidden');
+      }
+    }
+
+    function hasAccess(entitlements, issueSlug) {
+      for (var i = 0; i < entitlements.length; i++) {
+        var tier = entitlements[i].tier;
+        if (tier === 'digital' || tier === 'print') return true;
+        if (tier === 'issue:' + issueSlug) return true;
+      }
+      return false;
+    }
   })();
 </script>
