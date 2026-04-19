@@ -53,12 +53,27 @@ const singleIssueOptions = allIssues
     </div>
   </section>
 
+  <!-- Signed-in subscriber banner (revealed by JS when /api/me
+       reports an active tier). Sits above the tier cards so the
+       page reads as "you're in" before they scan the grid. -->
+  <section class="subscriber-banner-section" data-mag-subscriber-banner hidden>
+    <div class="mag-container-narrow">
+      <div class="subscriber-banner">
+        <div class="subscriber-banner-copy">
+          <span class="subscriber-banner-kicker">You're subscribed</span>
+          <strong data-mag-current-tier-label></strong>
+        </div>
+        <a href="/account" class="subscriber-banner-cta">Manage your plan →</a>
+      </div>
+    </div>
+  </section>
+
   <!-- Tier cards -->
   <section style="padding: 40px 0 56px;">
     <div class="mag-container">
       <div class="tier-cards">
         <!-- Free -->
-        <div class="tier-card">
+        <div class="tier-card" data-mag-tier-card="free">
           <div class="tier-card-kicker" style="color: var(--muted);">Free</div>
           <div class="tier-card-price">
             $0
@@ -74,11 +89,12 @@ const singleIssueOptions = allIssues
             <li>Full archive of past free stories</li>
             <li>RSS feed</li>
           </ul>
-          <span class="tier-cta tier-cta--disabled">Currently what you have</span>
+          <span class="tier-cta tier-cta--disabled" data-mag-tier-cta="anon">Currently what you have</span>
+          <span class="tier-cta tier-cta--disabled" data-mag-tier-cta="included" hidden>Included with your plan</span>
         </div>
 
         <!-- Digital (featured) -->
-        <div class="tier-card tier-card--featured">
+        <div class="tier-card tier-card--featured" data-mag-tier-card="digital">
           <div class="tier-badge">Most read</div>
           <div class="tier-card-kicker" style="color: var(--rust);">Digital</div>
           <div class="tier-card-price">
@@ -96,16 +112,22 @@ const singleIssueOptions = allIssues
             <li>Audio narration of every story</li>
             <li>Cancel anytime from your account</li>
           </ul>
-          <form method="POST" action="/api/checkout" class="tier-form">
+          <form method="POST" action="/api/checkout" class="tier-form" data-mag-tier-cta="anon">
             <input type="hidden" name="tier" value="digital" />
             <button type="submit" class="tier-cta tier-cta--live">
               Subscribe — $10 / mo
             </button>
           </form>
+          <a href="/account" class="tier-cta tier-cta--current" data-mag-tier-cta="current" hidden>
+            ✓ Current plan · Manage
+          </a>
+          <a href="/account" class="tier-cta tier-cta--switch" data-mag-tier-cta="switch" hidden>
+            <span data-mag-switch-label>Switch to Digital</span> →
+          </a>
         </div>
 
         <!-- Print + Digital -->
-        <div class="tier-card">
+        <div class="tier-card" data-mag-tier-card="print">
           <div class="tier-card-kicker" style="color: var(--muted);">Print + Digital</div>
           <div class="tier-card-price">
             $75<span class="tier-card-unit"> / quarter</span>
@@ -122,12 +144,18 @@ const singleIssueOptions = allIssues
             <li>Mailed from Highlands, NJ</li>
             <li>Back issues at half price ($50)</li>
           </ul>
-          <form method="POST" action="/api/checkout" class="tier-form">
+          <form method="POST" action="/api/checkout" class="tier-form" data-mag-tier-cta="anon">
             <input type="hidden" name="tier" value="print" />
             <button type="submit" class="tier-cta tier-cta--live">
               Subscribe — $75 / quarter
             </button>
           </form>
+          <a href="/account" class="tier-cta tier-cta--current" data-mag-tier-cta="current" hidden>
+            ✓ Current plan · Manage
+          </a>
+          <a href="/account" class="tier-cta tier-cta--switch" data-mag-tier-cta="switch" hidden>
+            <span data-mag-switch-label>Upgrade to Print + Digital</span> →
+          </a>
         </div>
       </div>
     </div>
@@ -297,6 +325,90 @@ const singleIssueOptions = allIssues
       </div>
     </div>
   </section>
+
+  <script is:inline>
+    (function () {
+      /* Reshape the tier grid to reflect the signed-in reader's
+         current plan. Anonymous / no-tier readers see the default
+         Subscribe CTAs. */
+      var TIER_LABELS = {
+        digital: 'Digital — $10 / mo',
+        print:   'Print + Digital — $75 / quarter',
+      };
+      // Only digital and print are switchable. "free" is always
+      // included for subscribers, never a separate purchase.
+      var TIER_RANK = { free: 0, digital: 1, print: 2 };
+
+      fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (!data || !data.signedIn) return;
+          var ents = data.entitlements || [];
+          var activeTier = null;
+          for (var i = 0; i < ents.length; i++) {
+            if (ents[i].tier === 'print') { activeTier = 'print'; break; }
+            if (ents[i].tier === 'digital') activeTier = 'digital';
+          }
+          if (!activeTier) return;
+
+          // Reveal the top banner
+          var banner = document.querySelector('[data-mag-subscriber-banner]');
+          if (banner) {
+            banner.removeAttribute('hidden');
+            var label = banner.querySelector('[data-mag-current-tier-label]');
+            if (label) label.textContent = TIER_LABELS[activeTier] || activeTier;
+          }
+
+          // Update each tier card's CTA
+          var cards = document.querySelectorAll('[data-mag-tier-card]');
+          for (var c = 0; c < cards.length; c++) {
+            var card = cards[c];
+            var cardTier = card.getAttribute('data-mag-tier-card');
+
+            // Free card: show "Included" label for any paying tier
+            if (cardTier === 'free') {
+              setCtaState(card, 'included');
+              continue;
+            }
+            // Current plan
+            if (cardTier === activeTier) {
+              setCtaState(card, 'current');
+              card.classList.add('tier-card--current');
+              continue;
+            }
+            // Switch: either upgrade (to higher rank) or downgrade (to lower)
+            var fromRank = TIER_RANK[activeTier];
+            var toRank = TIER_RANK[cardTier];
+            var isUpgrade = toRank > fromRank;
+            var switchLabel = card.querySelector('[data-mag-switch-label]');
+            if (switchLabel) {
+              switchLabel.textContent = isUpgrade
+                ? 'Upgrade to ' + labelFor(cardTier)
+                : 'Downgrade to ' + labelFor(cardTier);
+            }
+            setCtaState(card, 'switch');
+          }
+        })
+        .catch(function () { /* keep defaults on any failure */ });
+
+      function labelFor(tier) {
+        if (tier === 'print') return 'Print + Digital';
+        if (tier === 'digital') return 'Digital';
+        return tier;
+      }
+
+      function setCtaState(card, state) {
+        var ctas = card.querySelectorAll('[data-mag-tier-cta]');
+        for (var i = 0; i < ctas.length; i++) {
+          if (ctas[i].getAttribute('data-mag-tier-cta') === state) {
+            ctas[i].removeAttribute('hidden');
+          } else {
+            ctas[i].setAttribute('hidden', '');
+          }
+        }
+      }
+    })();
+  </script>
 </BaseLayout>
 
 <style>
@@ -434,6 +546,89 @@ const singleIssueOptions = allIssues
   }
   .tier-cta--live:hover {
     background: var(--rust-light, #C4583E);
+  }
+
+  /* Current-plan CTA: solid navy with a checkmark, links to /account */
+  .tier-cta--current {
+    background: var(--navy);
+    color: #fff;
+    text-decoration: none;
+    border: 0;
+  }
+  .tier-cta--current:hover {
+    background: var(--navy-light, #1C4472);
+  }
+
+  /* Switch-plan CTA (upgrade/downgrade): outlined, understated */
+  .tier-cta--switch {
+    background: transparent;
+    color: var(--rust);
+    border: 1px solid var(--rust);
+    text-decoration: none;
+    transition: background 0.15s ease-out, color 0.15s ease-out;
+  }
+  .tier-cta--switch:hover {
+    background: var(--rust);
+    color: #fff;
+  }
+
+  /* Current-plan card gets a subtle ring so the eye lands on it */
+  .tier-card--current {
+    border-color: var(--navy);
+    border-width: 2px;
+  }
+
+  /* Subscriber banner */
+  .subscriber-banner-section {
+    padding: 16px 0 0;
+  }
+  .subscriber-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 16px 22px;
+    background: var(--cream-dark, #EFE6D2);
+    border: 1px solid var(--sand);
+  }
+  .subscriber-banner-copy {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .subscriber-banner-kicker {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+  .subscriber-banner-copy strong {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .subscriber-banner-cta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rust);
+    text-decoration: none;
+    border: 1px solid var(--rust);
+    padding: 9px 14px;
+    transition: background 0.15s ease-out, color 0.15s ease-out;
+  }
+  .subscriber-banner-cta:hover {
+    background: var(--rust);
+    color: #fff;
   }
 
   /* Single issue */
