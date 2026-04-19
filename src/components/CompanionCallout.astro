@@ -1,13 +1,14 @@
 ---
 /**
- * CompanionCallout — cross-link to a paired video/podcast/film.
+ * CompanionCallout — cross-link to a paired artifact on any Above the
+ * Hook property (blog, harbor, Studios video) or external media.
  *
  * Rendered at the foot of an article when its frontmatter has
  * `companion_to: <slug>` and the slug is registered in data/companions.ts.
  * Silent otherwise.
  */
 
-import type { Companion } from '../data/companions';
+import type { Companion, CompanionPlatform } from '../data/companions';
 
 interface Props {
   companion: Companion;
@@ -15,31 +16,74 @@ interface Props {
 
 const { companion } = Astro.props;
 
-const platformLabel = {
+// Label above the title: "Companion Video" / "Companion Story" etc.
+const platformLabel: Record<CompanionPlatform, string> = {
   youtube: 'Video',
   vimeo: 'Film',
-  podcast: 'Audio',
   film: 'Film',
-}[companion.platform];
+  podcast: 'Audio',
+  blog: 'Story',
+  magazine: 'Feature',
+  harbor: 'Live',
+};
+
+// External targets open in a new tab. Internal ATH properties open in place
+// so readers can navigate back via the family strip.
+const isSiblingProperty =
+  companion.platform === 'blog' ||
+  companion.platform === 'magazine' ||
+  companion.platform === 'harbor';
+const linkTarget = isSiblingProperty ? undefined : '_blank';
+const linkRel = isSiblingProperty ? undefined : 'noopener noreferrer';
 ---
 
 <aside class="companion-callout">
-  <a href={companion.url} target="_blank" rel="noopener noreferrer" class="companion-link">
+  <a
+    href={companion.url}
+    target={linkTarget}
+    rel={linkRel}
+    class={`companion-link companion-link--${companion.platform}`}
+  >
     <div class="companion-icon" aria-hidden="true">
-      {companion.platform === 'youtube' || companion.platform === 'vimeo' || companion.platform === 'film' ? (
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M8 5v14l11-7z" />
-        </svg>
-      ) : (
+      {
+        (companion.platform === 'youtube' ||
+          companion.platform === 'vimeo' ||
+          companion.platform === 'film') && (
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        )
+      }
+      {companion.platform === 'podcast' && (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10" />
           <path d="M15 10l-6 4V6l6 4z" fill="currentColor" />
         </svg>
       )}
+      {companion.platform === 'blog' && (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M5 4h11l3 3v13H5V4z" />
+          <path d="M15 4v4h4" />
+          <path d="M8 12h8M8 15h8M8 18h5" stroke-linecap="round" />
+        </svg>
+      )}
+      {companion.platform === 'magazine' && (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M4 4h7v16H4zM13 4h7v16h-7z" />
+          <path d="M6 8h3M6 11h3M15 8h3M15 11h3M15 14h3" stroke-linecap="round" />
+        </svg>
+      )}
+      {companion.platform === 'harbor' && (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" />
+          <path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke-linecap="round" />
+        </svg>
+      )}
     </div>
     <div class="companion-body">
       <div class="companion-kicker">
-        Companion {platformLabel}
+        Companion {platformLabel[companion.platform]}
         {companion.duration && (
           <>
             <span class="companion-dot">·</span>
@@ -48,6 +92,9 @@ const platformLabel = {
         )}
       </div>
       <div class="companion-title">{companion.title}</div>
+      {companion.summary && (
+        <div class="companion-summary">{companion.summary}</div>
+      )}
       <div class="companion-cta">
         {companion.kicker}
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -91,7 +138,13 @@ const platformLabel = {
   .companion-icon svg {
     width: 28px;
     height: 28px;
-    margin-left: 3px; /* optical center for play triangle */
+  }
+  /* Optical center for the play triangle — not needed on square icons. */
+  .companion-link--youtube .companion-icon svg,
+  .companion-link--vimeo .companion-icon svg,
+  .companion-link--film .companion-icon svg,
+  .companion-link--podcast .companion-icon svg {
+    margin-left: 3px;
   }
   .companion-kicker {
     font-family: var(--font-mono);
@@ -114,6 +167,15 @@ const platformLabel = {
     margin-bottom: 6px;
     line-height: 1.2;
   }
+  .companion-summary {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--on-dark-3);
+    font-style: italic;
+    margin-bottom: 10px;
+    max-width: 52ch;
+  }
   .companion-cta {
     font-family: var(--font-mono);
     font-size: 11px;
@@ -130,5 +192,6 @@ const platformLabel = {
       text-align: center;
     }
     .companion-icon { margin: 0 auto; }
+    .companion-summary { max-width: none; }
   }
 </style>

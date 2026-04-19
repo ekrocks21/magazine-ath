@@ -23,6 +23,7 @@ tags:
   - new_york_bight
   - conservation
 publication_date: 2026-04-01
+companion_to: harbor-live
 ---
 
 # The Whale at North Beach

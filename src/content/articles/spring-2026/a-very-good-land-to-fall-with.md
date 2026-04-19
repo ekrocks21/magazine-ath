@@ -19,6 +19,7 @@ tags:
   - henry_hudson
   - halve_maen
 publication_date: 2026-04-01
+companion_to: blog-sandy-hook-geography
 ---
 
 # A Very Good Land to Fall With
