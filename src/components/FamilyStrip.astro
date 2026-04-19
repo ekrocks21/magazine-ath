@@ -1,0 +1,48 @@
+---
+/**
+ * Cross-property nav strip — sits above the main masthead. Visible
+ * identically on magazine, blog, and harbor so the three properties
+ * read as one family.
+ *
+ * When this strip's content changes (new property, renamed link, etc.),
+ * update:
+ *   - This Astro component (magazine)
+ *   - `~/ATH/Blog/blog-build.py` → `family_strip_html()`
+ *   - Each `Observatory/*.html` (harbor)
+ *   - `public/brand/family-masthead.html` (canonical reference)
+ */
+
+interface Props {
+  /** Current property — highlights its own link in rust. */
+  current?: 'magazine' | 'blog' | 'harbor';
+}
+
+const { current = 'magazine' } = Astro.props;
+---
+
+<div class="ath-family-strip" data-ath-current={current}>
+  <div class="ath-family-strip-inner">
+    <span class="ath-family-strip-brand">Above the Hook</span>
+    <nav class="ath-family-strip-nav" aria-label="Above the Hook properties">
+      <a href="https://magazine.abovethehook.com" data-ath-link="magazine">Magazine</a>
+      <a href="https://blog.abovethehook.com" data-ath-link="blog">Blog</a>
+      <a href="https://harbor.abovethehook.com" data-ath-link="harbor">Harbor</a>
+      <a href="https://abovethehook.com/all" target="_blank" rel="noopener" data-ath-link="shop">Shop<span class="ext">↗</span></a>
+      <a href="https://www.youtube.com/@abovethehookstudios" target="_blank" rel="noopener" data-ath-link="youtube">YouTube<span class="ext">↗</span></a>
+    </nav>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const root = document.querySelector<HTMLElement>('.ath-family-strip[data-ath-current]');
+    if (!root) return;
+    const current = root.getAttribute('data-ath-current');
+    if (!current) return;
+    const link = root.querySelector<HTMLElement>('[data-ath-link="' + current + '"]');
+    if (link) {
+      link.classList.add('is-current');
+      link.setAttribute('aria-current', 'page');
+    }
+  })();
+</script>

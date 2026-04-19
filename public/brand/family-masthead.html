@@ -1,0 +1,43 @@
+<!--
+  Above the Hook — canonical cross-property nav strip
+  ===================================================
+
+  Paste this HTML at the very top of <body> on every ATH property.
+  Replace `data-ath-current` with the current property slug
+  (magazine | blog | harbor) so the active link picks up the rust
+  highlight from ath-components.css.
+
+  Requires ath-tokens.css + ath-components.css to be loaded.
+
+  When the link set changes (new property, YouTube URL change, etc.),
+  update this file first and then propagate to each property's template.
+  There is no SSI or server-side include — each property embeds its
+  own copy to keep the HTML fully static and cacheable.
+-->
+<div class="ath-family-strip" data-ath-current="">
+  <div class="ath-family-strip-inner">
+    <span class="ath-family-strip-brand">Above the Hook</span>
+    <nav class="ath-family-strip-nav" aria-label="Above the Hook properties">
+      <a href="https://magazine.abovethehook.com" data-ath-link="magazine">Magazine</a>
+      <a href="https://blog.abovethehook.com" data-ath-link="blog">Blog</a>
+      <a href="https://harbor.abovethehook.com" data-ath-link="harbor">Harbor</a>
+      <a href="https://abovethehook.com/all" target="_blank" rel="noopener" data-ath-link="shop">Shop<span class="ext">↗</span></a>
+      <a href="https://www.youtube.com/@abovethehookstudios" target="_blank" rel="noopener" data-ath-link="youtube">YouTube<span class="ext">↗</span></a>
+    </nav>
+  </div>
+</div>
+<script>
+  // Tiny inline: mark the current property's link as active, based on
+  // data-ath-current on the strip element. Runs once, no framework.
+  (function () {
+    var root = document.querySelector('.ath-family-strip[data-ath-current]');
+    if (!root) return;
+    var current = root.getAttribute('data-ath-current');
+    if (!current) return;
+    var link = root.querySelector('[data-ath-link="' + current + '"]');
+    if (link) {
+      link.classList.add('is-current');
+      link.setAttribute('aria-current', 'page');
+    }
+  })();
+</script>

@@ -1,0 +1,55 @@
+/*
+ * Above the Hook — brand tokens
+ *
+ * Canonical CSS custom properties. Imported by every ATH property:
+ * magazine.abovethehook.com, blog.abovethehook.com, harbor.abovethehook.com.
+ *
+ * Changes here propagate everywhere on the next CDN cache cycle. Bump
+ * the ?v= query string in consumer <link> tags to force refresh.
+ *
+ * Usage:
+ *   <link rel="stylesheet" href="https://magazine.abovethehook.com/brand/ath-tokens.css?v=1">
+ */
+
+:root {
+  /* ─── Palette (matches Above the Hook Design System) ──────────────── */
+  --ath-navy: #1B2E4B;
+  --ath-navy-light: #2A4470;
+  --ath-navy-dark: #10192B;
+
+  --ath-rust: #8B3A2A;
+  --ath-rust-light: #C4583E;
+  --ath-rust-dark: #6B2A1D;
+
+  --ath-cream: #F5F0E8;
+  --ath-cream-dark: #EDE7D9;
+  --ath-paper: #FDFAF5;
+
+  --ath-ink: #1A1208;
+  --ath-ink-soft: #3D3020;
+
+  --ath-sand: #C9B99A;
+  --ath-sand-light: #E0D5C0;
+  --ath-muted: #7A6F5F;
+
+  /* On-dark surfaces (navy backgrounds) */
+  --ath-on-dark-1: #FFFFFF;
+  --ath-on-dark-2: #F5F0E8;
+  --ath-on-dark-3: #E0D5C0;
+  --ath-on-dark-4: #C9B99A;
+
+  /* ─── Type stacks ─────────────────────────────────────────────────── */
+  --ath-font-display: "Playfair Display Variable", "Playfair Display", Georgia, "Times New Roman", serif;
+  --ath-font-body: "Source Serif 4 Variable", "Source Serif 4", Georgia, "Times New Roman", serif;
+  --ath-font-mono: "DM Mono", "IBM Plex Mono", "Courier New", monospace;
+
+  /* ─── Layout ─────────────────────────────────────────────────────── */
+  --ath-max-wide: 1200px;
+  --ath-max-content: 760px;
+  --ath-measure: 65ch;
+
+  /* ─── Motion ──────────────────────────────────────────────────────── */
+  --ath-duration-fast: 150ms;
+  --ath-duration-base: 250ms;
+  --ath-ease-out: cubic-bezier(0.2, 0.7, 0.3, 1);
+}

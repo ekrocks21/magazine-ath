@@ -1,0 +1,27 @@
+# Above the Hook — Netlify header rules for magazine.abovethehook.com
+#
+# Brand assets are consumed cross-origin by blog.abovethehook.com and
+# harbor.abovethehook.com. Set CORS + long cache accordingly.
+
+# Fonts — required for cross-origin loading from blog/harbor
+/brand/fonts/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=31536000, immutable
+
+# Brand stylesheets and the family-masthead snippet
+/brand/*.css
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/brand/*.html
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# Brand SVG marks (logos, monogram, live-dot) may be referenced cross-origin
+/brand/*.svg
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=86400
+
+# OG images are static once generated
+/og/*
+  Cache-Control: public, max-age=86400

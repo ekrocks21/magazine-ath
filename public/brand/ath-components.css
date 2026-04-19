@@ -1,0 +1,406 @@
+/*
+ * Above the Hook — portable component styles
+ *
+ * Framework-agnostic CSS used across magazine, blog, and harbor.
+ * Assumes ath-tokens.css is already loaded.
+ *
+ * Naming: every class is prefixed `ath-` so it doesn't collide with
+ * property-specific styles. A consumer can safely add to these with
+ * their own CSS cascading.
+ *
+ * Usage:
+ *   <link rel="stylesheet" href="https://magazine.abovethehook.com/brand/fonts.css">
+ *   <link rel="stylesheet" href="https://magazine.abovethehook.com/brand/ath-tokens.css?v=1">
+ *   <link rel="stylesheet" href="https://magazine.abovethehook.com/brand/ath-components.css?v=1">
+ */
+
+/* ─── Family strip (cross-property nav, sits above each site's masthead) ─── */
+
+.ath-family-strip {
+  background: var(--ath-navy-dark);
+  color: var(--ath-on-dark-3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.ath-family-strip-inner {
+  max-width: var(--ath-max-wide);
+  margin: 0 auto;
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  font-family: var(--ath-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.ath-family-strip-brand {
+  color: var(--ath-sand);
+  font-weight: 400;
+}
+.ath-family-strip-nav {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.ath-family-strip-nav a {
+  color: var(--ath-on-dark-3);
+  text-decoration: none;
+  transition: color var(--ath-duration-fast) var(--ath-ease-out);
+}
+.ath-family-strip-nav a:hover {
+  color: var(--ath-rust-light);
+}
+.ath-family-strip-nav a[aria-current="page"],
+.ath-family-strip-nav a.is-current {
+  color: var(--ath-rust-light);
+}
+.ath-family-strip-nav a .ext {
+  margin-left: 4px;
+  font-size: 9px;
+  opacity: 0.7;
+}
+@media (max-width: 640px) {
+  .ath-family-strip-inner {
+    padding: 8px 16px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+  .ath-family-strip-brand {
+    display: none;
+  }
+  .ath-family-strip-nav {
+    margin: 0 auto;
+    justify-content: center;
+    gap: 14px;
+  }
+}
+
+/* ─── Property masthead (main nav, sits below family strip) ─────────── */
+
+.ath-masthead {
+  background: var(--ath-navy);
+  color: var(--ath-on-dark-1);
+  position: relative;
+}
+.ath-masthead-inner {
+  max-width: var(--ath-max-wide);
+  margin: 0 auto;
+  padding: 22px 24px 18px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.ath-wordmark {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  line-height: 1.1;
+}
+.ath-wordmark-sup {
+  display: block;
+  font-family: var(--ath-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ath-sand);
+  margin-bottom: 4px;
+}
+.ath-wordmark-main {
+  display: block;
+  font-family: var(--ath-font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ath-on-dark-1);
+}
+.ath-wordmark-main em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ath-rust-light);
+}
+.ath-masthead-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.ath-masthead-nav a {
+  font-family: var(--ath-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ath-on-dark-2);
+  text-decoration: none;
+  transition: color var(--ath-duration-fast) var(--ath-ease-out);
+}
+.ath-masthead-nav a:hover {
+  color: var(--ath-rust-light);
+}
+.ath-masthead-nav a[aria-current="page"],
+.ath-masthead-nav a.is-active {
+  color: var(--ath-rust-light);
+}
+.ath-subscribe-btn {
+  background: var(--ath-rust);
+  color: var(--ath-on-dark-1) !important;
+  padding: 9px 18px;
+  font-family: var(--ath-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background var(--ath-duration-fast) var(--ath-ease-out);
+}
+.ath-subscribe-btn:hover {
+  background: var(--ath-rust-light);
+}
+.ath-masthead-rule {
+  height: 2px;
+  background: var(--ath-rust);
+}
+@media (max-width: 720px) {
+  .ath-masthead-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+  .ath-masthead-nav {
+    gap: 16px;
+  }
+}
+
+/* ─── Footer (appears at bottom of every property) ──────────────────── */
+
+.ath-footer {
+  background: var(--ath-navy-dark);
+  color: var(--ath-on-dark-3);
+  padding: 56px 24px 36px;
+  margin-top: auto;
+}
+.ath-footer-inner {
+  max-width: var(--ath-max-wide);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 48px;
+}
+.ath-footer-wordmark {
+  font-family: var(--ath-font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ath-on-dark-1);
+  display: block;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.ath-footer-wordmark em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ath-rust-light);
+}
+.ath-footer-tagline {
+  font-family: var(--ath-font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ath-on-dark-3);
+  max-width: 320px;
+  margin: 0 0 16px;
+}
+.ath-footer-address {
+  font-family: var(--ath-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ath-sand);
+}
+.ath-footer-col-title {
+  font-family: var(--ath-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ath-sand);
+  margin: 0 0 16px;
+}
+.ath-footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ath-footer-list a {
+  font-family: var(--ath-font-body);
+  font-size: 14px;
+  color: var(--ath-on-dark-2);
+  text-decoration: none;
+  transition: color var(--ath-duration-fast) var(--ath-ease-out);
+}
+.ath-footer-list a:hover {
+  color: var(--ath-rust-light);
+}
+.ath-footer-bottom {
+  max-width: var(--ath-max-wide);
+  margin: 40px auto 0;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: var(--ath-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ath-muted);
+}
+@media (max-width: 720px) {
+  .ath-footer-inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+/* ─── Utilities ─────────────────────────────────────────────────────── */
+
+.ath-rust-rule {
+  height: 2px;
+  width: 80px;
+  background: var(--ath-rust);
+  border: 0;
+}
+.ath-small-caps {
+  font-family: var(--ath-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ath-muted);
+}
+.ath-meta-dotted {
+  font-family: var(--ath-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ath-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}
+.ath-meta-dotted .dot {
+  color: var(--ath-sand);
+}
+.ath-meta-dotted .rust {
+  color: var(--ath-rust);
+}
+
+/* ─── Buttons ──────────────────────────────────────────────────────── */
+
+.ath-btn-primary,
+.ath-btn-ghost,
+.ath-btn-dark,
+.ath-btn-link {
+  font-family: var(--ath-font-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--ath-duration-fast) var(--ath-ease-out);
+}
+.ath-btn-primary {
+  background: var(--ath-rust);
+  color: var(--ath-on-dark-1);
+  padding: 13px 22px;
+  font-size: 11px;
+}
+.ath-btn-primary:hover {
+  background: var(--ath-rust-light);
+}
+.ath-btn-ghost {
+  background: transparent;
+  color: var(--ath-ink);
+  padding: 13px 22px;
+  font-size: 11px;
+  border: 1px solid var(--ath-sand);
+}
+.ath-btn-ghost:hover {
+  border-color: var(--ath-rust);
+  color: var(--ath-rust);
+}
+.ath-btn-dark {
+  background: var(--ath-navy);
+  color: var(--ath-on-dark-1);
+  padding: 13px 22px;
+  font-size: 11px;
+}
+.ath-btn-dark:hover {
+  background: var(--ath-navy-light);
+}
+.ath-btn-link {
+  color: var(--ath-rust);
+  font-size: 11px;
+  padding: 0;
+}
+.ath-btn-link:hover {
+  color: var(--ath-rust-light);
+}
+
+/* ─── Live dot (harbor / real-time UIs) ─────────────────────────────── */
+
+.ath-live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ath-rust);
+  box-shadow: 0 0 0 0 rgba(196, 88, 62, 0.6);
+  animation: ath-pulse 2s var(--ath-ease-out) infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes ath-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(196, 88, 62, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(196, 88, 62, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(196, 88, 62, 0);
+  }
+}
+
+/* ─── Pull quote (shared with magazine article pattern) ─────────────── */
+
+.ath-pullquote {
+  margin: 3.5rem auto;
+  max-width: 720px;
+  padding-left: 28px;
+  border-left: 2px solid var(--ath-rust);
+}
+.ath-pullquote blockquote {
+  margin: 0;
+  padding: 0;
+  font-family: var(--ath-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  line-height: 1.3;
+  color: var(--ath-navy);
+  letter-spacing: -0.01em;
+}
+.ath-pullquote cite {
+  display: block;
+  margin-top: 18px;
+  font-family: var(--ath-font-mono);
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ath-muted);
+}

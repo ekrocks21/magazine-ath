@@ -725,3 +725,55 @@ img { max-width: 100%; height: auto; display: block; }
   .mag-container, .mag-container-narrow, .mag-container-reading { padding: 0 24px; }
   .pullquote { margin: 32px 0; font-size: 22px; }
 }
+
+/* ── Family strip (cross-property nav — mirrors brand/ath-components.css
+   so magazine renders without needing a cross-origin fetch) ────────── */
+.ath-family-strip {
+  background: var(--navy-dark, #10192B);
+  color: var(--on-dark-3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.ath-family-strip-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.ath-family-strip-brand {
+  color: var(--sand);
+}
+.ath-family-strip-nav {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.ath-family-strip-nav a {
+  color: var(--on-dark-3);
+  text-decoration: none;
+  transition: color 150ms ease-out;
+}
+.ath-family-strip-nav a:hover,
+.ath-family-strip-nav a.is-current {
+  color: var(--rust-light);
+}
+.ath-family-strip-nav .ext {
+  margin-left: 4px;
+  font-size: 9px;
+  opacity: 0.7;
+}
+@media (max-width: 640px) {
+  .ath-family-strip-inner {
+    padding: 8px 16px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+  .ath-family-strip-brand { display: none; }
+  .ath-family-strip-nav { margin: 0 auto; justify-content: center; gap: 14px; }
+}
