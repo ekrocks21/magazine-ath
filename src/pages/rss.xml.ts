@@ -8,6 +8,7 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
+import { articleRoute } from '../utils/article-route';
 
 export async function GET(context: APIContext) {
   const site = context.site ?? new URL('https://magazine.abovethehook.com');
@@ -26,18 +27,14 @@ export async function GET(context: APIContext) {
     description:
       'The quarterly print magazine of Above the Hook. Coastal New Jersey, observed.',
     site,
-    items: articles.map((a) => {
-      const [issueSlug, fileName] = a.id.split('/');
-      const articleSlug = fileName.replace(/\.md$/, '');
-      return {
-        title: a.data.title,
-        description: a.data.dek ?? undefined,
-        link: `/issues/${issueSlug}/${articleSlug}`,
-        pubDate: a.data.publish_date,
-        author: a.data.byline ?? a.data.author,
-        categories: [a.data.pillar, ...a.data.tags],
-      };
-    }),
+    items: articles.map((a) => ({
+      title: a.data.title,
+      description: a.data.dek ?? undefined,
+      link: articleRoute(a).href,
+      pubDate: a.data.publish_date,
+      author: a.data.byline ?? a.data.author,
+      categories: [a.data.pillar, ...a.data.tags],
+    })),
     customData: '<language>en-us</language>',
   });
 }

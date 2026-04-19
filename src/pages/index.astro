@@ -17,6 +17,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CardIllustration from '../components/CardIllustration.astro';
 import CoverImage from '../components/CoverImage.astro';
+import { articleRoute } from '../utils/article-route';
 
 const includeDrafts =
   import.meta.env.PUBLIC_INCLUDE_DRAFTS === 'true' ||
@@ -67,8 +68,8 @@ const allArticles = await getCollection('articles', ({ data }) =>
   includeDrafts ? true : data.status !== 'draft',
 );
 
-const currentArticles = allArticles.filter((a) =>
-  a.id.startsWith(`${currentSlug}/`),
+const currentArticles = allArticles.filter(
+  (a) => a.data.issue === currentSlug,
 );
 
 const editorsLetter = currentArticles.find((a) => a.data.type === 'editors_letter');
@@ -80,7 +81,7 @@ const featured = currentArticles
 // First article drives the hero headline (split on last period for em).
 const heroArticle = featured[0] ?? editorsLetter;
 const heroTitle = heroArticle?.data.title ?? currentData.theme ?? currentData.title;
-const heroSlug = heroArticle ? heroArticle.id.split('/')[1].replace(/\.md$/, '') : '';
+const heroSlug = heroArticle ? articleRoute(heroArticle).articleSlug : '';
 
 // Split hero title into two chunks for dual-color treatment.
 function splitHeroTitle(t: string): { head: string; tail: string } {
@@ -109,7 +110,7 @@ if (editorsLetter) {
 }
 
 const editorsLetterSlug = editorsLetter
-  ? editorsLetter.id.split('/')[1].replace(/\.md$/, '')
+  ? articleRoute(editorsLetter).articleSlug
   : '';
 
 const authorsLabel = editorsLetter?.data.byline
@@ -334,7 +335,7 @@ const statusWord = {
 
         <div class="ed-card-grid">
           {featured.map((a, i) => {
-            const articleSlug = a.id.split('/')[1].replace(/\.md$/, '');
+            const { articleSlug } = articleRoute(a);
             const isFree = a.data.access === 'free' || i === 0;
             const readingMin = Math.max(1, Math.round((a.data.word_count ?? 0) / 220));
             return (

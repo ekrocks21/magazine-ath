@@ -11,6 +11,7 @@ import ArticleHeader from '../../../components/ArticleHeader.astro';
 import ArticleHeroImage from '../../../components/ArticleHeroImage.astro';
 import SmallCapsLabel from '../../../components/SmallCapsLabel.astro';
 import Gallery from '../../../components/Gallery.astro';
+import { articleRoute } from '../../../utils/article-route';
 
 // ── Static paths ──────────────────────────────────────────────────────
 // Each article under src/content/articles/[issue]/[article].md becomes
@@ -27,12 +28,7 @@ export async function getStaticPaths() {
   );
 
   return all.map((article) => {
-    // The entry `id` is the path from the content base, e.g.
-    //   "spring-2026/a-very-good-land-to-fall-with.md"
-    // Split into [issue, article].
-    const [issueSlug, articleFile] = article.id.split('/');
-    const articleSlug = articleFile.replace(/\.md$/, '');
-
+    const { issueSlug, articleSlug } = articleRoute(article);
     return {
       params: { issue: issueSlug, article: articleSlug },
       props: { article },
@@ -51,7 +47,7 @@ const data = article.data;
 // ── Related articles (same issue, exclude self, max 3) ─────────────────
 
 const siblings = (await getCollection('articles'))
-  .filter((a) => a.id.startsWith(`${data.issue}/`) && a.id !== article.id)
+  .filter((a) => a.data.issue === data.issue && a.id !== article.id)
   .slice(0, 3);
 
 // ── Reading time ──────────────────────────────────────────────────────
@@ -143,9 +139,7 @@ const ogImageResolved =
             </p>
             <ul class="list-none m-0 p-0 space-y-6">
               {siblings.map((s) => {
-                const [iSlug, fFile] = s.id.split('/');
-                const aSlug = fFile.replace(/\.md$/, '');
-                const href = `/issues/${iSlug}/${aSlug}`;
+                const { href } = articleRoute(s);
                 return (
                   <li>
                     <a

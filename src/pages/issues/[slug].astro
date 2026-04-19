@@ -12,6 +12,7 @@ import SmallCapsLabel from '../../components/SmallCapsLabel.astro';
 import IssuePartners from '../../components/IssuePartners.astro';
 import IssueColophon from '../../components/IssueColophon.astro';
 import CoverImage from '../../components/CoverImage.astro';
+import { articleRoute } from '../../utils/article-route';
 
 // Partner-pool images (Winter 2026 only right now; add future issues as needed)
 import winterBayside from '../../assets/issues/winter-2026/bayside-sunset.jpg';
@@ -44,17 +45,22 @@ const allArticles = await getCollection('articles', ({ data: d }) =>
   includeDrafts ? true : d.status !== 'draft',
 );
 
-const issueArticles = allArticles.filter((a) =>
-  a.id.startsWith(`${slug}/`),
-);
+const issueArticles = allArticles.filter((a) => a.data.issue === slug);
 
 // Editor's letter
 const editorsLetterEntry =
   (data.editors_letter
     ? issueArticles.find(
-        (a) =>
-          a.id === `${slug}/${data.editors_letter}.md` ||
-          a.id.replace(/\.md$/, '') === `${slug}/${data.editors_letter}`,
+        (a) => {
+          const last = a.id.split('/').pop() ?? '';
+          const declared = a.data.slug ?? '';
+          return (
+            a.id === `${slug}/${data.editors_letter}.md` ||
+            a.id.replace(/\.md$/, '') === `${slug}/${data.editors_letter}` ||
+            last.replace(/\.md$/, '') === data.editors_letter ||
+            declared === data.editors_letter
+          );
+        },
       )
     : undefined) ??
   issueArticles.find((a) => a.data.type === 'editors_letter');
@@ -225,7 +231,7 @@ const issueLabel = `${seasonLabel} ${data.year}`;
         </div>
         <p class="issue-letter-more">
           <a
-            href={`/issues/${slug}/${editorsLetterEntry.id.split('/')[1].replace(/\.md$/, '')}`}
+            href={articleRoute(editorsLetterEntry).href}
             class="btn-link"
           >
             Read the letter on its own page
@@ -249,7 +255,7 @@ const issueLabel = `${seasonLabel} ${data.year}`;
 
         <ul class="issue-toc-list">
           {tocArticles.map((a) => {
-            const articleSlug = a.id.split('/')[1].replace(/\.md$/, '');
+            const { articleSlug } = articleRoute(a);
             const pillarLabel = a.data.pillar
               .split('_')
               .map((w) => w.charAt(0).toUpperCase() + w.slice(1))

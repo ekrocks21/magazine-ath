@@ -172,6 +172,17 @@ const articles = defineCollection({
         pillar: z.enum(PILLARS),
         tags: z.array(z.string()).default([]),
 
+        // Optional declarative slug. Astro resolves routes from filename, so
+        // this is editorial metadata only (surviving filename renames / docs),
+        // not a route override. Accepting it in schema keeps it from being
+        // silently stripped.
+        slug: z.string().optional(),
+
+        // Cross-link to a companion artifact (e.g. a Studios YouTube video
+        // that pairs with a magazine piece). Rendered as a "Companion"
+        // callout by the article template when present.
+        companion_to: z.string().optional(),
+
         // Hero — image() makes Astro run the pipeline + emit responsive variants
         hero_image: image().optional(),
         hero_image_alt: z.string().optional(),
