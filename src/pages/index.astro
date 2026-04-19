@@ -52,7 +52,17 @@ const current = publishedIssues[0] ?? issues[0];
 const currentSlug = current.id.replace(/\.md$/, '');
 const currentData = current.data;
 
-const nextIssue = futureIssues[0];
+// "Coming Next" is the next issue to ship, not the next to publish
+// online. Spring can be live on the web (publish_date passed) and
+// still be the next issue landing in print subscribers' mailboxes.
+// We sort every issue with a future ship_date ascending and take the
+// soonest.
+const nextIssue = issues
+  .filter((i) => (i.data.ship_date?.valueOf() ?? 0) > NOW)
+  .sort(
+    (a, b) =>
+      (a.data.ship_date?.valueOf() ?? 0) - (b.data.ship_date?.valueOf() ?? 0),
+  )[0];
 const nextSlug = nextIssue?.id.replace(/\.md$/, '');
 const nextData = nextIssue?.data;
 const nextNumber = nextData
@@ -61,8 +71,8 @@ const nextNumber = nextData
 const nextSeasonLabel = nextData
   ? nextData.season.charAt(0).toUpperCase() + nextData.season.slice(1)
   : 'Summer';
-const nextPublishLabel = nextData?.publish_date
-  ? new Date(nextData.publish_date).toLocaleDateString('en-US', {
+const nextShipLabel = nextData?.ship_date
+  ? new Date(nextData.ship_date).toLocaleDateString('en-US', {
       month: 'long',
       year: 'numeric',
       timeZone: 'UTC',
@@ -711,7 +721,7 @@ const statusWord = {
               <div
                 style="margin-top: 24px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand);"
               >
-                Publishing {nextPublishLabel}
+                Shipping {nextShipLabel}
               </div>
             </div>
           </div>
