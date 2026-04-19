@@ -133,6 +133,14 @@ const editorsLetterDate = editorsLetter?.data.publication_date
 const pastIssues = publishedIssues.slice(1);
 const currentNumber = String(currentData.issue_number).padStart(2, '0');
 
+// Archive strip on the home page reads left-to-right as the magazine
+// grew ("Every issue, from the first forward") — so sort ascending
+// by issue number and show up to five slots.
+const ARCHIVE_STRIP_SLOTS = 5;
+const archiveStripIssues = [...publishedIssues]
+  .sort((a, b) => (a.data.issue_number ?? 0) - (b.data.issue_number ?? 0))
+  .slice(0, ARCHIVE_STRIP_SLOTS);
+
 // Pillar → kicker label
 function pillarLabel(p: string): string {
   return p.replace(/_/g, ' ').toUpperCase();
@@ -512,47 +520,13 @@ const statusWord = {
       </div>
 
       <div class="archive-grid">
-        <!-- Current issue -->
-        <a href={`/issues/${currentSlug}`} class="archive-card">
-          <div class="issue-cover issue-cover-small" style="opacity: 1;">
-            {currentData.cover_image ? (
-              <CoverImage
-                src={currentData.cover_image}
-                alt={currentData.cover_image_alt ?? `${currentData.title} cover`}
-                widths={[240, 360, 480]}
-                sizes="(min-width: 1200px) 220px, (min-width: 640px) 22vw, 40vw"
-                loading="lazy"
-              />
-            ) : (
-              <svg viewBox="0 0 300 400" role="img" aria-label={`${currentData.title} cover`}>
-                <rect width="300" height="400" fill="#FDFAF5" />
-                <circle cx="230" cy="130" r="22" fill="#C4583E" opacity="0.35" />
-                <path d="M0 240 L60 218 L140 210 L220 214 L300 222 L300 290 L0 290 Z" fill="#8B3A2A" opacity="0.14" />
-                <text x="150" y="80" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">ABOVE THE HOOK</text>
-                <text x="150" y="180" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-weight="700" fill="#1A1208">The Local</text>
-                <text x="150" y="220" text-anchor="middle" font-family="'Playfair Display', serif" font-size="34" font-style="italic" fill="#8B3A2A">Lookout</text>
-                <text x="150" y="350" text-anchor="middle" font-family="'Playfair Display', serif" font-size="16" font-style="italic" fill="#3D3020">{currentData.theme ?? 'Return'}</text>
-                <text x="150" y="378" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" letter-spacing="3" fill="#7A6F5F">NO. {currentNumber} · SPRING 2026</text>
-              </svg>
-            )}
-          </div>
-          <div class="archive-meta">
-            No. {currentNumber}<span style="margin: 0 0.5em; color: var(--sand);">·</span>Spring 2026
-          </div>
-          <div class="archive-theme">{currentData.theme ?? currentData.title}</div>
-        </a>
-
-        {pastIssues.slice(0, 4).map((i) => {
+        {archiveStripIssues.map((i) => {
           const iSlug = i.id.replace(/\.md$/, '');
           const iSeason = i.data.season.charAt(0).toUpperCase() + i.data.season.slice(1);
           const iNumber = String(i.data.issue_number).padStart(2, '0');
-          const isPublished = i.data.status === 'published' || i.data.status === 'archived';
           return (
             <a href={`/issues/${iSlug}`} class="archive-card">
-              <div
-                class="issue-cover issue-cover-small"
-                style={isPublished ? 'opacity: 1;' : 'opacity: 0.38; filter: grayscale(0.6);'}
-              >
+              <div class="issue-cover issue-cover-small" style="opacity: 1;">
                 {i.data.cover_image ? (
                   <CoverImage
                     src={i.data.cover_image}
@@ -579,8 +553,8 @@ const statusWord = {
           );
         })}
 
-        {/* Pad to 5 cols with placeholders if fewer than 4 past issues */}
-        {Array.from({ length: Math.max(0, 4 - pastIssues.length) }).map((_, idx) => (
+        {/* Pad remaining slots with placeholders so the strip always fills 5 cols */}
+        {Array.from({ length: Math.max(0, ARCHIVE_STRIP_SLOTS - archiveStripIssues.length) }).map(() => (
           <div class="archive-card" style="pointer-events: none;">
             <div class="issue-cover issue-cover-small" style="opacity: 0.24; filter: grayscale(0.8);">
               <svg viewBox="0 0 300 400" role="img" aria-label="Future issue">
