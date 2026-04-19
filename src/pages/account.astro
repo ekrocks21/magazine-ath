@@ -1,0 +1,728 @@
+---
+/**
+ * /account — first-party account management.
+ *
+ * Static Astro shell. All state comes from the Worker's
+ * /api/account/status endpoint on load. Cancel / resume / change-tier
+ * actions POST to their respective endpoints, then re-fetch status.
+ *
+ * This page does not gate on auth at render time — the client-side
+ * script handles the "not signed in" state and prompts the user to
+ * sign in via magic link.
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Your account"
+  description="Manage your subscription to The Local Lookout."
+  ogImage="/og/default.png"
+>
+  <section class="account-section">
+    <div class="account-container">
+
+      <!-- State: loading (shown until /api/account/status resolves) -->
+      <div data-account-state="loading">
+        <p class="account-loading">Loading your account…</p>
+      </div>
+
+      <!-- State: not signed in -->
+      <div data-account-state="anon" hidden>
+        <div class="kicker">Sign in</div>
+        <h1 class="account-title">You're not signed in.</h1>
+        <p class="account-lead">
+          To manage your subscription, sign in with a magic link sent
+          to your email.
+        </p>
+        <div class="account-actions">
+          <a href="/signin" class="btn-primary">Sign in</a>
+          <a href="/subscribe" class="btn-ghost">See tiers</a>
+        </div>
+      </div>
+
+      <!-- State: signed in -->
+      <div data-account-state="signed-in" hidden>
+        <div class="kicker">Your account</div>
+        <h1 class="account-title">Signed in.</h1>
+        <div class="account-email" data-field="email"></div>
+
+        <!-- Banner: cancellation scheduled -->
+        <div class="account-banner account-banner--cancelling" data-when="cancelling" hidden>
+          <strong>Your subscription is set to cancel.</strong>
+          <span data-field="cancel-on"></span>
+          <button type="button" class="btn-inline" data-action="resume">Resume subscription</button>
+        </div>
+
+        <!-- Current plan card -->
+        <div class="account-card" data-when="has-subscription" hidden>
+          <div class="card-head">
+            <div class="card-kicker">Current plan</div>
+            <span class="tier-badge" data-field="tier-badge"></span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Price</span>
+            <span class="card-value" data-field="price"></span>
+          </div>
+          <div class="card-row">
+            <span class="card-label" data-field="renewal-label">Next renewal</span>
+            <span class="card-value" data-field="renewal-date"></span>
+          </div>
+          <div class="card-row" data-when="has-card" hidden>
+            <span class="card-label">Payment</span>
+            <span class="card-value" data-field="card"></span>
+          </div>
+        </div>
+
+        <!-- No active subscription -->
+        <div class="account-empty" data-when="no-subscription" hidden>
+          <p>You're signed in, but there's no active subscription on this email.</p>
+          <a href="/subscribe" class="btn-primary">Pick a tier</a>
+        </div>
+
+        <!-- Change plan -->
+        <div class="account-section-block" data-when="has-subscription" hidden>
+          <h2 class="section-heading">Change plan</h2>
+          <p class="section-lead">
+            Switch between tiers at any time. Stripe prorates the
+            charge automatically — you won't lose or double-pay.
+          </p>
+          <div class="account-plan-options">
+            <button
+              type="button"
+              class="plan-option"
+              data-action="change-tier"
+              data-tier="digital"
+            >
+              <span class="plan-option-name">Digital</span>
+              <span class="plan-option-price">$10 / month</span>
+              <span class="plan-option-current" data-when-tier="digital">Current plan</span>
+              <span class="plan-option-cta" data-when-not-tier="digital">Switch →</span>
+            </button>
+            <button
+              type="button"
+              class="plan-option"
+              data-action="change-tier"
+              data-tier="print"
+            >
+              <span class="plan-option-name">Print + Digital</span>
+              <span class="plan-option-price">$75 / quarter</span>
+              <span class="plan-option-current" data-when-tier="print">Current plan</span>
+              <span class="plan-option-cta" data-when-not-tier="print">Switch →</span>
+            </button>
+          </div>
+
+          <!-- Inline tier-change confirmation -->
+          <div class="account-confirm" data-confirm="change-tier" hidden>
+            <p class="confirm-body">
+              Switch to <strong data-field="confirm-tier-label"></strong>
+              <span data-field="confirm-tier-price"></span>?
+              Stripe will prorate. Your next bill runs on your current
+              cycle end date.
+            </p>
+            <div class="confirm-actions">
+              <button type="button" class="btn-primary" data-action="change-tier-confirm">Yes, switch</button>
+              <button type="button" class="btn-ghost" data-action="dismiss-confirm">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment method update -->
+        <div class="account-section-block" data-when="has-subscription" hidden>
+          <h2 class="section-heading">Payment method</h2>
+          <p class="section-lead">
+            To keep your card details off our servers, the update form
+            lives with Stripe. You'll come right back here when done.
+          </p>
+          <a href="/api/account/payment-portal" class="btn-primary">Update card on file</a>
+        </div>
+
+        <!-- Issue purchases (if any) -->
+        <div class="account-section-block" data-when="has-issue-entitlements" hidden>
+          <h2 class="section-heading">Single-issue purchases</h2>
+          <ul class="account-issue-list" data-field="issue-entitlements"></ul>
+        </div>
+
+        <!-- Cancel -->
+        <div class="account-section-block account-danger" data-when="can-cancel" hidden>
+          <h2 class="section-heading">Cancel subscription</h2>
+          <p class="section-lead">
+            Cancel anytime. You'll keep access until the end of your
+            current billing period, then we stop billing.
+          </p>
+          <button type="button" class="btn-ghost btn-danger" data-action="cancel">Cancel subscription</button>
+
+          <div class="account-confirm" data-confirm="cancel" hidden>
+            <p class="confirm-body">
+              Cancel your subscription? You'll keep reading until
+              <strong data-field="confirm-cancel-date"></strong>. No
+              further charges after that.
+            </p>
+            <div class="confirm-actions">
+              <button type="button" class="btn-primary btn-danger" data-action="cancel-confirm">Yes, cancel</button>
+              <button type="button" class="btn-ghost" data-action="dismiss-confirm">Keep subscription</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sign out (always visible when signed in) -->
+        <div class="account-section-block">
+          <h2 class="section-heading">Sign out</h2>
+          <form method="POST" action="/api/logout">
+            <button type="submit" class="btn-ghost">Sign out of this device</button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- Error banner (any state) -->
+      <div class="account-error" data-account-error hidden>
+        <strong>Something went wrong.</strong>
+        <span data-field="error-message"></span>
+        <button type="button" class="btn-inline" data-action="dismiss-error">Dismiss</button>
+      </div>
+
+    </div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      var TIER_LABEL = { digital: 'Digital', print: 'Print + Digital' };
+      var TIER_PRICE = {
+        digital: '$10 / month',
+        print:   '$75 / quarter',
+      };
+
+      var root = document.querySelector('.account-container');
+      if (!root) return;
+
+      var pendingTierChange = null; // holds the tier string during confirmation
+
+      refresh();
+
+      // ── Event delegation ────────────────────────────────────────
+      root.addEventListener('click', function (ev) {
+        var t = ev.target;
+        while (t && t !== root && !t.getAttribute) t = t.parentNode;
+        if (!t || t === root) return;
+
+        var action = t.getAttribute('data-action');
+        if (!action) return;
+
+        if (action === 'change-tier') {
+          var tier = t.getAttribute('data-tier');
+          if (!tier) return;
+          // Skip confirm if this is the current tier (button is a no-op).
+          if (root.getAttribute('data-current-tier') === tier) return;
+          pendingTierChange = tier;
+          showConfirm('change-tier', {
+            'confirm-tier-label': TIER_LABEL[tier] || tier,
+            'confirm-tier-price': ' (' + (TIER_PRICE[tier] || '') + ')',
+          });
+        } else if (action === 'change-tier-confirm') {
+          if (!pendingTierChange) return;
+          doChangeTier(pendingTierChange);
+        } else if (action === 'cancel') {
+          var d = root.getAttribute('data-period-end-label') || 'your current period end';
+          showConfirm('cancel', { 'confirm-cancel-date': d });
+        } else if (action === 'cancel-confirm') {
+          doCancel();
+        } else if (action === 'resume') {
+          doResume();
+        } else if (action === 'dismiss-confirm') {
+          hideConfirms();
+          pendingTierChange = null;
+        } else if (action === 'dismiss-error') {
+          hide('[data-account-error]');
+        }
+      });
+
+      // ── API calls ───────────────────────────────────────────────
+      function refresh() {
+        show('[data-account-state="loading"]');
+        hide('[data-account-state="anon"]');
+        hide('[data-account-state="signed-in"]');
+
+        fetch('/api/account/status', { credentials: 'same-origin', cache: 'no-store' })
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)); })
+          .then(render)
+          .catch(function (err) {
+            hide('[data-account-state="loading"]');
+            showError(err.message || 'Failed to load account');
+            show('[data-account-state="anon"]');
+          });
+      }
+
+      function doCancel() {
+        postJson('/api/account/cancel', {})
+          .then(function () { hideConfirms(); refresh(); })
+          .catch(function (err) { showError('Cancel failed: ' + err.message); });
+      }
+
+      function doResume() {
+        postJson('/api/account/resume', {})
+          .then(refresh)
+          .catch(function (err) { showError('Resume failed: ' + err.message); });
+      }
+
+      function doChangeTier(tier) {
+        postForm('/api/account/change-tier', { tier: tier })
+          .then(function () { hideConfirms(); pendingTierChange = null; refresh(); })
+          .catch(function (err) { showError('Plan change failed: ' + err.message); });
+      }
+
+      function postJson(url, body) {
+        return fetch(url, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        }).then(handleResponse);
+      }
+
+      function postForm(url, body) {
+        var params = new URLSearchParams();
+        for (var k in body) params.append(k, body[k]);
+        return fetch(url, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString(),
+        }).then(handleResponse);
+      }
+
+      function handleResponse(r) {
+        if (r.ok) return r.json();
+        return r.json().then(
+          function (j) { throw new Error(j.error || ('HTTP ' + r.status)); },
+          function () { throw new Error('HTTP ' + r.status); },
+        );
+      }
+
+      // ── Render ──────────────────────────────────────────────────
+      function render(data) {
+        hide('[data-account-state="loading"]');
+        hide('[data-account-error]');
+
+        if (!data.signedIn) {
+          show('[data-account-state="anon"]');
+          return;
+        }
+        show('[data-account-state="signed-in"]');
+
+        // Email
+        setText('[data-field="email"]', data.email);
+
+        // Subscription state blocks
+        var hasSub = data.tier === 'digital' || data.tier === 'print';
+        toggle('[data-when="has-subscription"]', hasSub);
+        toggle('[data-when="no-subscription"]', !hasSub);
+
+        if (hasSub) {
+          setText('[data-field="tier-badge"]', TIER_LABEL[data.tier] || data.tier);
+          setText('[data-field="price"]', formatPrice(data));
+          var periodEndLabel = formatDate(data.current_period_end);
+          root.setAttribute('data-current-tier', data.tier);
+          root.setAttribute('data-period-end-label', periodEndLabel);
+
+          // Cancelling vs active
+          var cancelling = data.status === 'cancelling';
+          toggle('[data-when="cancelling"]', cancelling);
+          toggle('[data-when="can-cancel"]', !cancelling);
+          if (cancelling) {
+            setText('[data-field="cancel-on"]', ' Access ends on ' + periodEndLabel + '.');
+            var renewalLabel = root.querySelector('[data-field="renewal-label"]');
+            if (renewalLabel) renewalLabel.textContent = 'Access ends';
+          }
+          setText('[data-field="renewal-date"]', periodEndLabel);
+
+          // Card
+          if (data.card) {
+            toggle('[data-when="has-card"]', true);
+            setText('[data-field="card"]', capitalize(data.card.brand) + ' ending ' + data.card.last4);
+          } else {
+            toggle('[data-when="has-card"]', false);
+          }
+
+          // Mark which plan option is current
+          var options = root.querySelectorAll('[data-action="change-tier"]');
+          for (var i = 0; i < options.length; i++) {
+            var opt = options[i];
+            var optTier = opt.getAttribute('data-tier');
+            var isCurrent = optTier === data.tier;
+            opt.classList.toggle('plan-option--current', isCurrent);
+            opt.setAttribute('aria-current', isCurrent ? 'true' : 'false');
+            var currentLabel = opt.querySelector('[data-when-tier="' + optTier + '"]');
+            var switchLabel = opt.querySelector('[data-when-not-tier="' + optTier + '"]');
+            if (currentLabel) currentLabel.hidden = !isCurrent;
+            if (switchLabel) switchLabel.hidden = isCurrent;
+          }
+        }
+
+        // Issue entitlements list
+        var issues = data.issue_entitlements || [];
+        toggle('[data-when="has-issue-entitlements"]', issues.length > 0);
+        if (issues.length > 0) {
+          var ul = root.querySelector('[data-field="issue-entitlements"]');
+          if (ul) {
+            ul.innerHTML = '';
+            for (var j = 0; j < issues.length; j++) {
+              var li = document.createElement('li');
+              li.textContent = prettyIssueSlug(issues[j]);
+              ul.appendChild(li);
+            }
+          }
+        }
+      }
+
+      // ── UI helpers ──────────────────────────────────────────────
+      function show(sel) {
+        var el = root.querySelector(sel);
+        if (el) el.removeAttribute('hidden');
+      }
+      function hide(sel) {
+        var el = root.querySelector(sel);
+        if (el) el.setAttribute('hidden', '');
+      }
+      function toggle(sel, on) {
+        var els = root.querySelectorAll(sel);
+        for (var i = 0; i < els.length; i++) {
+          if (on) els[i].removeAttribute('hidden');
+          else    els[i].setAttribute('hidden', '');
+        }
+      }
+      function setText(sel, text) {
+        var el = root.querySelector(sel);
+        if (el) el.textContent = text;
+      }
+      function showConfirm(name, fields) {
+        hideConfirms();
+        var panel = root.querySelector('[data-confirm="' + name + '"]');
+        if (!panel) return;
+        for (var k in fields) {
+          var f = panel.querySelector('[data-field="' + k + '"]');
+          if (f) f.textContent = fields[k];
+        }
+        panel.removeAttribute('hidden');
+        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      function hideConfirms() {
+        var panels = root.querySelectorAll('[data-confirm]');
+        for (var i = 0; i < panels.length; i++) panels[i].setAttribute('hidden', '');
+      }
+      function showError(msg) {
+        var box = root.querySelector('[data-account-error]');
+        if (!box) return;
+        var m = box.querySelector('[data-field="error-message"]');
+        if (m) m.textContent = ' ' + msg;
+        box.removeAttribute('hidden');
+      }
+
+      // ── Formatting ──────────────────────────────────────────────
+      function formatPrice(d) {
+        if (d.amount_cents == null) return '';
+        var amt = '$' + (d.amount_cents / 100).toFixed(2).replace(/\.00$/, '');
+        if (d.interval) {
+          var count = d.interval_count && d.interval_count !== 1 ? d.interval_count + ' ' : '';
+          amt += ' / ' + count + d.interval + (d.interval_count > 1 ? 's' : '');
+        }
+        return amt;
+      }
+      function formatDate(unix) {
+        if (!unix) return '';
+        var d = new Date(unix * 1000);
+        return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      }
+      function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+      function prettyIssueSlug(s) {
+        return s.split('-').map(function (w) {
+          return w.charAt(0).toUpperCase() + w.slice(1);
+        }).join(' ');
+      }
+    })();
+  </script>
+</BaseLayout>
+
+<style>
+  .account-section {
+    padding: 96px 0 120px;
+    min-height: 60vh;
+  }
+  .account-container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+  .account-title {
+    margin: 12px 0 8px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 2.6rem);
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .account-email {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+  .account-lead {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 8px 0 24px;
+  }
+  .account-loading {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+    padding: 40px 0;
+  }
+
+  .account-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  .account-banner {
+    margin: 24px 0;
+    padding: 16px 20px;
+    border: 1px solid var(--sand);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .account-banner--cancelling {
+    background: #FCEEE6;
+    border-color: var(--rust);
+    color: var(--ink);
+  }
+  .account-banner strong { display: inline; }
+
+  .account-card {
+    margin: 24px 0;
+    background: #fff;
+    border: 1px solid var(--sand);
+    padding: 24px 28px;
+  }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--sand);
+  }
+  .card-kicker {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tier-badge {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .card-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-family: var(--font-body);
+    font-size: 15px;
+  }
+  .card-label { color: var(--muted); }
+  .card-value { color: var(--ink); }
+
+  .account-section-block {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--sand);
+  }
+  .section-heading {
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2.2vw, 1.6rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+    color: var(--ink);
+  }
+  .section-lead {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+    max-width: 56ch;
+  }
+
+  .account-plan-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .plan-option {
+    background: #fff;
+    border: 1px solid var(--sand);
+    padding: 20px 18px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    transition: border-color 0.15s ease-out, background 0.15s ease-out;
+    font-family: var(--font-body);
+  }
+  .plan-option:hover:not(.plan-option--current) {
+    border-color: var(--rust);
+    background: #FCF8F2;
+  }
+  .plan-option--current {
+    border-color: var(--rust);
+    border-width: 2px;
+    cursor: default;
+  }
+  .plan-option-name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .plan-option-price {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .plan-option-current {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+  .plan-option-cta {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+
+  .account-confirm {
+    margin-top: 20px;
+    padding: 20px 22px;
+    border: 1px solid var(--rust);
+    background: #FCF8F2;
+  }
+  .confirm-body {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0 0 16px;
+    color: var(--ink);
+  }
+  .confirm-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .account-issue-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .account-issue-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--sand);
+    font-family: var(--font-body);
+    font-size: 15px;
+  }
+  .account-issue-list li:first-child { border-top: 1px solid var(--sand); }
+
+  .account-empty {
+    background: #fff;
+    border: 1px solid var(--sand);
+    padding: 24px 28px;
+    margin: 24px 0;
+  }
+  .account-empty p {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0 0 16px;
+  }
+
+  .account-danger { border-top-color: var(--rust); }
+
+  .account-error {
+    margin-top: 24px;
+    padding: 14px 18px;
+    background: #FDECEC;
+    border: 1px solid #C9462D;
+    color: #7A1E0F;
+    font-family: var(--font-body);
+    font-size: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* Buttons */
+  .btn-primary, .btn-ghost, .btn-inline {
+    display: inline-block;
+    padding: 12px 20px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border: 1px solid var(--rust);
+    background: transparent;
+    color: var(--rust);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s ease-out, color 0.15s ease-out;
+  }
+  .btn-primary { background: var(--rust); color: #fff; }
+  .btn-primary:hover { background: var(--rust-light, #C4583E); border-color: var(--rust-light, #C4583E); }
+  .btn-ghost:hover { background: var(--rust); color: #fff; }
+  .btn-inline {
+    padding: 6px 12px;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    margin-left: auto;
+  }
+  .btn-danger { border-color: #C9462D; color: #C9462D; }
+  .btn-danger.btn-primary { background: #C9462D; color: #fff; }
+  .btn-danger.btn-ghost:hover { background: #C9462D; color: #fff; }
+
+  @media (max-width: 640px) {
+    .account-plan-options { grid-template-columns: 1fr; }
+  }
+</style>
