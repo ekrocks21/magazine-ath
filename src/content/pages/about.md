@@ -47,9 +47,8 @@ slowest of them, and the one that is meant to last longest.
 
 ## The magazine itself
 
-Set in Fraunces, Source Serif 4, and Inter. Printed on uncoated stock.
-Approximately eighty pages per issue. Shipped to subscribers in time with
-the season it covers.
+Set in Fraunces, Source Serif 4, and Inter. Printed on uncoated stock,
+and shipped to subscribers in time with the season it covers.
 
 Digital editions of each issue are available at this site.
 
