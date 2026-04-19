@@ -120,7 +120,7 @@ const singleIssueOptions = allIssues
             <li>Everything in Digital</li>
             <li>Four printed issues a year</li>
             <li>Mailed from Highlands, NJ</li>
-            <li>Subscriber-only cover variants</li>
+            <li>Back issues at half price ($50)</li>
           </ul>
           <form method="POST" action="/api/checkout" class="tier-form">
             <input type="hidden" name="tier" value="print" />
@@ -147,6 +147,10 @@ const singleIssueOptions = allIssues
               One printed copy, plus digital access to that issue.
               For readers who want one specific issue without a
               subscription, or to gift the magazine one time.
+              <span class="single-issue-sub-note">
+                Print subscribers buy extras at $50 — sign in first
+                and the price adjusts automatically.
+              </span>
             </p>
           </div>
         </div>
@@ -155,7 +159,7 @@ const singleIssueOptions = allIssues
             <p class="single-issue-empty">No issues available for single purchase yet.</p>
           ) : (
             singleIssueOptions.map((i) => (
-              <form method="POST" action="/api/checkout" class="single-issue-card">
+              <form method="POST" action="/api/checkout" class="single-issue-card" data-single-issue-form>
                 <input type="hidden" name="tier" value="single" />
                 <input type="hidden" name="issue" value={i.slug} />
                 <div class="single-issue-card-num">
@@ -165,8 +169,8 @@ const singleIssueOptions = allIssues
                 {i.theme && (
                   <div class="single-issue-card-theme">{i.theme}</div>
                 )}
-                <button type="submit" class="single-issue-card-cta">
-                  Buy — $100 →
+                <button type="submit" class="single-issue-card-cta" data-single-issue-cta>
+                  Buy — <span data-single-issue-price>$100</span> →
                 </button>
               </form>
             ))
@@ -468,6 +472,14 @@ const singleIssueOptions = allIssues
     color: var(--ink-soft);
     max-width: 62ch;
     margin: 0;
+  }
+  .single-issue-sub-note {
+    display: block;
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--rust);
   }
   .single-issue-grid {
     display: grid;

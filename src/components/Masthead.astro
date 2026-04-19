@@ -89,9 +89,27 @@ function isActiveFor(href: string): boolean {
           subscribeCta.setAttribute('hidden', '');
           accountCta.removeAttribute('hidden');
         }
-        unlockGatedCards(data.entitlements || []);
+        var entitlements = data.entitlements || [];
+        unlockGatedCards(entitlements);
+        applySubscriberPricing(entitlements);
       })
       .catch(function () { /* offline / Worker not in front — keep defaults */ });
+
+    /* For Print subscribers, single-issue back-issue purchases drop
+       from $100 to $50. The Worker enforces this server-side; here
+       we just flip the visible button price so subscribers see the
+       right number before clicking through to Stripe. */
+    function applySubscriberPricing(entitlements) {
+      var isPrint = false;
+      for (var i = 0; i < entitlements.length; i++) {
+        if (entitlements[i].tier === 'print') { isPrint = true; break; }
+      }
+      if (!isPrint) return;
+      var priceEls = document.querySelectorAll('[data-single-issue-price]');
+      for (var j = 0; j < priceEls.length; j++) {
+        priceEls[j].textContent = '$50';
+      }
+    }
 
     /* For each subscriber-only card, decide if the reader's active
        entitlements cover the card's issue. Digital and print are

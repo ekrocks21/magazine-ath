@@ -323,15 +323,17 @@ const issueLabel = `${seasonLabel} ${data.year}`;
             hundred dollars includes the mailed copy and digital
             access to this issue.
           </p>
-          <form method="POST" action="/api/checkout" class="order-print-cta">
+          <form method="POST" action="/api/checkout" class="order-print-cta" data-single-issue-form>
             <input type="hidden" name="tier" value="single" />
             <input type="hidden" name="issue" value={slug} />
-            <button type="submit" class="btn-primary">
-              Buy this issue — $100 <span class="arrow">→</span>
+            <button type="submit" class="btn-primary" data-single-issue-cta>
+              Buy this issue — <span data-single-issue-price>$100</span> <span class="arrow">→</span>
             </button>
           </form>
           <p class="order-print-note">
-            Already a print subscriber? Your copy ships automatically.
+            Print subscribers: your quarterly copy ships automatically
+            — back issues and extras are half price ($50) when you're
+            signed in.
           </p>
         </div>
       </div>
