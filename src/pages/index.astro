@@ -179,20 +179,22 @@ const archiveStripCards = archiveStripEntries.map((entry, idx) => {
 });
 
 /**
- * Format a ship_date for the archive strip. Returns either
- * "SHIPPED MAR 31, 2026" (past) or "ANTICIPATED JUN 30" (future).
- * Year is omitted on anticipated dates when they're in the current
- * year to keep the label compact.
+ * Format a ship_date for the archive strip. Compares the ship_date
+ * itself against today — an issue can be "published" (digital live)
+ * but not yet shipped (print still en route). Past → "Shipped MMM DD,
+ * YYYY"; future → "Ships MMM DD[, YYYY]" (year omitted inside the
+ * current calendar year for compactness).
  */
-function formatShipLabel(date: Date | undefined, isFuture: boolean): string | null {
+function formatShipLabel(date: Date | undefined): string | null {
   if (!date) return null;
   const month = date.toLocaleDateString('en-US', { month: 'short' });
   const day = date.getDate();
   const year = date.getFullYear();
-  if (isFuture) {
+  const isFutureShip = date.valueOf() > NOW;
+  if (isFutureShip) {
     return year === CURRENT_YEAR
-      ? `Anticipated ${month} ${day}`
-      : `Anticipated ${month} ${day}, ${year}`;
+      ? `Ships ${month} ${day}`
+      : `Ships ${month} ${day}, ${year}`;
   }
   return `Shipped ${month} ${day}, ${year}`;
 }
@@ -584,8 +586,13 @@ const statusWord = {
             variant === 'current' ? 'Current' :
             variant === 'next'    ? 'Next'    :
             variant === 'later'   ? 'Later'   : 'Past';
-          const isFuture = status === 'future';
-          const shipLabel = formatShipLabel(i.data.ship_date, isFuture);
+          // Ship styling tracks the ship_date, not the issue's publish
+          // status — an issue can be "current" (digital live) while the
+          // print copy still ships in the future, and the label needs to
+          // read that way too.
+          const isFutureShip =
+            !!i.data.ship_date && i.data.ship_date.valueOf() > NOW;
+          const shipLabel = formatShipLabel(i.data.ship_date);
           return (
             <a
               href={`/issues/${iSlug}`}
@@ -629,7 +636,7 @@ const statusWord = {
               </div>
               <div class="archive-theme">{i.data.theme ?? '—'}</div>
               {shipLabel && (
-                <div class:list={['archive-ship', isFuture ? 'archive-ship--future' : 'archive-ship--past']}>
+                <div class:list={['archive-ship', isFutureShip ? 'archive-ship--future' : 'archive-ship--past']}>
                   {shipLabel}
                 </div>
               )}
