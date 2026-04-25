@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sail4th 250 — The Fleet — The Local Lookout · Spring 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1B2E4B; --rust:#8B3A2A; --rust-light:#C4583E;
+  --cream:#F5F0E8; --cream-dark:#EDE7D9; --paper:#FDFAF5;
+  --ink:#1A1208; --ink-soft:#3D3020; --sand:#C9B99A;
+  --sand-light:#E0D5C0; --muted:#7A6F5F; --gold:#C9A84C;
+  --serif:"Playfair Display",Georgia,serif;
+  --body:"Source Serif 4",Georgia,serif;
+  --mono:"DM Mono",monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:18px;}
+body{background:var(--cream);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;}
+::selection{background:var(--rust);color:var(--cream);}
+img{display:block;max-width:100%;}
+
+/* MASTHEAD */
+.masthead{background:var(--navy);border-bottom:3px solid var(--rust);padding:16px 60px;display:flex;align-items:center;justify-content:space-between;}
+.masthead-title{font-family:var(--serif);font-weight:700;font-size:20px;color:var(--cream);letter-spacing:0.01em;}
+.masthead-title em{font-style:italic;font-weight:400;}
+.masthead-right{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(201,185,154,0.45);text-align:right;}
+
+/* ISSUE OPENER */
+.issue-stripe{background:var(--cream-dark);border-bottom:1px solid var(--sand-light);padding:12px 60px;display:flex;align-items:center;justify-content:space-between;}
+.issue-label{font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--rust);}
+.issue-nav{display:flex;gap:24px;}
+.issue-nav a{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.15s;}
+.issue-nav a:hover{color:var(--navy);}
+.issue-nav a.active{color:var(--navy);}
+
+/* FEATURE OPENER — FULL BLEED */
+.feature-opener{background:var(--navy);position:relative;overflow:hidden;min-height:80vh;display:flex;flex-direction:column;justify-content:flex-end;}
+.feature-opener-img{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg, #0d1a2e 0%, #1b2e4b 40%, #243d63 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+/* IMAGE PLACEHOLDER — HERO */
+.img-placeholder{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0.15;
+  font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--cream);gap:12px;
+}
+.img-placeholder-icon{font-size:48px;opacity:0.4;}
+.img-placeholder-label{letter-spacing:0.25em;}
+.img-placeholder-sub{font-size:8px;opacity:0.6;letter-spacing:0.2em;}
+
+/* Image placeholder for ship cards */
+.ship-img-placeholder{
+  width:100%;aspect-ratio:16/9;
+  background:linear-gradient(135deg,#0d1720 0%,#1b2e4b 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;
+  font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(201,185,154,0.3);
+  border-bottom:1px solid rgba(201,185,154,0.1);
+}
+.ship-img-placeholder .icon{font-size:28px;opacity:0.2;}
+
+.feature-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(27,46,75,0.96) 0%,rgba(27,46,75,0.6) 50%,transparent 100%);
+}
+.feature-content{
+  position:relative;z-index:2;
+  padding:80px 60px 72px;
+  max-width:1100px;
+}
+.feature-kicker{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.32em;text-transform:uppercase;
+  color:var(--rust-light);margin-bottom:20px;
+  display:flex;align-items:center;gap:14px;
+}
+.feature-kicker::before{content:'';width:32px;height:1px;background:var(--rust-light);}
+.feature-headline{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(44px,7vw,88px);
+  color:var(--cream);line-height:1.0;letter-spacing:-0.025em;
+  margin-bottom:24px;
+}
+.feature-headline em{font-style:italic;font-weight:400;color:rgba(245,240,232,0.7);}
+.feature-dek{
+  font-family:var(--body);font-style:italic;
+  font-size:clamp(16px,1.8vw,22px);
+  color:rgba(245,240,232,0.65);line-height:1.55;max-width:620px;
+  margin-bottom:36px;
+}
+.feature-byline{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(201,185,154,0.5);
+}
+
+/* INTRO SECTION */
+.intro-section{background:var(--paper);border-bottom:1px solid var(--sand-light);padding:72px 60px;}
+.intro-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr;gap:80px;align-items:start;}
+.intro-text{}
+.intro-dropcap::first-letter{
+  font-family:var(--serif);font-weight:700;font-size:5.5rem;
+  float:left;line-height:0.78;margin:8px 12px 0 0;color:var(--rust);
+}
+.intro-dropcap{font-family:var(--body);font-size:17px;color:var(--ink-soft);line-height:1.85;margin-bottom:22px;}
+.intro-body{font-family:var(--body);font-size:16px;color:var(--ink-soft);line-height:1.85;}
+.intro-body p{margin-bottom:18px;}
+.intro-body p:last-child{margin-bottom:0;}
+.intro-sidebar{}
+.sidebar-stat{padding:20px 0;border-bottom:1px solid var(--sand-light);}
+.sidebar-stat:first-child{border-top:1px solid var(--sand-light);}
+.sidebar-stat-num{font-family:var(--serif);font-weight:700;font-size:44px;color:var(--navy);line-height:1;}
+.sidebar-stat-label{font-family:var(--mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-top:5px;}
+.sidebar-pullquote{
+  margin-top:32px;
+  font-family:var(--serif);font-style:italic;
+  font-size:18px;color:var(--navy);line-height:1.5;
+  padding-left:20px;border-left:4px solid var(--rust);
+}
+
+/* SECTION DIVIDER */
+.section-divider{
+  background:var(--navy);
+  padding:40px 60px;
+  display:flex;align-items:center;gap:24px;
+}
+.section-divider-rule{flex:1;height:1px;background:rgba(201,185,154,0.2);}
+.section-divider-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--rust-light);white-space:nowrap;
+}
+.section-divider-num{
+  font-family:var(--serif);font-weight:700;font-size:14px;
+  color:rgba(201,185,154,0.25);
+}
+
+/* FLEET GRID */
+.fleet-section{background:var(--cream);padding:0 0 80px;}
+.fleet-header{padding:60px 60px 40px;max-width:1100px;margin:0 auto;}
+.fleet-header-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:var(--rust);margin-bottom:10px;}
+.fleet-header-title{font-family:var(--serif);font-weight:700;font-size:clamp(30px,4vw,48px);color:var(--navy);line-height:1.1;letter-spacing:-0.02em;}
+.fleet-header-rule{width:40px;height:3px;background:var(--rust);margin:16px 0 20px;}
+.fleet-header-dek{font-family:var(--body);font-style:italic;font-size:16px;color:var(--ink-soft);line-height:1.65;max-width:600px;}
+
+.fleet-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--sand-light);
+  border:1px solid var(--sand-light);
+  margin:0 60px;
+}
+
+/* SHIP CARD */
+.ship-card{
+  background:var(--paper);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transition:background 0.2s;
+}
+.ship-card:hover{background:#FAF6EF;}
+.ship-card-img-wrap{position:relative;overflow:hidden;}
+.ship-card-img-wrap img{width:100%;height:220px;object-fit:cover;display:block;}
+.ship-card-flag{
+  position:absolute;top:14px;left:14px;
+  font-family:var(--mono);font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  background:rgba(27,46,75,0.9);color:var(--cream);
+  padding:4px 10px;
+  backdrop-filter:blur(4px);
+}
+.ship-card-class{
+  position:absolute;top:14px;right:14px;
+  font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;
+  background:rgba(139,58,42,0.9);color:var(--cream);
+  padding:4px 10px;
+}
+.ship-card-body{padding:24px 22px 28px;flex:1;display:flex;flex-direction:column;}
+.ship-card-name{
+  font-family:var(--serif);font-weight:700;
+  font-size:20px;color:var(--navy);line-height:1.15;
+  margin-bottom:4px;letter-spacing:-0.01em;
+}
+.ship-card-country{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--rust);margin-bottom:14px;
+}
+.ship-card-desc{
+  font-family:var(--body);font-size:13px;color:var(--ink-soft);line-height:1.7;flex:1;
+  margin-bottom:16px;
+}
+.ship-card-specs{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;
+  border-top:1px solid var(--sand-light);padding-top:14px;margin-top:auto;
+}
+.spec-item{}
+.spec-label{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+.spec-value{font-family:var(--mono);font-size:10px;color:var(--navy);margin-top:2px;letter-spacing:0.04em;}
+
+/* FEATURED LARGE SHIPS */
+.featured-ships{background:var(--navy);padding:72px 60px;}
+.featured-inner{max-width:1100px;margin:0 auto;}
+.featured-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:var(--rust-light);margin-bottom:10px;}
+.featured-title{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4vw,44px);color:var(--cream);line-height:1.1;margin-bottom:8px;}
+.featured-rule{width:40px;height:3px;background:var(--rust);margin:16px 0 48px;}
+
+.featured-ship{
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;
+  padding:48px 0;border-bottom:1px solid rgba(201,185,154,0.1);
+}
+.featured-ship:last-child{border-bottom:none;padding-bottom:0;}
+.featured-ship.reverse{direction:rtl;}
+.featured-ship.reverse > *{direction:ltr;}
+.featured-ship-img{
+  aspect-ratio:4/3;
+  background:rgba(245,240,232,0.05);
+  border:1px solid rgba(201,185,154,0.1);
+  overflow:hidden;position:relative;
+}
+.featured-ship-img img{width:100%;height:100%;object-fit:cover;}
+.featured-ship-flag-tag{
+  position:absolute;top:16px;left:16px;
+  font-family:var(--mono);font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  background:rgba(27,46,75,0.92);color:var(--cream);padding:5px 12px;
+}
+.featured-ship-text{}
+.featured-ship-kicker{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--rust-light);margin-bottom:10px;
+}
+.featured-ship-name{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(26px,3.5vw,38px);color:var(--cream);line-height:1.1;
+  letter-spacing:-0.015em;margin-bottom:6px;
+}
+.featured-ship-country{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(201,185,154,0.4);margin-bottom:20px;
+}
+.featured-ship-desc{
+  font-family:var(--body);font-size:15px;color:rgba(245,240,232,0.72);line-height:1.8;
+  margin-bottom:24px;
+}
+.featured-ship-specs{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+  border-top:1px solid rgba(201,185,154,0.15);padding-top:20px;
+}
+.fspec-label{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(201,185,154,0.4);}
+.fspec-value{font-family:var(--mono);font-size:11px;color:var(--cream);margin-top:3px;letter-spacing:0.04em;}
+
+/* HARBOR SECTION */
+.harbor-section{background:var(--cream-dark);border-top:1px solid var(--sand-light);padding:72px 60px;}
+.harbor-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;}
+.harbor-text{}
+.harbor-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:var(--rust);margin-bottom:10px;}
+.harbor-title{font-family:var(--serif);font-weight:700;font-size:clamp(26px,3.5vw,40px);color:var(--navy);line-height:1.1;margin-bottom:8px;}
+.harbor-rule{width:40px;height:3px;background:var(--rust);margin:16px 0 24px;}
+.harbor-body{font-family:var(--body);font-size:15px;color:var(--ink-soft);line-height:1.8;}
+.harbor-body p{margin-bottom:16px;}
+.harbor-body p:last-child{margin-bottom:0;}
+.harbor-live-box{
+  background:var(--navy);padding:32px;
+  margin-top:32px;
+  display:flex;align-items:center;gap:16px;
+}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--rust-light);animation:pulse 2s ease-in-out infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);}}
+.live-text{}
+.live-label{font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--rust-light);}
+.live-desc{font-family:var(--body);font-size:13px;color:rgba(245,240,232,0.6);margin-top:4px;line-height:1.5;}
+.harbor-map-placeholder{
+  background:var(--navy);
+  aspect-ratio:4/3;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;
+  font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(201,185,154,0.25);
+  border:1px solid rgba(201,185,154,0.1);
+}
+.map-placeholder-icon{font-size:36px;opacity:0.15;}
+.watching-list{margin-top:24px;display:flex;flex-direction:column;gap:0;}
+.watch-item{
+  padding:14px 0;border-bottom:1px solid var(--sand-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.watch-item:first-child{border-top:1px solid var(--sand-light);}
+.watch-name{font-family:var(--serif);font-weight:600;font-size:14px;color:var(--navy);}
+.watch-flag{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);}
+
+/* COLLECTION TEASER */
+.collection-section{
+  background:var(--navy);
+  border-top:3px solid var(--rust);
+  padding:72px 60px;
+}
+.collection-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;}
+.collection-text{}
+.collection-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:var(--rust-light);margin-bottom:10px;}
+.collection-title{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4vw,48px);color:var(--cream);line-height:1.1;margin-bottom:8px;}
+.collection-title em{font-style:italic;font-weight:400;}
+.collection-rule{width:40px;height:3px;background:var(--rust);margin:16px 0 24px;}
+.collection-body{font-family:var(--body);font-size:15px;color:rgba(245,240,232,0.7);line-height:1.8;margin-bottom:28px;}
+.collection-cta{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--cream);border-bottom:1px solid rgba(245,240,232,0.3);
+  padding-bottom:2px;display:inline-block;
+}
+.collection-items{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.collection-item{
+  background:rgba(245,240,232,0.05);border:1px solid rgba(201,185,154,0.12);
+  padding:24px 20px;
+  aspect-ratio:1/1;
+  display:flex;flex-direction:column;justify-content:flex-end;
+}
+.collection-item-label{font-family:var(--mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(201,185,154,0.4);margin-bottom:6px;}
+.collection-item-name{font-family:var(--serif);font-weight:600;font-size:15px;color:var(--cream);line-height:1.2;}
+.collection-item-note{font-family:var(--mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--rust-light);margin-top:6px;}
+
+/* FOOTER */
+.article-footer{background:var(--paper);border-top:1px solid var(--sand-light);padding:40px 60px;}
+.article-footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.article-footer-issue{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
+.article-footer-wm{font-family:var(--serif);font-weight:700;font-size:16px;color:var(--navy);}
+.article-footer-wm em{font-style:italic;font-weight:400;}
+.article-footer-page{font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
+
+@media(max-width:900px){
+  .masthead,.issue-stripe{padding:14px 24px;}
+  .feature-content{padding:48px 24px 56px;}
+  .intro-section,.fleet-header,.harbor-section,.collection-section,.article-footer{padding-left:24px;padding-right:24px;}
+  .fleet-section{padding-bottom:48px;}
+  .fleet-grid{grid-template-columns:1fr;margin:0 24px;}
+  .featured-ships{padding:48px 24px;}
+  .intro-inner,.harbor-inner,.collection-inner{grid-template-columns:1fr;gap:40px;}
+  .featured-ship{grid-template-columns:1fr;gap:28px;}
+  .featured-ship.reverse{direction:ltr;}
+  .article-footer-inner{flex-direction:column;gap:12px;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-title">THE LOCAL LOOKOUT <em>by</em> ABOVE THE HOOK</div>
+  <div class="masthead-right">
+    Spring 2026 · Vol. 1 No. 2<br>
+    Highlands, New Jersey
+  </div>
+</div>
+
+<!-- ISSUE NAV -->
+<div class="issue-stripe">
+  <div class="issue-label">Sail4th 250 — Special Feature</div>
+  <div class="issue-nav">
+    <a href="#">The Gate</a>
+    <a href="#fleet" class="active">The Fleet</a>
+    <a href="#harbor">From the Bluff</a>
+    <a href="#collection">The Collection</a>
+  </div>
+</div>
+
+<!-- FEATURE OPENER -->
+<div class="feature-opener">
+  <div class="feature-opener-img">
+    <!-- HERO IMAGE PLACEHOLDER — Replace with: aerial photograph of tall ships in New York Harbor, sunset, multiple ships under sail -->
+    <div class="img-placeholder">
+      <div class="img-placeholder-icon">⛵</div>
+      <div class="img-placeholder-label">Hero Image</div>
+      <div class="img-placeholder-sub">Tall ships in New York Harbor · aerial · sunset</div>
+    </div>
+  </div>
+  <div class="feature-overlay"></div>
+  <div class="feature-content">
+    <div class="feature-kicker">Sail4th 250 · July 3–8, 2026 · New York Harbor</div>
+    <h1 class="feature-headline">
+      The Gate<br>They Must<br><em>All Pass</em>
+    </h1>
+    <p class="feature-dek">Nineteen nations. Nineteen ships. Every one of them will aim for Sandy Hook Bay before they see Manhattan. We will be watching from the bluff.</p>
+    <div class="feature-byline">Above the Hook · Spring 2026 · The Local Lookout</div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="intro-section">
+  <div class="intro-inner">
+    <div class="intro-text">
+      <p class="intro-dropcap">There is a moment, when approaching New York Harbor from the Atlantic, when the coast resolves out of the haze and you know where you are. The hills above Sandy Hook. The lighthouse that has burned there without interruption since 1764. The same mark that Giovanni da Verrazzano described in 1524, that Henry Hudson noted in 1609, that two million immigrants fixed their eyes on as they arrived at Ellis Island. This July, it will be the first thing seen by the crews of some of the most extraordinary sailing vessels on earth.</p>
+      <div class="intro-body">
+        <p>On July 3rd and 4th, 2026, the Port of New York and New Jersey will host the largest gathering of tall ships in modern history — a six-day maritime celebration of America's 250th anniversary that officials expect to draw eight to ten million spectators. More than fifty Class A and Class B tall ships from thirty countries will transit New York Harbor, joining fifty allied and U.S. naval vessels, the Queen Mary 2, and thousands of pleasure boats on a parade route stretching from the Verrazzano-Narrows Bridge to the George Washington Bridge.</p>
+        <p>Every one of them passes through Sandy Hook Bay first. Every one of them sails past the hills of Highlands before they see Manhattan. From the Harbor Observatory, we will track them from the moment they appear on AIS.</p>
+        <p>What follows is the fleet — or rather, the portion of it that represents the nations and ships in the images handed to us by the Sail4th organizers. Nineteen vessels, nineteen stories. The oldest was launched in 1931. The newest in 2017. Together they carry crews and cadets from every ocean. On July 4th, the USCG Barque Eagle leads them through the gate.</p>
+      </div>
+    </div>
+    <div class="intro-sidebar">
+      <div class="sidebar-stat">
+        <div class="sidebar-stat-num">50+</div>
+        <div class="sidebar-stat-label">Class A & B tall ships committed</div>
+      </div>
+      <div class="sidebar-stat">
+        <div class="sidebar-stat-num">30</div>
+        <div class="sidebar-stat-label">Nations represented</div>
+      </div>
+      <div class="sidebar-stat">
+        <div class="sidebar-stat-num">8–10M</div>
+        <div class="sidebar-stat-label">Expected spectators</div>
+      </div>
+      <div class="sidebar-stat">
+        <div class="sidebar-stat-num">July 3–8</div>
+        <div class="sidebar-stat-label">Six days of events, 2026</div>
+      </div>
+      <p class="sidebar-pullquote">"On July 4th, 2026, this port will serve as the world's home port."<br><br>— Chris O'Brien, President, Sail4th 250</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION DIVIDER -->
+<div class="section-divider">
+  <div class="section-divider-num">§</div>
+  <div class="section-divider-label">The Featured Fleet · 19 Ships</div>
+  <div class="section-divider-rule"></div>
+</div>
+
+<!-- FEATURED: THE BIG THREE -->
+<div class="featured-ships">
+  <div class="featured-inner">
+    <div class="featured-eyebrow">The Flagship Vessels</div>
+    <h2 class="featured-title">The ships that define the fleet</h2>
+    <div class="featured-rule"></div>
+
+    <!-- AMERIGO VESPUCCI -->
+    <div class="featured-ship">
+      <div class="featured-ship-img">
+        <!-- IMAGE PLACEHOLDER: Amerigo Vespucci under full sail, black hull with white stripes, three masts -->
+        <div class="ship-img-placeholder" style="height:100%;aspect-ratio:auto;">
+          <div class="icon">⛵</div>
+          <div>Image: Amerigo Vespucci</div>
+          <div style="font-size:7px;opacity:0.5;margin-top:4px;">Full-rigged three-masted ship · Italian Navy · black hull with white stripes</div>
+        </div>
+        <div class="featured-ship-flag-tag">Italy · Italian Navy</div>
+      </div>
+      <div class="featured-ship-text">
+        <div class="featured-ship-kicker">Class A · Full-Rigged Ship · Est. 1931</div>
+        <div class="featured-ship-name">Amerigo Vespucci</div>
+        <div class="featured-ship-country">La Spezia, Italy</div>
+        <p class="featured-ship-desc">Called "the most beautiful ship in the world" — not once, but twice, by American aircraft carriers that encountered her at sea. The USS Independence radioed the compliment in 1962. In 2022, the USS George H.W. Bush confirmed it: "You are still, after sixty years, the most beautiful ship in the world." Built in 1931 to resemble an 18th-century warship of the line, the Amerigo Vespucci's black hull is painted with two white stripes that recall the gun decks of the era she evokes. She has sailed continuously for nearly a century, training cadets of the Italian Naval Academy in the seamanship that has not fundamentally changed since the age of sail. Her motto, drawn from Leonardo da Vinci: "Not who begins, but he who perseveres."</p>
+        <div class="featured-ship-specs">
+          <div>
+            <div class="fspec-label">Length</div>
+            <div class="fspec-value">329 ft (101 m)</div>
+          </div>
+          <div>
+            <div class="fspec-label">Sail Area</div>
+            <div class="fspec-value">30,400 sq ft</div>
+          </div>
+          <div>
+            <div class="fspec-label">Launched</div>
+            <div class="fspec-value">1931</div>
+          </div>
+          <div>
+            <div class="fspec-label">Masts</div>
+            <div class="fspec-value">3 · Full-rigged</div>
+          </div>
+          <div>
+            <div class="fspec-label">Crew</div>
+            <div class="fspec-value">264 + 130 cadets</div>
+          </div>
+          <div>
+            <div class="fspec-label">Home Port</div>
+            <div class="fspec-value">La Spezia</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESMERALDA -->
+    <div class="featured-ship reverse">
+      <div class="featured-ship-img">
+        <!-- IMAGE PLACEHOLDER: Esmeralda under sail, four masts, Chilean Navy -->
+        <div class="ship-img-placeholder" style="height:100%;aspect-ratio:auto;">
+          <div class="icon">⛵</div>
+          <div>Image: Esmeralda</div>
+          <div style="font-size:7px;opacity:0.5;margin-top:4px;">Four-masted barquentine · Chilean Navy</div>
+        </div>
+        <div class="featured-ship-flag-tag">Chile · Chilean Navy</div>
+      </div>
+      <div class="featured-ship-text">
+        <div class="featured-ship-kicker">Class A · Four-Masted Barquentine · Est. 1946</div>
+        <div class="featured-ship-name">Esmeralda</div>
+        <div class="featured-ship-country">Valparaíso, Chile</div>
+        <p class="featured-ship-desc">The second-largest tall ship in the world and the largest in this fleet. Built in Cádiz, Spain, in 1946, Esmeralda carries the largest sail area of any vessel coming to New York — 30,892 square feet across four masts. She has visited more than 300 ports on all five oceans. Her sister ship is the Juan Sebastián de Elcano of Spain. The Chilean Navy's training vessel and goodwill ambassador, she embarks 90 midshipmen alongside her permanent crew of 300. When she moves through Sandy Hook Bay, she will be visible from the Highlands bluff long before her hull clears the horizon.</p>
+        <div class="featured-ship-specs">
+          <div>
+            <div class="fspec-label">Length</div>
+            <div class="fspec-value">371 ft (113 m)</div>
+          </div>
+          <div>
+            <div class="fspec-label">Sail Area</div>
+            <div class="fspec-value">30,892 sq ft</div>
+          </div>
+          <div>
+            <div class="fspec-label">Built</div>
+            <div class="fspec-value">Cádiz, 1946</div>
+          </div>
+          <div>
+            <div class="fspec-label">Masts</div>
+            <div class="fspec-value">4 · Barquentine</div>
+          </div>
+          <div>
+            <div class="fspec-label">Crew</div>
+            <div class="fspec-value">300 + 90 midshipmen</div>
+          </div>
+          <div>
+            <div class="fspec-label">Home Port</div>
+            <div class="fspec-value">Valparaíso</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARA LIBERTAD -->
+    <div class="featured-ship">
+      <div class="featured-ship-img">
+        <!-- IMAGE PLACEHOLDER: ARA Libertad, white hull, Argentine Navy -->
+        <div class="ship-img-placeholder" style="height:100%;aspect-ratio:auto;">
+          <div class="icon">⛵</div>
+          <div>Image: ARA Libertad</div>
+          <div style="font-size:7px;opacity:0.5;margin-top:4px;">Full-rigged ship · Argentine Navy · white hull</div>
+        </div>
+        <div class="featured-ship-flag-tag">Argentina · Argentine Navy</div>
+      </div>
+      <div class="featured-ship-text">
+        <div class="featured-ship-kicker">Class A · Full-Rigged Ship · Est. 1963</div>
+        <div class="featured-ship-name">ARA Libertad</div>
+        <div class="featured-ship-country">Buenos Aires, Argentina</div>
+        <p class="featured-ship-desc">One of the largest and fastest tall ships on earth. ARA Libertad holds the world record for the fastest Atlantic crossing by a sail training vessel — 8 days, 12 hours from Cape Race, Newfoundland to the Dursey Island lighthouse off Ireland. Built in 1963 at the Río Santiago Shipyard in Ensenada, Argentina, she carries 28,545 square feet of sail across three masts. With a crew of 24 officers, 187 sailors, and 150 cadets, she is the Argentine Navy's flagship training vessel and one of the most recognized tall ships in the world. Her name means Liberty.</p>
+        <div class="featured-ship-specs">
+          <div>
+            <div class="fspec-label">Length</div>
+            <div class="fspec-value">340 ft (103 m)</div>
+          </div>
+          <div>
+            <div class="fspec-label">Sail Area</div>
+            <div class="fspec-value">28,545 sq ft</div>
+          </div>
+          <div>
+            <div class="fspec-label">Built</div>
+            <div class="fspec-value">Ensenada, 1963</div>
+          </div>
+          <div>
+            <div class="fspec-label">Masts</div>
+            <div class="fspec-value">3 · Full-rigged</div>
+          </div>
+          <div>
+            <div class="fspec-label">Crew</div>
+            <div class="fspec-value">24 officers + 337</div>
+          </div>
+          <div>
+            <div class="fspec-label">Record</div>
+            <div class="fspec-value">Fastest Atlantic sail</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLEET GRID — ALL 19 SHIPS -->
+<div id="fleet" class="fleet-section">
+  <div class="fleet-header">
+    <div class="fleet-header-eyebrow">The Complete Fleet</div>
+    <h2 class="fleet-header-title">All nineteen ships, nation by nation</h2>
+    <div class="fleet-header-rule"></div>
+    <p class="fleet-header-dek">Every vessel in the featured fleet — from the oldest full-rigged warship training ship in the world to a barquentine launched just seven years ago. They come from every ocean.</p>
+  </div>
+
+  <div class="fleet-grid">
+
+    <!-- AMERIGO VESPUCCI -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: Amerigo Vespucci at anchor or under sail, black hull, white stripes, three masts -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: Amerigo Vespucci</div>
+        </div>
+        <div class="ship-card-flag">Italy</div>
+        <div class="ship-card-class">Full-Rigged Ship</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">Amerigo Vespucci</div>
+        <div class="ship-card-country">Italian Navy · La Spezia</div>
+        <p class="ship-card-desc">The oldest and arguably most beautiful military tall ship in the world. Launched 1931, built to resemble an 18th-century warship, she has trained Italian Naval Academy cadets for nearly a century. Twice called "the most beautiful ship in the world" by American aircraft carriers at sea. Her motto: "Not who begins, but he who perseveres."</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">329 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Launched</div><div class="spec-value">1931</div></div>
+          <div class="spec-item"><div class="spec-label">Sail area</div><div class="spec-value">30,400 sq ft</div></div>
+          <div class="spec-item"><div class="spec-label">Masts</div><div class="spec-value">3</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARC GLORIA -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: ARC Gloria, three-masted barque, Colombian Navy, white hull -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: ARC Gloria</div>
+        </div>
+        <div class="ship-card-flag">Colombia</div>
+        <div class="ship-card-class">Barque</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">ARC Gloria</div>
+        <div class="ship-card-country">Colombian Navy · Cartagena</div>
+        <p class="ship-card-desc">The official flagship of the Colombian Navy and a veteran of nearly every major tall ship event of the past four decades. Built in 1968 and named for the wife of the defense minister who commissioned her. She carries 15,000 square feet of sail and typically embarks 80 naval cadets alongside her permanent crew of 85.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">212 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1968</div></div>
+          <div class="spec-item"><div class="spec-label">Sail area</div><div class="spec-value">15,000 sq ft</div></div>
+          <div class="spec-item"><div class="spec-label">Masts</div><div class="spec-value">3 · Barque</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BAP UNION -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: BAP Unión, Peruvian Navy tall ship, barque -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: BAP Unión</div>
+        </div>
+        <div class="ship-card-flag">Peru</div>
+        <div class="ship-card-class">Barque</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">BAP Unión</div>
+        <div class="ship-card-country">Peruvian Navy · Callao</div>
+        <p class="ship-card-desc">The pride of the Peruvian Navy and one of the newest tall ships in the fleet, launched in 2016 at the SIMA shipyard in Peru — one of the few tall ships built entirely in South America by its home nation. She is a four-masted barquentine at 378 feet, making her one of the largest vessels in the Sail4th 250 fleet. Her name means Union — the ideal she carries across every ocean she enters.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">378 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">2016</div></div>
+          <div class="spec-item"><div class="spec-label">Rig</div><div class="spec-value">4-mast barquentine</div></div>
+          <div class="spec-item"><div class="spec-label">Home</div><div class="spec-value">Callao, Peru</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BELLE POULE -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: Belle Poule, French Navy schooner, small, red and black hull details -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: Belle Poule</div>
+        </div>
+        <div class="ship-card-flag">France</div>
+        <div class="ship-card-class">Schooner</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">Belle Poule</div>
+        <div class="ship-card-country">French Navy · Brest</div>
+        <p class="ship-card-desc">Built in 1932 as a replica of a traditional Breton cod-fishing schooner and now one of the French Navy's most beloved training vessels. Belle Poule carries a particular piece of history: during World War II, she evacuated members of the French government from Dunkirk to England in June 1940. She carries 4,800 square feet of sail and a crew of twenty. Small, perfectly formed, and irreplaceable.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">123 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1932</div></div>
+          <div class="spec-item"><div class="spec-label">Sail area</div><div class="spec-value">4,800 sq ft</div></div>
+          <div class="spec-item"><div class="spec-label">Crew</div><div class="spec-value">20</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAPITAN MIRANDA -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: Capitán Miranda, Uruguayan Navy, white hull, schooner -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: Capitán Miranda</div>
+        </div>
+        <div class="ship-card-flag">Uruguay</div>
+        <div class="ship-card-class">Schooner</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">Capitán Miranda</div>
+        <div class="ship-card-country">Uruguayan Navy · Montevideo</div>
+        <p class="ship-card-desc">Originally built in Spain in 1930 as a hydrographic survey vessel, Capitán Miranda was converted to a sail training ship in 1978 and has since circumnavigated the globe twice. She is a three-masted topsail schooner and a familiar presence at tall ship events worldwide. Named for Captain Francisco P. Miranda, a pioneering Uruguayan naval officer and oceanographer who surveyed the waters of the South Atlantic in the early 20th century.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1930, Spain</div></div>
+          <div class="spec-item"><div class="spec-label">Converted</div><div class="spec-value">1978</div></div>
+          <div class="spec-item"><div class="spec-label">Rig</div><div class="spec-value">Topsail schooner</div></div>
+          <div class="spec-item"><div class="spec-label">Home</div><div class="spec-value">Montevideo</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAR MLODZIEZY -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: Dar Młodzieży, Polish full-rigged ship, white hull, three masts -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: Dar Młodzieży</div>
+        </div>
+        <div class="ship-card-flag">Poland</div>
+        <div class="ship-card-class">Full-Rigged Ship</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">Dar Młodzieży</div>
+        <div class="ship-card-country">Polish Navy · Gdynia</div>
+        <p class="ship-card-desc">Her name means Gift of Youth. Built in 1982 in Gdańsk as a training ship for the Polish Merchant Marine Academy, she is one of the sister ships in the B-95 class — a group of five virtually identical full-rigged vessels built in Soviet-era Poland that remain among the most recognizable tall ships in the world. She has completed numerous transatlantic voyages and is a perennial favorite at OpSail and Tall Ships Races events.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">357 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1982, Gdańsk</div></div>
+          <div class="spec-item"><div class="spec-label">Rig</div><div class="spec-value">Full-rigged ship</div></div>
+          <div class="spec-item"><div class="spec-label">Home</div><div class="spec-value">Gdynia</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EAGLE -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: USCGC Eagle, white hull with orange and blue Coast Guard stripe, barque -->
+        <div class="ship-img-placeholder">
+          <div class="icon">🦅</div>
+          <div>Photo: USCGC Eagle</div>
+        </div>
+        <div class="ship-card-flag">United States</div>
+        <div class="ship-card-class">Barque · USCG</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">USCGC Eagle</div>
+        <div class="ship-card-country">U.S. Coast Guard · New London, CT</div>
+        <p class="ship-card-desc">America's tall ship and the only active duty sailing vessel in the U.S. military. Built in Hamburg, Germany in 1936 as the Horst Wessel, she was taken by the United States as a war prize in 1946 and commissioned as Eagle. She has trained Coast Guard cadets ever since. On July 4th, 2026, Eagle will lead the International Parade of Sail into New York Harbor — the same role she has played at every major OpSail event in American history.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">295 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1936, Hamburg</div></div>
+          <div class="spec-item"><div class="spec-label">Sail area</div><div class="spec-value">21,350 sq ft</div></div>
+          <div class="spec-item"><div class="spec-label">Role</div><div class="spec-value">Leads the Parade</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ELISSA -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: Elissa, historic barque, black hull, Galveston Texas -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⚓</div>
+          <div>Photo: Elissa</div>
+        </div>
+        <div class="ship-card-flag">United States</div>
+        <div class="ship-card-class">Barque · 1877</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">Elissa</div>
+        <div class="ship-card-country">Texas Seaport Museum · Galveston, TX</div>
+        <p class="ship-card-desc">The oldest ship in the fleet by more than half a century. Built in Aberdeen, Scotland in 1877 by Alexander Hall and Sons, Elissa is a three-masted iron barque that carried cargo across the world's oceans for decades before being rescued from a Greek breakers yard in 1975. Restored to sailing condition by the Galveston Historical Foundation, she is a National Historic Landmark and one of only a handful of 19th-century merchant sailing ships still capable of sailing under her own power.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1877, Aberdeen</div></div>
+          <div class="spec-item"><div class="spec-label">Material</div><div class="spec-value">Iron hull</div></div>
+          <div class="spec-item"><div class="spec-label">Status</div><div class="spec-value">Natl. Historic Landmark</div></div>
+          <div class="spec-item"><div class="spec-label">Home</div><div class="spec-value">Galveston, TX</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESMERALDA -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: Esmeralda, four-masted barquentine, Chilean Navy, white hull -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: Esmeralda</div>
+        </div>
+        <div class="ship-card-flag">Chile</div>
+        <div class="ship-card-class">Four-Masted Barquentine</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">Esmeralda</div>
+        <div class="ship-card-country">Chilean Navy · Valparaíso</div>
+        <p class="ship-card-desc">The second-largest tall ship in the world and the queen of this fleet by sail area. Built in Cádiz in 1946, she carries 30,892 square feet of canvas across four masts. Sister ship to the Juan Sebastián de Elcano of Spain. She has visited more than 300 ports on all five oceans, serving as Chile's floating embassy and training grounds for 90 midshipmen per voyage. When she appears on the horizon in Sandy Hook Bay, she will be unmistakable.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">371 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1946, Cádiz</div></div>
+          <div class="spec-item"><div class="spec-label">Sail area</div><div class="spec-value">30,892 sq ft</div></div>
+          <div class="spec-item"><div class="spec-label">Cadets</div><div class="spec-value">90 per voyage</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GUAYAS -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: BAE Guayas, Ecuadorian Navy barque -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: BAE Guayas</div>
+        </div>
+        <div class="ship-card-flag">Ecuador</div>
+        <div class="ship-card-class">Barque</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">BAE Guayas</div>
+        <div class="ship-card-country">Ecuadorian Navy · Guayaquil</div>
+        <p class="ship-card-desc">Launched in 1978, Guayas is named three times over — for the Huancavilca chief Guayas, for the Guayas River, and for the first steamship ever built in Ecuador, which carried the same name in 1841. A three-masted steel barque carrying 15,200 square feet of sail, she serves the Ecuadorian Navy as training vessel and national symbol. Her figurehead is a condor — the national bird of Ecuador — spreading its wings at the bow.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">257 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1978</div></div>
+          <div class="spec-item"><div class="spec-label">Sail area</div><div class="spec-value">15,200 sq ft</div></div>
+          <div class="spec-item"><div class="spec-label">Home</div><div class="spec-value">Guayaquil</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HARVEY GAMAGE -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: Harvey Gamage, American topsail schooner -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: Harvey Gamage</div>
+        </div>
+        <div class="ship-card-flag">United States</div>
+        <div class="ship-card-class">Topsail Schooner</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">Harvey Gamage</div>
+        <div class="ship-card-country">Ocean Classroom Foundation · USA</div>
+        <p class="ship-card-desc">Named for the Maine shipbuilder who constructed her in 1973 at his South Bristol yard, Harvey Gamage is a 95-foot wooden topsail schooner operated by the Ocean Classroom Foundation as a floating school for high school students. She has sailed more than 300,000 miles in her career, introducing thousands of young people to the science and seamanship of the sea. A vessel defined by what she teaches rather than what she carries.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">95 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1973, Maine</div></div>
+          <div class="spec-item"><div class="spec-label">Material</div><div class="spec-value">Wood</div></div>
+          <div class="spec-item"><div class="spec-label">Mission</div><div class="spec-value">Student education</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HMS GLADAN -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: HMS Gladan, Swedish Navy schooner, dark hull -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: HMS Gladan</div>
+        </div>
+        <div class="ship-card-flag">Sweden</div>
+        <div class="ship-card-class">Schooner</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">HMS Gladan</div>
+        <div class="ship-card-country">Swedish Navy · Karlskrona</div>
+        <p class="ship-card-desc">One of two identical sister schooners operated by the Swedish Navy — the other being HMS Falken. Gladan means "The Kite" in Swedish. Built in 1947 at the Djurgårdsvarvet shipyard in Stockholm, she is a two-masted topsail schooner used to train Swedish naval officers in traditional seamanship. She has competed in tall ships races throughout Europe and made multiple Atlantic crossings. Small and precise — the Scandinavian aesthetic expressed in canvas and hull.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1947, Stockholm</div></div>
+          <div class="spec-item"><div class="spec-label">Name</div><div class="spec-value">"The Kite"</div></div>
+          <div class="spec-item"><div class="spec-label">Rig</div><div class="spec-value">Topsail schooner</div></div>
+          <div class="spec-item"><div class="spec-label">Home</div><div class="spec-value">Karlskrona</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INS SUDARSHINI -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: INS Sudarshini, Indian Navy barque -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: INS Sudarshini</div>
+        </div>
+        <div class="ship-card-flag">India</div>
+        <div class="ship-card-class">Barque</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">INS Sudarshini</div>
+        <div class="ship-card-country">Indian Navy · Kochi, Kerala</div>
+        <p class="ship-card-desc">The Indian Navy's sailing training vessel, commissioned in 2012 and built at the Goa Shipyard on India's west coast. She is a three-masted barque designed by British naval architect Colin Mudie, carrying 11,140 square feet of sail across 20 sails. Named for a mythological disc weapon associated with clarity and divine vision. INS Sudarshini has circumnavigated the globe and made multiple visits to foreign ports as India's maritime ambassador, a rare oceanic presence for a navy more associated with its littoral waters.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">177 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Commissioned</div><div class="spec-value">2012</div></div>
+          <div class="spec-item"><div class="spec-label">Sail area</div><div class="spec-value">11,140 sq ft</div></div>
+          <div class="spec-item"><div class="spec-label">Sails</div><div class="spec-value">20</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JUAN BAUTISTA CAMBIASO -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: Juan Bautista Cambiaso, Dominican Republic Navy barquentine -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: Juan Bautista Cambiaso</div>
+        </div>
+        <div class="ship-card-flag">Dominican Republic</div>
+        <div class="ship-card-class">Barquentine</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">Juan Bautista Cambiaso</div>
+        <div class="ship-card-country">Dominican Navy · Santo Domingo</div>
+        <p class="ship-card-desc">Named for Juan Bautista Cambiaso, an Italian-born Dominican naval officer and hero of the Dominican War of Independence. Launched in 2009 in Bulgaria and acquired by the Dominican Republic in 2018, she is the newest-generation training vessel in the fleet — a steel-hulled three-masted barquentine with 11,000 square feet of sail and accommodations for 37 cadets. She represents a navy discovering what sail training can do for officer development.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">177 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Launched</div><div class="spec-value">2009, Bulgaria</div></div>
+          <div class="spec-item"><div class="spec-label">Sail area</div><div class="spec-value">11,000 sq ft</div></div>
+          <div class="spec-item"><div class="spec-label">Cadets</div><div class="spec-value">37</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KRI BIMA SUCI -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: KRI Bima Suci, Indonesian Navy tall ship, white hull with traditional motifs -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: KRI Bima Suci</div>
+        </div>
+        <div class="ship-card-flag">Indonesia</div>
+        <div class="ship-card-class">Barquentine</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">KRI Bima Suci</div>
+        <div class="ship-card-country">Indonesian Navy · Surabaya</div>
+        <p class="ship-card-desc">The newest tall ship in this fleet, launched in 2017 in Sevilla, Spain, to replace the aging KRI Dewaruci. Bima Suci is named for Bima, a hero from the Mahabharata epic celebrated across Indonesian culture, combined with Suci meaning "pure" or "holy." A three-masted barquentine, she is the largest vessel in the Indonesian Navy and carries traditional Javanese and Indonesian decorative motifs throughout her design — a ship that is unmistakably of its nation.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">2017, Sevilla</div></div>
+          <div class="spec-item"><div class="spec-label">Rig</div><div class="spec-value">Barquentine</div></div>
+          <div class="spec-item"><div class="spec-label">Newest</div><div class="spec-value">Fleet's newest ship</div></div>
+          <div class="spec-item"><div class="spec-label">Home</div><div class="spec-value">Surabaya</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MIRCEA -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: Mircea, Romanian Navy barque, three masts, white hull with blue stripe -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: Mircea</div>
+        </div>
+        <div class="ship-card-flag">Romania</div>
+        <div class="ship-card-class">Barque</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">Mircea</div>
+        <div class="ship-card-country">Romanian Navy · Constanța</div>
+        <p class="ship-card-desc">Named for Mircea the Elder, Prince of Wallachia and one of Romania's greatest medieval rulers, who held back the Ottoman Empire at the peak of its power. Built in Hamburg in 1938 at the Blohm & Voss shipyard — the same yard that produced the Bismarck — Mircea is a sister ship to the American Eagle and Germany's Gorch Fock I. She has trained Romanian naval officers on the Black Sea and Mediterranean for nearly ninety years. Her hull carries the tricolor bands of the Romanian national flag.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1938, Hamburg</div></div>
+          <div class="spec-item"><div class="spec-label">Rig</div><div class="spec-value">Barque</div></div>
+          <div class="spec-item"><div class="spec-label">Yard</div><div class="spec-value">Blohm & Voss</div></div>
+          <div class="spec-item"><div class="spec-label">Home</div><div class="spec-value">Constanța</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NRP SAGRES -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: NRP Sagres, Portuguese Navy barque, white hull with red crosses on sails -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: NRP Sagres</div>
+        </div>
+        <div class="ship-card-flag">Portugal</div>
+        <div class="ship-card-class">Barque</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">NRP Sagres</div>
+        <div class="ship-card-country">Portuguese Navy · Lisbon</div>
+        <p class="ship-card-desc">Named for Sagres — the southwestern tip of Portugal from which Henry the Navigator launched the Age of Discovery in the 15th century. Built in Hamburg in 1937 as Albert Leo Schlageter for the German Navy, Sagres is a sister ship to Eagle and Mircea. Her white sails carry the red Cross of Christ — the same emblem carried by Vasco da Gama's ships when they first rounded the Cape of Good Hope. She connects the ocean-going ambitions of modern Portugal to the explorers who mapped the world.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1937, Hamburg</div></div>
+          <div class="spec-item"><div class="spec-label">Sail emblem</div><div class="spec-value">Cross of Christ</div></div>
+          <div class="spec-item"><div class="spec-label">Rig</div><div class="spec-value">Barque · 3-mast</div></div>
+          <div class="spec-item"><div class="spec-label">Home</div><div class="spec-value">Lisbon</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OOSTERSCHELDE -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <!-- IMAGE: Oosterschelde, Dutch three-masted topsail schooner, green hull -->
+        <div class="ship-img-placeholder">
+          <div class="icon">⛵</div>
+          <div>Photo: Oosterschelde</div>
+        </div>
+        <div class="ship-card-flag">Netherlands</div>
+        <div class="ship-card-class">Topsail Schooner</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">Oosterschelde</div>
+        <div class="ship-card-country">Sail Training Netherlands · Rotterdam</div>
+        <p class="ship-card-desc">Built in 1918 as a cargo schooner in Rotterdam, the Oosterschelde sailed the Baltic and North Sea trade routes for decades before being restored to her original condition in 1992. She is named for the Eastern Scheldt estuary in the Netherlands. Now operated as a sail training vessel and available for charter voyages, she is the oldest Dutch tall ship still sailing and one of the few remaining examples of the cargo schooners that worked the European coastal trade a century ago.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1918, Rotterdam</div></div>
+          <div class="spec-item"><div class="spec-label">Restored</div><div class="spec-value">1992</div></div>
+          <div class="spec-item"><div class="spec-label">Rig</div><div class="spec-value">3-mast topsail schooner</div></div>
+          <div class="spec-item"><div class="spec-label">Home</div><div class="spec-value">Rotterdam</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end fleet-grid -->
+</div><!-- end fleet-section -->
+
+<!-- SECTION DIVIDER -->
+<div class="section-divider">
+  <div class="section-divider-num">§</div>
+  <div class="section-divider-label">From the Bluff · The Harbor Observatory</div>
+  <div class="section-divider-rule"></div>
+</div>
+
+<!-- HARBOR / OBSERVATORY -->
+<div id="harbor" class="harbor-section">
+  <div class="harbor-inner">
+    <div class="harbor-text">
+      <div class="harbor-eyebrow">Above the Hook · Harbor Observatory</div>
+      <h2 class="harbor-title">Watching from the hills above it all</h2>
+      <div class="harbor-rule" style="width:40px;height:3px;background:var(--rust);margin-bottom:24px;"></div>
+      <div class="harbor-body">
+        <p>The Sandy Hook Harbor Observatory tracks every vessel transiting New York Harbor in real time from the hills of Highlands — an Axis 4K PTZ camera on the bluff, an AIS receiver reading every ship's position and identity, an AI system writing the story of each vessel as it passes.</p>
+        <p>For Sail4th 250, we will be watching the entire week. Every tall ship that passes Sandy Hook Bay will be captured, identified, and documented in the Observatory archive. The fleet profiles you have read in this issue will appear live on the Observatory as each vessel enters the harbor.</p>
+        <p>The best view in America is from this bluff. The best view on this bluff is through the Observatory camera. On July 4th, when Eagle leads the parade through Sandy Hook Bay, we will be live.</p>
+      </div>
+      <div class="harbor-live-box">
+        <div class="live-dot"></div>
+        <div class="live-text">
+          <div class="live-label">Live · 24/7 · harbor.abovethehook.com</div>
+          <div class="live-desc">The harbor is always moving. We are always watching. During Sail4th week, every tall ship transit will be captured and published in real time.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px;">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--rust);margin-bottom:12px;">Ships we will be watching for</div>
+        <div class="watching-list">
+          <div class="watch-item"><div class="watch-name">Amerigo Vespucci</div><div class="watch-flag">Italy · Full-Rigged Ship</div></div>
+          <div class="watch-item"><div class="watch-name">Esmeralda</div><div class="watch-flag">Chile · Four-Masted Barquentine</div></div>
+          <div class="watch-item"><div class="watch-name">ARA Libertad</div><div class="watch-flag">Argentina · Full-Rigged Ship</div></div>
+          <div class="watch-item"><div class="watch-name">USCGC Eagle</div><div class="watch-flag">USA · Leads the Parade</div></div>
+          <div class="watch-item"><div class="watch-name">NRP Sagres</div><div class="watch-flag">Portugal · Cross of Christ sails</div></div>
+          <div class="watch-item"><div class="watch-name">Dar Młodzieży</div><div class="watch-flag">Poland · Gift of Youth</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="harbor-map-placeholder">
+        <!-- IMAGE PLACEHOLDER: Harbor Observatory map showing parade route, Sandy Hook Bay, vessel tracks -->
+        <div class="map-placeholder-icon">🗺️</div>
+        <div>Harbor Map · AIS Overlay</div>
+        <div style="font-size:7px;margin-top:4px;opacity:0.5;">Parade route: Verrazzano to GWB</div>
+        <div style="font-size:7px;margin-top:2px;opacity:0.5;">July 3: East River · July 4: Hudson River</div>
+      </div>
+      <div style="margin-top:20px;background:var(--paper);border:1px solid var(--sand-light);padding:24px 20px;">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--rust);margin-bottom:14px;">The Parade Route</div>
+        <div style="font-family:var(--body);font-size:13px;color:var(--ink-soft);line-height:1.7;">
+          <p style="margin-bottom:10px;"><strong>July 3:</strong> Tall ships parade through the East River from upper Manhattan toward downtown.</p>
+          <p style="margin-bottom:10px;"><strong>July 4:</strong> The full International Parade of Sail begins near the Verrazzano-Narrows Bridge, moving north through the Hudson River. Eagle leads.</p>
+          <p><strong>Sandy Hook Bay:</strong> Every ship transits here first. The Observatory captures them all as they pass the Highlands bluff — before the crowds, before Manhattan, before the parade begins.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COLLECTION TEASER -->
+<div id="collection" class="collection-section">
+  <div class="collection-inner">
+    <div class="collection-text">
+      <div class="collection-eyebrow">Above the Hook · Sail4th 250</div>
+      <h2 class="collection-title">We made<br>something for <em>this.</em></h2>
+      <div class="collection-rule"></div>
+      <p class="collection-body">A limited collection of apparel and objects built around the event that will define this harbor for a generation. The Sail4th 250 ATH collection launches ahead of July 3rd — designed in Highlands, printed for the people who were watching from the right side of the water.</p>
+      <p class="collection-body" style="font-style:italic;color:rgba(245,240,232,0.5);font-size:13px;">Full collection details, product images, and availability at abovethehook.com</p>
+      <a href="https://abovethehook.com/shop" class="collection-cta">Shop the collection at abovethehook.com →</a>
+    </div>
+    <div class="collection-items">
+      <div class="collection-item">
+        <!-- IMAGE: Sail4th 250 crewneck mockup or lifestyle shot -->
+        <div class="collection-item-label">Apparel</div>
+        <div class="collection-item-name">Sail4th 250 Crewneck</div>
+        <div class="collection-item-note">Coming soon</div>
+      </div>
+      <div class="collection-item">
+        <!-- IMAGE: ATH tote with harbor illustration -->
+        <div class="collection-item-label">Accessories</div>
+        <div class="collection-item-name">Harbor Observer Tote</div>
+        <div class="collection-item-note">Coming soon</div>
+      </div>
+      <div class="collection-item">
+        <!-- IMAGE: ATH Sail4th archival print of Sandy Hook Bay -->
+        <div class="collection-item-label">Print · Limited Edition</div>
+        <div class="collection-item-name">The Gate — Archival Print</div>
+        <div class="collection-item-note">Limited run</div>
+      </div>
+      <div class="collection-item">
+        <!-- IMAGE: Sail4th cap or hat -->
+        <div class="collection-item-label">Headwear</div>
+        <div class="collection-item-name">ATH Five-Panel Cap</div>
+        <div class="collection-item-note">Coming soon</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARTICLE FOOTER -->
+<div class="article-footer">
+  <div class="article-footer-inner">
+    <div class="article-footer-issue">The Local Lookout · Spring 2026 · Vol. 1 No. 2</div>
+    <div class="article-footer-wm">ABOVE <em>the</em> HOOK</div>
+    <div class="article-footer-page">Highlands, NJ · abovethehook.com</div>
+  </div>
+</div>
+
+</body>
+</html>
