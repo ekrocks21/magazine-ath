@@ -57,7 +57,7 @@ img{display:block;max-width:100%;}
 
 /* Image placeholder for ship cards */
 .ship-img-placeholder{
-  width:100%;aspect-ratio:16/9;
+  width:100%;height:320px;
   background:linear-gradient(135deg,#0d1720 0%,#1b2e4b 100%);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:8px;
@@ -170,8 +170,8 @@ img{display:block;max-width:100%;}
   transition:background 0.2s;
 }
 .ship-card:hover{background:#FAF6EF;}
-.ship-card-img-wrap{position:relative;overflow:hidden;}
-.ship-card-img-wrap img{width:100%;height:220px;object-fit:cover;display:block;}
+.ship-card-img-wrap{position:relative;overflow:hidden;background:var(--navy);}
+.ship-card-img-wrap img{width:100%;height:320px;object-fit:contain;display:block;}
 .ship-card-flag{
   position:absolute;top:14px;left:14px;
   font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
@@ -185,7 +185,7 @@ img{display:block;max-width:100%;}
   background:rgba(139,58,42,0.9);color:var(--cream);
   padding:4px 10px;
 }
-.ship-card-body{padding:24px 22px 28px;flex:1;display:flex;flex-direction:column;}
+.ship-card-body{padding:28px 24px 30px;flex:1;display:flex;flex-direction:column;}
 .ship-card-name{
   font-family:var(--serif);font-weight:700;
   font-size:20px;color:var(--navy);line-height:1.15;
@@ -222,12 +222,12 @@ img{display:block;max-width:100%;}
 .featured-ship.reverse{direction:rtl;}
 .featured-ship.reverse > *{direction:ltr;}
 .featured-ship-img{
-  aspect-ratio:4/3;
-  background:rgba(245,240,232,0.05);
+  aspect-ratio:3/2;
+  background:var(--navy);
   border:1px solid rgba(201,185,154,0.1);
   overflow:hidden;position:relative;
 }
-.featured-ship-img img{width:100%;height:100%;object-fit:cover;}
+.featured-ship-img img{width:100%;height:100%;object-fit:contain;}
 .featured-ship-flag-tag{
   position:absolute;top:16px;left:16px;
   font-family:var(--mono);font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
