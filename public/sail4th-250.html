@@ -74,10 +74,16 @@ img{display:block;max-width:100%;}
 .feature-content{
   position:relative;z-index:2;
   padding:80px 60px 72px;
-  max-width:1100px;
+  max-width:1200px;
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+}
+.feature-content-left{}
+.feature-content-video iframe{
+  width:100%;aspect-ratio:16/9;border:none;display:block;
+  box-shadow:0 8px 40px rgba(0,0,0,0.5);
 }
 .feature-kicker{
-  font-family:var(--mono);font-size:9px;letter-spacing:0.32em;text-transform:uppercase;
+  font-family:var(--mono);font-size:11px;letter-spacing:0.32em;text-transform:uppercase;
   color:var(--rust-light);margin-bottom:20px;
   display:flex;align-items:center;gap:14px;
 }
@@ -96,7 +102,7 @@ img{display:block;max-width:100%;}
   margin-bottom:36px;
 }
 .feature-byline{
-  font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;
   color:rgba(201,185,154,0.5);
 }
 
@@ -132,7 +138,7 @@ img{display:block;max-width:100%;}
 }
 .section-divider-rule{flex:1;height:1px;background:rgba(201,185,154,0.2);}
 .section-divider-label{
-  font-family:var(--mono);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;
+  font-family:var(--mono);font-size:12px;letter-spacing:0.3em;text-transform:uppercase;
   color:var(--rust-light);white-space:nowrap;
 }
 .section-divider-num{
@@ -169,14 +175,14 @@ img{display:block;max-width:100%;}
 .ship-card-img-wrap img{width:100%;height:220px;object-fit:cover;display:block;}
 .ship-card-flag{
   position:absolute;top:14px;left:14px;
-  font-family:var(--mono);font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
   background:rgba(27,46,75,0.9);color:var(--cream);
   padding:4px 10px;
   backdrop-filter:blur(4px);
 }
 .ship-card-class{
   position:absolute;top:14px;right:14px;
-  font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;
+  font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;
   background:rgba(139,58,42,0.9);color:var(--cream);
   padding:4px 10px;
 }
@@ -191,7 +197,7 @@ img{display:block;max-width:100%;}
   color:var(--rust);margin-bottom:14px;
 }
 .ship-card-desc{
-  font-family:var(--body);font-size:13px;color:var(--ink-soft);line-height:1.7;flex:1;
+  font-family:var(--body);font-size:14px;color:var(--ink-soft);line-height:1.7;flex:1;
   margin-bottom:16px;
 }
 .ship-card-specs{
@@ -199,8 +205,8 @@ img{display:block;max-width:100%;}
   border-top:1px solid var(--sand-light);padding-top:14px;margin-top:auto;
 }
 .spec-item{}
-.spec-label{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
-.spec-value{font-family:var(--mono);font-size:10px;color:var(--navy);margin-top:2px;letter-spacing:0.04em;}
+.spec-label{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+.spec-value{font-family:var(--mono);font-size:12px;color:var(--navy);margin-top:2px;letter-spacing:0.04em;}
 
 /* FEATURED LARGE SHIPS */
 .featured-ships{background:var(--navy);padding:72px 60px;}
@@ -250,8 +256,8 @@ img{display:block;max-width:100%;}
   display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
   border-top:1px solid rgba(201,185,154,0.15);padding-top:20px;
 }
-.fspec-label{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(201,185,154,0.4);}
-.fspec-value{font-family:var(--mono);font-size:11px;color:var(--cream);margin-top:3px;letter-spacing:0.04em;}
+.fspec-label{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(201,185,154,0.4);}
+.fspec-value{font-family:var(--mono);font-size:13px;color:var(--cream);margin-top:3px;letter-spacing:0.04em;}
 
 /* HARBOR SECTION */
 .harbor-section{background:var(--cream-dark);border-top:1px solid var(--sand-light);padding:72px 60px;}
@@ -331,7 +337,7 @@ img{display:block;max-width:100%;}
 
 @media(max-width:900px){
   .masthead,.issue-stripe{padding:14px 24px;}
-  .feature-content{padding:48px 24px 56px;}
+  .feature-content{padding:48px 24px 56px;grid-template-columns:1fr;gap:32px;}
   .intro-section,.fleet-header,.harbor-section,.collection-section,.article-footer{padding-left:24px;padding-right:24px;}
   .fleet-section{padding-bottom:48px;}
   .fleet-grid{grid-template-columns:1fr;margin:0 24px;}
@@ -377,12 +383,17 @@ img{display:block;max-width:100%;}
   </div>
   <div class="feature-overlay"></div>
   <div class="feature-content">
-    <div class="feature-kicker">Sail4th 250 · July 3–8, 2026 · New York Harbor</div>
-    <h1 class="feature-headline">
-      The Gate<br>They Must<br><em>All Pass</em>
-    </h1>
-    <p class="feature-dek">Nineteen nations. Nineteen ships. Every one of them will aim for Sandy Hook Bay before they see Manhattan. We will be watching from the bluff.</p>
-    <div class="feature-byline">Above the Hook · Spring 2026 · The Local Lookout</div>
+    <div class="feature-content-left">
+      <div class="feature-kicker">Sail4th 250 · July 3–8, 2026 · New York Harbor</div>
+      <h1 class="feature-headline">
+        The Gate<br>They Must<br><em>All Pass</em>
+      </h1>
+      <p class="feature-dek">Nineteen nations. Nineteen ships. Every one of them will aim for Sandy Hook Bay before they see Manhattan. We will be watching from the bluff.</p>
+      <div class="feature-byline">Above the Hook · Spring 2026 · The Local Lookout</div>
+    </div>
+    <div class="feature-content-video">
+      <iframe src="https://www.youtube.com/embed/DveBwo2tlEc" title="Sail4th 250" allowfullscreen></iframe>
+    </div>
   </div>
 </div>
 
