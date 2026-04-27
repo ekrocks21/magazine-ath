@@ -33,6 +33,9 @@ interface Props {
    *  the article belongs to, so the Worker can honor single-issue
    *  entitlements. */
   dataArticleIssue?: string;
+  /** When true, adds data-hero-fullbleed to <body>. The masthead CSS/JS
+   *  use this to enable transparent-overlay mode over the home hero. */
+  heroFullBleed?: boolean;
 }
 
 const {
@@ -46,6 +49,7 @@ const {
   noindex,
   dataAccess,
   dataArticleIssue,
+  heroFullBleed,
 } = Astro.props;
 ---
 
@@ -69,11 +73,15 @@ const {
     />
     <slot name="head" />
     <Analytics />
+    <script>
+      import '../lib/analytics.ts';
+    </script>
   </head>
   <body
     class="min-h-screen flex flex-col"
     data-access={dataAccess}
     data-article-issue={dataArticleIssue}
+    data-hero-fullbleed={heroFullBleed ? '' : undefined}
   >
     <!-- Accessibility skip link. Visible on keyboard focus. -->
     <a

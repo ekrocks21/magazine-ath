@@ -1,19 +1,18 @@
 ---
 /**
- * Navy masthead with two-line wordmark (Above the Hook · Quarterly /
- * The Local <em>Lookout</em>), primary nav, subscribe chip, thin rust
- * divider beneath. Matches the prototype `.mag-masthead`.
+ * Three-zone masthead: left nav | centered wordmark | right CTA.
  *
- * "Current Issue" resolves dynamically to the latest published issue so
- * the link tracks forward as new issues ship.
+ * On pages with data-hero-fullbleed on <body> the header begins
+ * position:fixed + transparent, overlaying the full-bleed hero.
+ * An IntersectionObserver watches #hero-sentinel (placed at the
+ * bottom of the hero section) and adds .is-solid once the hero
+ * scrolls out of view, triggering the navy background.
+ *
+ * On all other pages the header renders as position:sticky with
+ * the standard navy background — no JS needed.
  */
 
 import { getCollection } from 'astro:content';
-
-interface NavItem {
-  label: string;
-  href: string;
-}
 
 const NOW = Date.now();
 const allIssues = await getCollection('issues');
@@ -28,30 +27,25 @@ const currentIssueHref = currentIssue
   ? `/issues/${currentIssue.id.replace(/\.md$/, '')}`
   : '/archive';
 
-const nav: NavItem[] = [
-  { label: 'Current Issue', href: currentIssueHref },
-  { label: 'Archive', href: '/archive' },
-  { label: 'Next Issue', href: '/next' },
-  { label: 'About', href: '/about' },
-];
-
 const currentPath = Astro.url.pathname;
 
 function isActiveFor(href: string): boolean {
   if (href === '/') return currentPath === '/';
   return currentPath === href || currentPath.startsWith(href + '/');
 }
+
+const leftNav = [
+  { label: 'Current Issue', href: currentIssueHref },
+  { label: 'Archive', href: '/archive' },
+  { label: 'About', href: '/about' },
+];
 ---
 
 <header class="mag-masthead">
   <div class="mag-masthead-inner">
-    <a href="/" class="mag-wordmark" aria-label="The Local Lookout — home">
-      <span class="mag-wordmark-sup">Above the Hook · Quarterly</span>
-      <span class="mag-wordmark-main">The Local <em>Lookout</em></span>
-    </a>
 
-    <nav class="mag-nav" aria-label="Primary">
-      {nav.map((item) => (
+    <nav class="mag-nav-left" aria-label="Primary">
+      {leftNav.map((item) => (
         <a
           href={item.href}
           class={isActiveFor(item.href) ? 'is-active' : ''}
@@ -60,24 +54,49 @@ function isActiveFor(href: string): boolean {
           {item.label}
         </a>
       ))}
-      {/* Default Subscribe chip is swapped to Account by the IIFE below
-          if /api/me reports an active session. Rendered both ways so
-          the cold page renders correctly when the Worker isn't in front. */}
+    </nav>
+
+    <a href="/" class="mag-wordmark" aria-label="The Local Lookout — home">
+      <span class="mag-wordmark-sup">Above the Hook · Quarterly</span>
+      <span class="mag-wordmark-main">The Local <em>Lookout</em></span>
+    </a>
+
+    <nav class="mag-nav-right" aria-label="Account">
+      <a href="/next" class="mag-nav-secondary">Next Issue</a>
+      {/* Subscribe chip swaps to Account after /api/me responds. */}
       <a href="/subscribe" class="mag-subscribe-btn" data-mag-subscribe-cta>Subscribe</a>
       <a href="/account" class="mag-subscribe-btn" data-mag-account-cta hidden>Account</a>
     </nav>
+
   </div>
   <div class="mag-rust-rule"></div>
 </header>
 
 <script>
-  /* /api/me is served by the paywall Worker and returns
-     { signedIn: true, email, entitlements[] } when the reader has a
-     valid magazine_session cookie. One fetch drives two UI decisions:
-       1. Swap the Subscribe chip for Account.
-       2. Flip any "Subscriber" lock chips on gated article cards to
-          "Unlocked" when the reader's entitlements cover them. */
+  /* ── Transparent-hero scroll logic ──────────────────────────────────
+     Only active when body carries data-hero-fullbleed (home page).
+     IntersectionObserver watches #hero-sentinel (zero-height div at
+     the bottom of the hero section). While the sentinel is visible the
+     masthead stays transparent; once it scrolls out we add .is-solid. */
   (function () {
+    var body = document.body;
+    var masthead = document.querySelector('.mag-masthead');
+    if (!body || !masthead) return;
+
+    if (body.hasAttribute('data-hero-fullbleed')) {
+      var sentinel = document.getElementById('hero-sentinel');
+      if (sentinel) {
+        var observer = new IntersectionObserver(
+          function (entries) {
+            masthead.classList.toggle('is-solid', !entries[0].isIntersecting);
+          },
+          { threshold: 0 },
+        );
+        observer.observe(sentinel);
+      }
+    }
+
+    /* ── Session / paywall logic (unchanged) ───────────────────────── */
     var subscribeCta = document.querySelector('[data-mag-subscribe-cta]');
     var accountCta = document.querySelector('[data-mag-account-cta]');
 
@@ -95,10 +114,6 @@ function isActiveFor(href: string): boolean {
       })
       .catch(function () { /* offline / Worker not in front — keep defaults */ });
 
-    /* For Print subscribers, single-issue back-issue purchases drop
-       from $100 to $50. The Worker enforces this server-side; here
-       we just flip the visible button price so subscribers see the
-       right number before clicking through to Stripe. */
     function applySubscriberPricing(entitlements) {
       var isPrint = false;
       for (var i = 0; i < entitlements.length; i++) {
@@ -111,9 +126,6 @@ function isActiveFor(href: string): boolean {
       }
     }
 
-    /* For each subscriber-only card, decide if the reader's active
-       entitlements cover the card's issue. Digital and print are
-       blanket; issue:<slug> is per-issue. */
     function unlockGatedCards(entitlements) {
       var cards = document.querySelectorAll('[data-access="subscriber"][data-article-issue]');
       if (!cards.length) return;

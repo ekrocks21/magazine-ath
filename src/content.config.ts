@@ -137,6 +137,11 @@ const issues = defineCollection({
         cover_image: image().optional(),
         cover_image_alt: z.string().optional(),
 
+        // Wide/landscape hero art for the full-bleed home hero.
+        // Falls back to cover_image when absent.
+        hero_image: image().optional(),
+        hero_image_alt: z.string().optional(),
+
         /** Slug of the editor's-letter article for this issue. */
         editors_letter: z.string().optional(),
 

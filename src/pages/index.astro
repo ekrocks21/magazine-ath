@@ -217,119 +217,63 @@ const statusWord = {
   title="The Local Lookout"
   description="The quarterly print magazine of Above the Hook. Coastal New Jersey, observed slowly."
   ogImage="/og/default.png"
+  heroFullBleed={true}
 >
   <StructuredData data={[siteWebSite(), siteOrganization()]} slot="head" />
-  <!-- ── 1. Story-forward hero ───────────────────────────────────── -->
-  <section style="padding: 72px 0 96px;">
-    <div class="mag-container hero-grid">
-      <div>
-        <div class="meta-dotted" style="margin-bottom: 28px;">
-          Issue No. {currentNumber}<span class="dot">·</span>Spring 2026<span class="dot">·</span>
-          <span class="rust">{statusWord}</span>
-        </div>
 
-        <h1
-          style="font-family: var(--font-display); font-weight: 700; font-size: clamp(3rem, 6.4vw, 5.2rem); line-height: 1.02; letter-spacing: -0.025em; color: var(--ink); margin-bottom: 28px;"
-        >
-          {heroSplit.head}
-          <em style="font-weight: 400; color: var(--rust);">{heroSplit.tail}</em>
-        </h1>
+  <!-- ── 1. Full-bleed hero ─────────────────────────────────────── -->
+  <section class="home-hero" aria-label="Featured story">
 
-        <p
-          style="font-family: var(--font-display); font-style: italic; font-size: 20px; line-height: 1.5; color: var(--ink-soft); max-width: 520px; margin-bottom: 40px;"
-        >
-          The return of the ospreys. Thirteen shillings paid to the Lenape in
-          1680. The house that stayed. A humpback at Gunnison Beach. The second
-          issue of The Local Lookout.
-        </p>
+    <!-- Background image (hero_image preferred; falls back to cover) -->
+    <div class="home-hero-bg">
+      {(currentData.hero_image ?? currentData.cover_image) ? (
+        <CoverImage
+          src={(currentData.hero_image ?? currentData.cover_image)!}
+          alt={currentData.hero_image_alt ?? currentData.cover_image_alt ?? `${currentData.title} cover`}
+          widths={[800, 1200, 1600, 2400]}
+          sizes="100vw"
+          loading="eager"
+        />
+      ) : (
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Spring 2026" style="width:100%;height:100%;display:block;">
+          <rect width="1200" height="800" fill="#10192B" />
+          <circle cx="900" cy="200" r="220" fill="#1B2E4B" opacity="0.7" />
+          <circle cx="200" cy="600" r="180" fill="#1B2E4B" opacity="0.5" />
+          <text x="600" y="340" text-anchor="middle" font-family="'Playfair Display', serif" font-size="96" font-weight="700" fill="#F5F0E8" opacity="0.08">The Local Lookout</text>
+        </svg>
+      )}
+    </div>
 
-        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-          <a href={`/issues/${currentSlug}`} class="btn-primary">
-            Read the issue <span class="arrow">→</span>
-          </a>
-          {heroSlug && (
-            <a href={`/issues/${currentSlug}/${heroSlug}`} class="btn-ghost">
-              Preview the feature
-            </a>
-          )}
-        </div>
+    <!-- Gradient overlay -->
+    <div class="home-hero-gradient" aria-hidden="true"></div>
 
-        <div
-          style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--sand); display: flex; gap: 48px; flex-wrap: wrap;"
-        >
-          <div>
-            <div
-              style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;"
-            >
-              Publishing
-            </div>
-            <div
-              style="font-family: var(--font-display); font-size: 18px; color: var(--ink); letter-spacing: -0.01em;"
-            >
-              Quarterly
-            </div>
-          </div>
-          <div>
-            <div
-              style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;"
-            >
-              From
-            </div>
-            <div
-              style="font-family: var(--font-display); font-size: 18px; color: var(--ink); letter-spacing: -0.01em;"
-            >
-              Highlands, NJ
-            </div>
-          </div>
-          <div>
-            <div
-              style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;"
-            >
-              Founded
-            </div>
-            <div
-              style="font-family: var(--font-display); font-size: 18px; color: var(--ink); letter-spacing: -0.01em;"
-            >
-              Winter 2026
-            </div>
-          </div>
-        </div>
+    <!-- Content overlay — anchored to bottom -->
+    <div class="home-hero-content mag-container">
+      <div class="home-hero-kicker meta-dotted">
+        Issue No. {currentNumber}<span class="dot">·</span>{currentData.season.charAt(0).toUpperCase() + currentData.season.slice(1)} {currentData.year}<span class="dot">·</span><span class="rust">{statusWord}</span>
       </div>
-
-      <div style="position: relative; padding-left: 24px;" class="hero-cover">
-        <div
-          class="issue-cover"
-          style="width: 100%; max-width: 420px; margin-left: auto; transform: rotate(-1.2deg);"
-        >
-          {currentData.cover_image ? (
-            <CoverImage
-              src={currentData.cover_image}
-              alt={currentData.cover_image_alt ?? `${currentData.title} cover`}
-              widths={[360, 560, 720, 960]}
-              sizes="(min-width: 900px) 420px, 80vw"
-              loading="eager"
-            />
-          ) : (
-            <svg viewBox="0 0 420 560" role="img" aria-label="Spring 2026 cover" style="display:block; width:100%; height:auto; background: var(--paper);">
-              <rect width="420" height="560" fill="#FDFAF5" />
-              <path d="M0 330 L70 304 L160 292 L260 286 L340 292 L420 302 L420 410 L0 410 Z" fill="#8B3A2A" opacity="0.12" />
-              <circle cx="330" cy="180" r="28" fill="#C4583E" opacity="0.35" />
-              <text x="210" y="110" text-anchor="middle" font-family="'DM Mono', monospace" font-size="11" letter-spacing="4" fill="#7A6F5F">ABOVE THE HOOK · QUARTERLY</text>
-              <text x="210" y="250" text-anchor="middle" font-family="'Playfair Display', serif" font-size="46" font-weight="700" fill="#1A1208">The Local</text>
-              <text x="210" y="310" text-anchor="middle" font-family="'Playfair Display', serif" font-size="46" font-weight="400" font-style="italic" fill="#8B3A2A">Lookout</text>
-              <rect x="170" y="330" width="80" height="2" fill="#8B3A2A" />
-              <text x="210" y="390" text-anchor="middle" font-family="'DM Mono', monospace" font-size="11" letter-spacing="3" fill="#7A6F5F">ISSUE NO. 02 · SPRING 2026</text>
-              <text x="210" y="490" text-anchor="middle" font-family="'Playfair Display', serif" font-size="22" font-style="italic" fill="#3D3020">{currentData.theme ?? 'Return'}</text>
-            </svg>
-          )}
-        </div>
-        <div
-          style="position: absolute; right: -20px; top: -14px; background: var(--rust); color: #fff; padding: 8px 14px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; transform: rotate(2deg); box-shadow: 0 6px 16px rgba(139,58,42,0.3);"
-        >
-          {statusWord}
-        </div>
+      <h1 class="home-hero-title">
+        {heroSplit.head}<em>{heroSplit.tail}</em>
+      </h1>
+      {(heroArticle?.data.dek || currentData.tagline) && (
+        <p class="home-hero-dek">
+          {heroArticle?.data.dek ?? currentData.tagline}
+        </p>
+      )}
+      <div class="home-hero-ctas">
+        <a href={`/issues/${currentSlug}`} class="btn-primary">
+          Read the issue <span class="arrow">→</span>
+        </a>
+        {heroSlug && (
+          <a href={`/issues/${currentSlug}/${heroSlug}`} class="btn-ghost-light">
+            Preview the feature
+          </a>
+        )}
       </div>
     </div>
+
+    <!-- Sentinel: IntersectionObserver in Masthead watches this -->
+    <div id="hero-sentinel" aria-hidden="true"></div>
   </section>
 
   <!-- ── 2. Editor's letter ──────────────────────────────────────── -->
@@ -739,12 +683,6 @@ const statusWord = {
 </BaseLayout>
 
 <style>
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 88px;
-    align-items: center;
-  }
   .letter-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -904,8 +842,6 @@ const statusWord = {
     .ed-card-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
   }
   @media (max-width: 900px) {
-    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
-    .hero-cover { padding-left: 0 !important; }
     .letter-grid { grid-template-columns: 1fr; gap: 24px; }
     .subscribe-grid { grid-template-columns: 1fr; gap: 40px; }
     .tier-grid { grid-template-columns: 1fr; }
