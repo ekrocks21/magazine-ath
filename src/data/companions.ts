@@ -73,8 +73,8 @@ export const COMPANIONS: Record<string, Companion> = {
   //     summary: 'The 1764 origin story of America\u2019s oldest working lighthouse.',
   //   },
   'blog-sandy-hook-geography': {
-    title: 'Sandy Hook: A Geography',
-    url: 'https://blog.abovethehook.com/posts/sandy-hook-geography',
+    title: 'The Edge of the Continent',
+    url: 'https://blog.abovethehook.com/posts/the-edge-of-the-continent-why-new-york-harbor-sandy-hook-and-the-highlands-shape/',
     platform: 'blog',
     kicker: 'Read on the Blog',
     summary:
