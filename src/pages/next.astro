@@ -2,7 +2,7 @@
 /**
  * /next — The next issue preview page
  *
- * Shows the nearest future issue (publish_date > today). If no future issue
+ * Shows the nearest future issue (ship_date > today). If no future issue
  * exists, we still render a quiet "next issue in progress" page so the link
  * from the masthead never 404s.
  */
@@ -15,11 +15,11 @@ const issues = await getCollection('issues');
 const NOW = Date.now();
 
 const futureIssues = issues
-  .filter((i) => (i.data.publish_date?.valueOf() ?? 0) > NOW)
+  .filter((i) => (i.data.ship_date?.valueOf() ?? 0) > NOW)
   .sort(
     (a, b) =>
-      (a.data.publish_date?.valueOf() ?? 0) -
-      (b.data.publish_date?.valueOf() ?? 0),
+      (a.data.ship_date?.valueOf() ?? 0) -
+      (b.data.ship_date?.valueOf() ?? 0),
   );
 
 const nextIssue = futureIssues[0];
@@ -29,8 +29,8 @@ const nextNumber = data ? String(data.issue_number).padStart(2, '0') : '—';
 const seasonLabel = data
   ? data.season.charAt(0).toUpperCase() + data.season.slice(1)
   : '';
-const publishLabel = data?.publish_date
-  ? data.publish_date.toLocaleDateString('en-US', {
+const publishLabel = data?.ship_date
+  ? data.ship_date.toLocaleDateString('en-US', {
       month: 'long',
       year: 'numeric',
       timeZone: 'UTC',
@@ -84,7 +84,7 @@ const bodyParagraphs = body
             <div
               style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;"
             >
-              Publishing
+              Shipping
             </div>
             <div
               style="font-family: var(--font-display); font-size: 18px; color: var(--ink); letter-spacing: -0.01em;"
