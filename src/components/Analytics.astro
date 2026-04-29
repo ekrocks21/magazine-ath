@@ -1,26 +1,20 @@
 ---
 /**
- * Analytics — Plausible, loaded only when PUBLIC_ANALYTICS_DOMAIN is set.
+ * Analytics — Cloudflare Web Analytics beacon.
  *
- * On Netlify, set PUBLIC_ANALYTICS_DOMAIN to the domain registered in
- * Plausible (e.g. "magazine.abovethehook.com"). Leave unset in dev or
- * preview contexts to skip the script entirely — no pageview pollution.
- *
- * If you switch to Umami or a different analytics vendor later, this
- * is the one file to change.
+ * Set PUBLIC_CF_WEB_ANALYTICS_TOKEN in Netlify environment variables to
+ * the token generated at dash.cloudflare.com → Analytics → Web Analytics.
+ * Leave unset in dev/preview to skip the beacon entirely.
  */
 
-const domain = import.meta.env.PUBLIC_ANALYTICS_DOMAIN;
-const scriptSrc =
-  import.meta.env.PUBLIC_ANALYTICS_SCRIPT ??
-  'https://plausible.io/js/script.js';
+const token = import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN;
 ---
 
-{domain && (
+{token && (
   <script
     is:inline
     defer
-    data-domain={domain}
-    src={scriptSrc}
+    src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon={`{"token": "${token}"}`}
   ></script>
 )}
