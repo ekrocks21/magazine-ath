@@ -282,7 +282,7 @@ body[data-hero-fullbleed] .mag-masthead.is-solid .mag-rust-rule {
   bottom: 0;
   left: 0;
   right: 0;
-  padding-bottom: 72px;
+  padding-bottom: 96px;
   color: var(--on-dark-1);
 }
 .home-hero-kicker {
@@ -907,12 +907,12 @@ body[data-hero-fullbleed] .mag-masthead.is-solid .mag-rust-rule {
   .pullquote { margin: 32px 0; font-size: 22px; }
   .home-hero-title { font-size: clamp(2.4rem, 7vw, 3.6rem); }
   .home-hero-dek { font-size: 17px; }
-  .home-hero-content { padding-bottom: 48px; }
+  .home-hero-content { padding-bottom: 64px; }
 }
 
 @media (max-width: 640px) {
   .home-hero-kicker { font-size: 9px; }
-  .home-hero-content { padding-bottom: 36px; }
+  .home-hero-content { padding-bottom: 48px; }
 }
 
 /* ── Family strip (cross-property nav — mirrors brand/ath-components.css
