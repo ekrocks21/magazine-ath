@@ -33,4 +33,4 @@ dunes at Sandy Hook remember from 1944, and a quiet afternoon on the bluefish
 boats out of Belford. The summer here has always been loud. The magazine is
 the thing that keeps a slower record of it.
 
-Publishing early July 2026.
+Publishing September 2026.
