@@ -65,7 +65,5 @@ Sign in with an email, no password. Cancel anytime from your account.
 ## Submissions and correspondence
 
 Letters, editorial pitches, and press inquiries:
-[hello@abovethehook.com](mailto:hello@abovethehook.com). We read everything
+[shop@abovethehook.com](mailto:shop@abovethehook.com). We read everything
 and reply to most of it, eventually.
-
-Mailing address: Atlantic Highlands, New Jersey.
