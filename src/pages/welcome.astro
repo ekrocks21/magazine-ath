@@ -1,0 +1,85 @@
+---
+/**
+ * /welcome — Post-checkout landing page.
+ *
+ * The Cloudflare Worker redirects here after a successful Stripe
+ * Checkout session. The session cookie is already set before the
+ * redirect lands, so the reader is signed in by the time they arrive.
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const issues = await getCollection('issues');
+const latestIssue = issues
+  .filter((i) => i.data.publish_date && i.data.publish_date.valueOf() <= Date.now())
+  .sort((a, b) => (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0))[0];
+
+const issueSlug = latestIssue ? latestIssue.id.replace(/\.md$/, '') : null;
+---
+
+<BaseLayout
+  title="Welcome — The Local Lookout"
+  description="Your subscription is confirmed. Welcome to The Local Lookout."
+  noindex={true}
+>
+  <section style="padding: 120px 0 96px; min-height: 60vh; display: flex; align-items: center;">
+    <div class="mag-container-narrow" style="text-align: center;">
+
+      <div
+        style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--rust); margin-bottom: 28px;"
+      >
+        Subscription confirmed
+      </div>
+
+      <h1
+        style="font-family: var(--font-display); font-weight: 700; font-size: clamp(2.4rem, 5vw, 3.8rem); line-height: 1.06; letter-spacing: -0.025em; color: var(--ink); margin-bottom: 24px;"
+      >
+        Welcome to the magazine.
+      </h1>
+
+      <p
+        style="font-family: var(--font-display); font-style: italic; font-size: 20px; line-height: 1.55; color: var(--ink-soft); max-width: 520px; margin: 0 auto 48px;"
+      >
+        You're signed in and your subscription is active. A confirmation
+        email is on its way.
+      </p>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
+        {issueSlug ? (
+          <a href={`/issues/${issueSlug}`} class="btn-primary">
+            Read the current issue <span class="arrow">→</span>
+          </a>
+        ) : (
+          <a href="/" class="btn-primary">
+            Go to the magazine <span class="arrow">→</span>
+          </a>
+        )}
+        <a
+          href="/next"
+          style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 24px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink); border: 1px solid var(--sand); text-decoration: none;"
+        >
+          Preview the next issue
+        </a>
+      </div>
+
+      <div
+        style="margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--sand-light); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);"
+      >
+        Questions? <a href="mailto:shop@abovethehook.com" style="color: var(--rust); text-decoration: none;">shop@abovethehook.com</a>
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  fetch('/api/me')
+    .then((r) => r.ok ? r.json() : null)
+    .then((data) => {
+      if (!data?.entitlements?.length) {
+        location.replace('/subscribe');
+      }
+    })
+    .catch(() => {});
+</script>

@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page not found — The Local Lookout"
+  description="This page doesn't exist."
+  noindex={true}
+>
+  <section style="padding: 120px 0 96px; min-height: 60vh; display: flex; align-items: center;">
+    <div class="mag-container-narrow" style="text-align: center;">
+
+      <div
+        style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); margin-bottom: 28px;"
+      >
+        404
+      </div>
+
+      <h1
+        style="font-family: var(--font-display); font-weight: 700; font-size: clamp(2.4rem, 5vw, 3.8rem); line-height: 1.06; letter-spacing: -0.025em; color: var(--ink); margin-bottom: 24px;"
+      >
+        Nothing here.
+      </h1>
+
+      <p
+        style="font-family: var(--font-display); font-style: italic; font-size: 20px; line-height: 1.55; color: var(--ink-soft); max-width: 480px; margin: 0 auto 48px;"
+      >
+        The page you're looking for has moved, never existed, or went
+        out with the tide.
+      </p>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
+        <a href="/" class="btn-primary">
+          Go to the magazine <span class="arrow">→</span>
+        </a>
+        <a
+          href="/archive"
+          style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 24px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink); border: 1px solid var(--sand); text-decoration: none;"
+        >
+          Browse the archive
+        </a>
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>
