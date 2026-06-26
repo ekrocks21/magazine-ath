@@ -227,4 +227,26 @@ const jsonLd = [
       }
     </footer>
   </article>
+
+  {/* Meta Pixel — ViewContent. Reuses the site-wide pixel loaded in
+      BaseLayout's <head> (does NOT re-init). Values come from issue/
+      article data so every article route reports correctly. */}
+  <script
+    define:vars={{
+      contentName: data.title,
+      contentIds: [data.issue],
+      value: 100.0,
+      currency: 'USD',
+    }}
+  >
+    if (typeof fbq === 'function') {
+      fbq('track', 'ViewContent', {
+        content_name: contentName,
+        content_ids: contentIds,
+        content_type: 'product',
+        value: value,
+        currency: currency,
+      });
+    }
+  </script>
 </BaseLayout>
