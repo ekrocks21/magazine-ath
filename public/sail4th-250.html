@@ -3,6 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Meta Pixel Code -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1323034166192722');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1323034166192722&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 <title>Sail4th 250 — The Fleet — The Local Lookout · Spring 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -347,7 +364,30 @@ img{display:block;max-width:100%;}
   .featured-ship.reverse{direction:ltr;}
   .article-footer-inner{flex-direction:column;gap:12px;text-align:center;}
 }
+
+/* FLEET MAP */
+#fleet-map{width:100%;aspect-ratio:4/3;background:var(--navy);position:relative;z-index:0;}
+.fleet-map-status{font-family:var(--mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(201,185,154,0.35);margin-top:10px;min-height:14px;}
+.leaflet-popup-content-wrapper{background:var(--navy);border:1px solid rgba(201,185,154,0.2);border-radius:0;padding:0;box-shadow:0 4px 24px rgba(0,0,0,0.5);}
+.leaflet-popup-tip-container{display:none;}
+.leaflet-popup-content{margin:0;width:220px!important;}
+.fleet-popup-img{width:100%;height:110px;object-fit:cover;display:block;}
+.fleet-popup-body{padding:12px 14px;}
+.fleet-popup-name{font-family:var(--serif);font-size:13px;font-weight:700;color:var(--cream);line-height:1.2;}
+.fleet-popup-country{font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--rust-light);margin-top:3px;margin-bottom:10px;}
+.fleet-popup-stats{display:flex;gap:14px;margin-bottom:8px;}
+.fleet-popup-stat{font-family:var(--mono);font-size:9px;}
+.fleet-popup-stat span{display:block;color:rgba(201,185,154,0.4);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;}
+.fleet-popup-stat strong{color:var(--cream);}
+.fleet-popup-ts{font-family:var(--mono);font-size:8px;color:rgba(201,185,154,0.3);margin-bottom:8px;}
+.fleet-popup-link{font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--rust-light);text-decoration:none;border-bottom:1px solid rgba(196,88,62,0.3);padding-bottom:1px;}
+.leaflet-control-attribution{background:rgba(27,46,75,0.85)!important;color:rgba(201,185,154,0.35)!important;font-size:8px!important;}
+.leaflet-control-attribution a{color:rgba(201,185,154,0.35)!important;}
+.ship-marker-wrap{position:relative;width:36px;height:36px;cursor:pointer;}
+.ship-arrow{position:absolute;top:0;left:0;width:36px;height:36px;}
+.ship-flag-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;line-height:1;pointer-events:none;}
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 </head>
 <body>
 
@@ -393,6 +433,61 @@ img{display:block;max-width:100%;}
     </div>
     <div class="feature-content-video">
       <iframe src="https://www.youtube.com/embed/DveBwo2tlEc" title="Sail4th 250" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION DIVIDER -->
+<div class="section-divider">
+  <div class="section-divider-num">§</div>
+  <div class="section-divider-label">From the Bluff · The Harbor Observatory</div>
+  <div class="section-divider-rule"></div>
+</div>
+
+<!-- HARBOR / OBSERVATORY -->
+<div id="harbor" class="harbor-section">
+  <div class="harbor-inner">
+    <div class="harbor-text">
+      <div class="harbor-eyebrow">Above the Hook · Harbor Observatory</div>
+      <h2 class="harbor-title">Watching from the hills above it all</h2>
+      <div class="harbor-rule" style="width:40px;height:3px;background:var(--rust);margin-bottom:24px;"></div>
+      <div class="harbor-body">
+        <p>The Sandy Hook Harbor Observatory tracks every vessel transiting New York Harbor in real time from the hills of Highlands — an Axis 4K PTZ camera on the bluff, an AIS receiver reading every ship's position and identity, an AI system writing the story of each vessel as it passes.</p>
+        <p>For Sail4th 250, we will be watching the entire week. Every tall ship that passes Sandy Hook Bay will be captured, identified, and documented in the Observatory archive. The fleet profiles you have read in this issue will appear live on the Observatory as each vessel enters the harbor.</p>
+        <p>The best view in America is from this bluff. The best view on this bluff is through the Observatory camera. On July 4th, when Eagle leads the parade through Sandy Hook Bay, we will be live.</p>
+      </div>
+      <div class="harbor-live-box">
+        <div class="live-dot"></div>
+        <div class="live-text">
+          <div class="live-label">Live · 24/7 · harbor.abovethehook.com</div>
+          <div class="live-desc">The harbor is always moving. We are always watching. During Sail4th week, every tall ship transit will be captured and published in real time.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px;">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--rust);margin-bottom:12px;">Ships we will be watching for</div>
+        <div class="watching-list">
+          <div class="watch-item"><div class="watch-name">Amerigo Vespucci</div><div class="watch-flag">Italy · Full-Rigged Ship</div></div>
+          <div class="watch-item"><div class="watch-name">Esmeralda</div><div class="watch-flag">Chile · Four-Masted Barquentine</div></div>
+          <div class="watch-item"><div class="watch-name">ARA Libertad</div><div class="watch-flag">Argentina · Full-Rigged Ship</div></div>
+          <div class="watch-item"><div class="watch-name">USCGC Eagle</div><div class="watch-flag">USA · Leads the Parade</div></div>
+          <div class="watch-item"><div class="watch-name">NRP Sagres</div><div class="watch-flag">Portugal · Cross of Christ sails</div></div>
+          <div class="watch-item"><div class="watch-name">Dar Młodzieży</div><div class="watch-flag">Poland · Gift of Youth</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div id="fleet-map"></div>
+      <div id="fleet-map-status" class="fleet-map-status">Loading fleet positions…</div>
+      <div style="margin-top:20px;background:var(--paper);border:1px solid var(--sand-light);padding:24px 20px;">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--rust);margin-bottom:14px;">The Parade Route</div>
+        <div style="font-family:var(--body);font-size:13px;color:var(--ink-soft);line-height:1.7;">
+          <p style="margin-bottom:10px;"><strong>July 3:</strong> Tall ships parade through the East River from upper Manhattan toward downtown.</p>
+          <p style="margin-bottom:10px;"><strong>July 4:</strong> The full International Parade of Sail begins near the Verrazzano-Narrows Bridge, moving north through the Hudson River. Eagle leads.</p>
+          <p><strong>Sandy Hook Bay:</strong> Every ship transits here first. The Observatory captures them all as they pass the Highlands bluff — before the crowds, before Manhattan, before the parade begins.</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -447,12 +542,7 @@ img{display:block;max-width:100%;}
     <!-- AMERIGO VESPUCCI -->
     <div class="featured-ship">
       <div class="featured-ship-img">
-        <!-- IMAGE PLACEHOLDER: Amerigo Vespucci under full sail, black hull with white stripes, three masts -->
-        <div class="ship-img-placeholder" style="height:100%;aspect-ratio:auto;">
-          <div class="icon">⛵</div>
-          <div>Image: Amerigo Vespucci</div>
-          <div style="font-size:7px;opacity:0.5;margin-top:4px;">Full-rigged three-masted ship · Italian Navy · black hull with white stripes</div>
-        </div>
+        <img src="https://magazine-assets.abovethehook.com/ships/amerigo-vespucci/hero.jpg" alt="Amerigo Vespucci under full sail in New York Harbor, black hull with white stripes">
         <div class="featured-ship-flag-tag">Italy · Italian Navy</div>
       </div>
       <div class="featured-ship-text">
@@ -532,11 +622,7 @@ img{display:block;max-width:100%;}
     <!-- ARA LIBERTAD -->
     <div class="featured-ship">
       <div class="featured-ship-img">
-        <div class="ship-img-placeholder" style="height:100%;aspect-ratio:auto;">
-          <div class="icon">⛵</div>
-          <div>Image: ARA Libertad</div>
-          <div style="font-size:7px;opacity:0.5;margin-top:4px;">Full-rigged ship · Argentine Navy · white hull</div>
-        </div>
+        <img src="https://magazine-assets.abovethehook.com/ships/libertad/hero-v2.jpg" alt="ARA Libertad Argentine Navy full-rigged ship under full sail, fastest Atlantic crossing record">
         <div class="featured-ship-flag-tag">Argentina · Argentine Navy</div>
       </div>
       <div class="featured-ship-text">
@@ -589,11 +675,7 @@ img{display:block;max-width:100%;}
     <!-- AMERIGO VESPUCCI -->
     <div class="ship-card">
       <div class="ship-card-img-wrap">
-        <!-- IMAGE: Amerigo Vespucci at anchor or under sail, black hull, white stripes, three masts -->
-        <div class="ship-img-placeholder">
-          <div class="icon">⛵</div>
-          <div>Photo: Amerigo Vespucci</div>
-        </div>
+        <img src="https://magazine-assets.abovethehook.com/ships/amerigo-vespucci/hero.jpg" alt="Amerigo Vespucci under full sail in New York Harbor, black hull with white stripes">
         <div class="ship-card-flag">Italy</div>
         <div class="ship-card-class">Full-Rigged Ship</div>
       </div>
@@ -613,11 +695,7 @@ img{display:block;max-width:100%;}
     <!-- ARC GLORIA -->
     <div class="ship-card">
       <div class="ship-card-img-wrap">
-        <!-- IMAGE: ARC Gloria, three-masted barque, Colombian Navy, white hull -->
-        <div class="ship-img-placeholder">
-          <div class="icon">⛵</div>
-          <div>Photo: ARC Gloria</div>
-        </div>
+        <img src="https://magazine-assets.abovethehook.com/ships/arc-gloria/hero.jpg" alt="ARC Gloria three-masted barque of the Colombian Navy under sail">
         <div class="ship-card-flag">Colombia</div>
         <div class="ship-card-class">Barque</div>
       </div>
@@ -868,11 +946,7 @@ img{display:block;max-width:100%;}
     <!-- JUAN BAUTISTA CAMBIASO -->
     <div class="ship-card">
       <div class="ship-card-img-wrap">
-        <!-- IMAGE: Juan Bautista Cambiaso, Dominican Republic Navy barquentine -->
-        <div class="ship-img-placeholder">
-          <div class="icon">⛵</div>
-          <div>Photo: Juan Bautista Cambiaso</div>
-        </div>
+        <img src="https://magazine-assets.abovethehook.com/ships/juan-bautista-cambiaso/hero.jpg" alt="Juan Bautista Cambiaso Dominican Republic Navy barquentine">
         <div class="ship-card-flag">Dominican Republic</div>
         <div class="ship-card-class">Barquentine</div>
       </div>
@@ -885,6 +959,26 @@ img{display:block;max-width:100%;}
           <div class="spec-item"><div class="spec-label">Launched</div><div class="spec-value">2009, Bulgaria</div></div>
           <div class="spec-item"><div class="spec-label">Sail area</div><div class="spec-value">11,000 sq ft</div></div>
           <div class="spec-item"><div class="spec-label">Cadets</div><div class="spec-value">37</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARA LIBERTAD -->
+    <div class="ship-card">
+      <div class="ship-card-img-wrap">
+        <img src="https://magazine-assets.abovethehook.com/ships/libertad/hero-v2.jpg" alt="ARA Libertad Argentine Navy full-rigged ship under full sail, fastest Atlantic crossing record">
+        <div class="ship-card-flag">Argentina</div>
+        <div class="ship-card-class">Full-Rigged Ship</div>
+      </div>
+      <div class="ship-card-body">
+        <div class="ship-card-name">ARA Libertad</div>
+        <div class="ship-card-country">Argentine Navy · Buenos Aires</div>
+        <p class="ship-card-desc">One of the world's fastest tall ships and one of the most recognized. ARA Libertad holds the world record for the fastest Atlantic crossing by a sail training vessel — 8 days and 12 hours from Cape Race, Newfoundland to the Dursey Island lighthouse off Ireland. Built in 1963 at the Río Santiago Shipyard in Ensenada — one of the few full-rigged ships ever built in South America. Her name means Liberty.</p>
+        <div class="ship-card-specs">
+          <div class="spec-item"><div class="spec-label">Length</div><div class="spec-value">340 ft</div></div>
+          <div class="spec-item"><div class="spec-label">Built</div><div class="spec-value">1963, Argentina</div></div>
+          <div class="spec-item"><div class="spec-label">Sail area</div><div class="spec-value">28,545 sq ft</div></div>
+          <div class="spec-item"><div class="spec-label">Record</div><div class="spec-value">Fastest Atlantic sail</div></div>
         </div>
       </div>
     </div>
@@ -976,106 +1070,6 @@ img{display:block;max-width:100%;}
   </div><!-- end fleet-grid -->
 </div><!-- end fleet-section -->
 
-<!-- SECTION DIVIDER -->
-<div class="section-divider">
-  <div class="section-divider-num">§</div>
-  <div class="section-divider-label">From the Bluff · The Harbor Observatory</div>
-  <div class="section-divider-rule"></div>
-</div>
-
-<!-- HARBOR / OBSERVATORY -->
-<div id="harbor" class="harbor-section">
-  <div class="harbor-inner">
-    <div class="harbor-text">
-      <div class="harbor-eyebrow">Above the Hook · Harbor Observatory</div>
-      <h2 class="harbor-title">Watching from the hills above it all</h2>
-      <div class="harbor-rule" style="width:40px;height:3px;background:var(--rust);margin-bottom:24px;"></div>
-      <div class="harbor-body">
-        <p>The Sandy Hook Harbor Observatory tracks every vessel transiting New York Harbor in real time from the hills of Highlands — an Axis 4K PTZ camera on the bluff, an AIS receiver reading every ship's position and identity, an AI system writing the story of each vessel as it passes.</p>
-        <p>For Sail4th 250, we will be watching the entire week. Every tall ship that passes Sandy Hook Bay will be captured, identified, and documented in the Observatory archive. The fleet profiles you have read in this issue will appear live on the Observatory as each vessel enters the harbor.</p>
-        <p>The best view in America is from this bluff. The best view on this bluff is through the Observatory camera. On July 4th, when Eagle leads the parade through Sandy Hook Bay, we will be live.</p>
-      </div>
-      <div class="harbor-live-box">
-        <div class="live-dot"></div>
-        <div class="live-text">
-          <div class="live-label">Live · 24/7 · harbor.abovethehook.com</div>
-          <div class="live-desc">The harbor is always moving. We are always watching. During Sail4th week, every tall ship transit will be captured and published in real time.</div>
-        </div>
-      </div>
-
-      <div style="margin-top:28px;">
-        <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--rust);margin-bottom:12px;">Ships we will be watching for</div>
-        <div class="watching-list">
-          <div class="watch-item"><div class="watch-name">Amerigo Vespucci</div><div class="watch-flag">Italy · Full-Rigged Ship</div></div>
-          <div class="watch-item"><div class="watch-name">Esmeralda</div><div class="watch-flag">Chile · Four-Masted Barquentine</div></div>
-          <div class="watch-item"><div class="watch-name">ARA Libertad</div><div class="watch-flag">Argentina · Full-Rigged Ship</div></div>
-          <div class="watch-item"><div class="watch-name">USCGC Eagle</div><div class="watch-flag">USA · Leads the Parade</div></div>
-          <div class="watch-item"><div class="watch-name">NRP Sagres</div><div class="watch-flag">Portugal · Cross of Christ sails</div></div>
-          <div class="watch-item"><div class="watch-name">Dar Młodzieży</div><div class="watch-flag">Poland · Gift of Youth</div></div>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <div class="harbor-map-placeholder">
-        <!-- IMAGE PLACEHOLDER: Harbor Observatory map showing parade route, Sandy Hook Bay, vessel tracks -->
-        <div class="map-placeholder-icon">🗺️</div>
-        <div>Harbor Map · AIS Overlay</div>
-        <div style="font-size:7px;margin-top:4px;opacity:0.5;">Parade route: Verrazzano to GWB</div>
-        <div style="font-size:7px;margin-top:2px;opacity:0.5;">July 3: East River · July 4: Hudson River</div>
-      </div>
-      <div style="margin-top:20px;background:var(--paper);border:1px solid var(--sand-light);padding:24px 20px;">
-        <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--rust);margin-bottom:14px;">The Parade Route</div>
-        <div style="font-family:var(--body);font-size:13px;color:var(--ink-soft);line-height:1.7;">
-          <p style="margin-bottom:10px;"><strong>July 3:</strong> Tall ships parade through the East River from upper Manhattan toward downtown.</p>
-          <p style="margin-bottom:10px;"><strong>July 4:</strong> The full International Parade of Sail begins near the Verrazzano-Narrows Bridge, moving north through the Hudson River. Eagle leads.</p>
-          <p><strong>Sandy Hook Bay:</strong> Every ship transits here first. The Observatory captures them all as they pass the Highlands bluff — before the crowds, before Manhattan, before the parade begins.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- COLLECTION TEASER -->
-<div id="collection" class="collection-section">
-  <div class="collection-inner">
-    <div class="collection-text">
-      <div class="collection-eyebrow">Above the Hook · Sail4th 250</div>
-      <h2 class="collection-title">We made<br>something for <em>this.</em></h2>
-      <div class="collection-rule"></div>
-      <p class="collection-body">A limited collection of apparel and objects built around the event that will define this harbor for a generation. The Sail4th 250 ATH collection launches ahead of July 3rd — designed in Highlands, printed for the people who were watching from the right side of the water.</p>
-      <p class="collection-body" style="font-style:italic;color:rgba(245,240,232,0.5);font-size:13px;">Full collection details, product images, and availability at abovethehook.com</p>
-      <a href="https://abovethehook.com/shop" class="collection-cta">Shop the collection at abovethehook.com →</a>
-    </div>
-    <div class="collection-items">
-      <div class="collection-item">
-        <!-- IMAGE: Sail4th 250 crewneck mockup or lifestyle shot -->
-        <div class="collection-item-label">Apparel</div>
-        <div class="collection-item-name">Sail4th 250 Crewneck</div>
-        <div class="collection-item-note">Coming soon</div>
-      </div>
-      <div class="collection-item">
-        <!-- IMAGE: ATH tote with harbor illustration -->
-        <div class="collection-item-label">Accessories</div>
-        <div class="collection-item-name">Harbor Observer Tote</div>
-        <div class="collection-item-note">Coming soon</div>
-      </div>
-      <div class="collection-item">
-        <!-- IMAGE: ATH Sail4th archival print of Sandy Hook Bay -->
-        <div class="collection-item-label">Print · Limited Edition</div>
-        <div class="collection-item-name">The Gate — Archival Print</div>
-        <div class="collection-item-note">Limited run</div>
-      </div>
-      <div class="collection-item">
-        <!-- IMAGE: Sail4th cap or hat -->
-        <div class="collection-item-label">Headwear</div>
-        <div class="collection-item-name">ATH Five-Panel Cap</div>
-        <div class="collection-item-note">Coming soon</div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ARTICLE FOOTER -->
 <div class="article-footer">
   <div class="article-footer-inner">
@@ -1085,5 +1079,90 @@ img{display:block;max-width:100%;}
   </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+(function () {
+  var map = L.map('fleet-map', { center: [40.55, -74.0], zoom: 8, zoomControl: true });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19,
+  }).addTo(map);
+
+  function makeIcon(cog, flag) {
+    var validCog = typeof cog === 'number' && cog >= 0 && cog < 360;
+    var rot = validCog ? cog : 0;
+    return L.divIcon({
+      className: '',
+      html: '<div class="ship-marker-wrap">' +
+        '<svg class="ship-arrow" style="transform:rotate(' + rot + 'deg)" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+          '<circle cx="18" cy="18" r="12" fill="#1B2E4B" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>' +
+          '<polygon points="18,6 22,24 18,21 14,24" fill="#C4583E"/>' +
+        '</svg>' +
+        '<div class="ship-flag-label">' + flag + '</div>' +
+      '</div>',
+      iconSize: [36, 36],
+      iconAnchor: [18, 18],
+      popupAnchor: [0, -20],
+    });
+  }
+
+  function fmtSog(sog) {
+    if (typeof sog !== 'number') return '—';
+    if (sog < 0.3) return 'At anchor';
+    return sog.toFixed(1) + ' kts';
+  }
+
+  function fmtCog(cog) {
+    if (typeof cog !== 'number' || cog >= 360) return '—';
+    return Math.round(cog) + '°';
+  }
+
+  function fmtTs(ts) {
+    if (!ts) return '';
+    try {
+      return new Date(ts).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+    } catch (e) { return ts; }
+  }
+
+  function buildPopup(p) {
+    return '<img class="fleet-popup-img" src="' + p.imageUrl + '" alt="' + p.name + '" onerror="this.style.display=\'none\'">' +
+      '<div class="fleet-popup-body">' +
+        '<div class="fleet-popup-name">' + p.flag + ' ' + p.name + '</div>' +
+        '<div class="fleet-popup-country">' + p.country + ' · ' + p.rig + '</div>' +
+        '<div class="fleet-popup-stats">' +
+          '<div class="fleet-popup-stat"><span>Speed</span><strong>' + fmtSog(p.sog) + '</strong></div>' +
+          '<div class="fleet-popup-stat"><span>Course</span><strong>' + fmtCog(p.cog) + '</strong></div>' +
+        '</div>' +
+        (p.ts ? '<div class="fleet-popup-ts">' + fmtTs(p.ts) + '</div>' : '') +
+        '<a class="fleet-popup-link" href="#fleet">View fleet profile →</a>' +
+      '</div>';
+  }
+
+  var statusEl = document.getElementById('fleet-map-status');
+
+  fetch('https://api.abovethehook.com/api/fleet-positions')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var features = (data && data.features) ? data.features : [];
+      features.forEach(function (f) {
+        var p = f.properties;
+        var coords = f.geometry.coordinates;
+        L.marker([coords[1], coords[0]], { icon: makeIcon(p.cog, p.flag) })
+          .bindPopup(buildPopup(p), { maxWidth: 240 })
+          .addTo(map);
+      });
+      if (statusEl) {
+        statusEl.textContent = features.length > 0
+          ? features.length + ' ship' + (features.length !== 1 ? 's' : '') + ' broadcasting AIS · positions updated every 5 min'
+          : 'No fleet AIS positions yet · ships may be in port or have AIS disabled';
+      }
+    })
+    .catch(function () {
+      if (statusEl) statusEl.textContent = 'Fleet positions temporarily unavailable';
+    });
+})();
+</script>
 </body>
 </html>
