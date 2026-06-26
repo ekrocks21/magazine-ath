@@ -11,6 +11,7 @@
 
 import '../styles/global.css';
 import SEO from '../components/SEO.astro';
+import MetaPixel from '../components/MetaPixel.astro';
 import Analytics from '../components/Analytics.astro';
 import FamilyStrip from '../components/FamilyStrip.astro';
 import Masthead from '../components/Masthead.astro';
@@ -61,6 +62,7 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#1C2E4A" />
+    <MetaPixel />
     <SEO
       title={title}
       description={description}
