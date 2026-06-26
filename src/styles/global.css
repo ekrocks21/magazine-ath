@@ -322,6 +322,7 @@ body[data-hero-fullbleed] .mag-masthead.is-solid .mag-rust-rule {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  padding-bottom: 48px;
 }
 
 /* Ghost variant for dark backgrounds */
