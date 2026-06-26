@@ -32,6 +32,17 @@ const singleIssueOptions = allIssues
   description="Four issues a year, and the whole archive. Ten dollars a month for digital, seventy-five a quarter for print, one hundred for a single issue."
   ogImage="/og/default.png"
 >
+  <!-- Checkout-cancelled notice (shown when Stripe redirects back with ?cancelled=1) -->
+  <div id="checkout-cancelled-banner" hidden style="background: var(--cream-dark); border-bottom: 1px solid var(--sand); padding: 14px 24px; text-align: center; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft);">
+    No charge was made. Pick a plan below whenever you're ready.
+    <button onclick="this.parentElement.hidden=true" style="margin-left: 16px; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 14px; line-height: 1;" aria-label="Dismiss">✕</button>
+  </div>
+  <script>
+    if (new URLSearchParams(location.search).get('cancelled') === '1') {
+      document.getElementById('checkout-cancelled-banner').hidden = false;
+    }
+  </script>
+
   <!-- Hero -->
   <section style="padding: 96px 0 56px;">
     <div class="mag-container-narrow" style="text-align: center;">
