@@ -133,6 +133,21 @@ const issues = defineCollection({
         theme: z.string().optional(),
         tagline: z.string().optional(),
 
+        /**
+         * Planned story lineup for a forthcoming issue. Rendered on /next as
+         * the "what's coming" showcase. Each entry is a named piece with its
+         * department and a one-line dek.
+         */
+        lineup: z
+          .array(
+            z.object({
+              department: z.string(),
+              title: z.string(),
+              dek: z.string().optional(),
+            }),
+          )
+          .default([]),
+
         // Cover art — pipeline-optimized when image() helper is used
         cover_image: image().optional(),
         cover_image_alt: z.string().optional(),

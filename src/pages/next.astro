@@ -43,6 +43,9 @@ const bodyParagraphs = body
   .split(/\n\s*\n/)
   .map((p) => p.trim())
   .filter(Boolean);
+
+// Named story lineup (frontmatter). When present, showcased as "The stories."
+const lineup = data?.lineup ?? [];
 ---
 
 <BaseLayout
@@ -174,7 +177,34 @@ const bodyParagraphs = body
     </section>
   )}
 
-  <section style="padding: 96px 0;">
+  {lineup.length > 0 && (
+    <section style="padding: 88px 0;">
+      <div class="mag-container-narrow">
+        <div class="meta-dotted" style="margin-bottom: 20px; justify-content: center; text-align: center;">
+          The stories<span class="dot">·</span>Issue No. {nextNumber}
+        </div>
+        <h2
+          style="font-family: var(--font-display); font-size: clamp(1.8rem, 3.4vw, 2.4rem); text-align: center; letter-spacing: -0.02em; color: var(--ink); font-weight: 700; margin-bottom: 48px;"
+        >
+          What's coming to the {seasonLabel} edition.
+        </h2>
+        <ol class="next-lineup">
+          {lineup.map((story, i) => (
+            <li class="next-lineup-item">
+              <span class="next-lineup-num">{String(i + 1).padStart(2, '0')}</span>
+              <div class="next-lineup-body">
+                <div class="next-lineup-dept">{story.department}</div>
+                <h3 class="next-lineup-title">{story.title}</h3>
+                {story.dek && <p class="next-lineup-dek">{story.dek}</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )}
+
+  <section style="padding: 96px 0; border-top: 1px solid var(--sand-light);">
     <div class="mag-container-narrow" style="text-align: center;">
       <div class="meta-dotted" style="margin-bottom: 16px; justify-content: center;">
         Subscribe
@@ -215,6 +245,54 @@ const bodyParagraphs = body
     font-size: 19px;
     line-height: 1.55;
     color: var(--ink);
+  }
+
+  .next-lineup {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 640px;
+    margin-inline: auto;
+  }
+  .next-lineup-item {
+    display: flex;
+    gap: 24px;
+    padding: 28px 0;
+    border-top: 1px solid var(--sand);
+  }
+  .next-lineup-item:last-child {
+    border-bottom: 1px solid var(--sand);
+  }
+  .next-lineup-num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--rust);
+    padding-top: 6px;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+  }
+  .next-lineup-dept {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .next-lineup-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .next-lineup-dek {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-soft);
   }
 
   @media (max-width: 900px) {
