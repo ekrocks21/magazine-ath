@@ -29,6 +29,9 @@ const dateLabel = publishDate
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      // Frontmatter dates are bare YYYY-MM-DD, parsed as UTC midnight. Format
+      // in UTC too, or every article reads a day early west of Greenwich.
+      timeZone: 'UTC',
     })
   : undefined;
 
