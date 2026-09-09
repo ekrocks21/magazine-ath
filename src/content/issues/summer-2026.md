@@ -3,49 +3,67 @@ title: "Summer 2026"
 issue_number: 3
 season: summer
 year: 2026
-status: in_production
+status: published
 publish_date: 2026-07-25
 ship_date: 2026-08-01
 theme: "The Season Has Arrived"
-tagline: "Sail4th 250 in the harbor, the water that turned blue, a sunset cleanup on Plum Island, music on the lawn at Monmouth, and the resort that made this coast famous before anyone was watching."
+tagline: "Forty-eight tall ships crossing our bay before they saw Manhattan, the water that turned Caribbean blue, five hundred humpbacks counted one tail at a time, seven hundred pounds off Plum Island on a Sunday evening, and the girl who learned to swim at the bottom of our street and then swam the Channel faster than any man had."
 lineup:
-  - department: "History Corner"
-    title: "Sandlass: The Gala Days"
-    dek: "The gilded-age resort that defined the shore for New York's upper class — and that almost no one under sixty remembers."
+  - department: "History Corner No. 001"
+    title: "The Gala Days at Highland Beach"
+    dek: "The gilded-age excursion resort that was the first place the Jersey Shore ever happened — and the single white house the state left standing."
+  - department: "History Corner No. 002"
+    title: "Two Hours and Forty Minutes"
+    dek: "A hundred years ago, Trudy Ederle trained in the water at the bottom of our road, then swam the English Channel faster than any man ever had."
   - department: "Season Feature"
-    title: "Sail4th 250: The Fleet Arrives"
-    dek: "The largest gathering of tall ships in modern history, every one passing Sandy Hook Bay before Manhattan — watched from the bluff."
-  - department: "Dis-patches"
-    title: "Parkstage: What We Saw"
-    dek: "Covering a Monmouth County music venue as media — what the drone saw from above, and what it means to document something that's yours."
-  - department: "Dis-patches"
+    title: "Four Days with the Tall Ships"
+    dek: "Forty-eight ships from twenty nations came for the country's 250th. Every one of them passed our house first."
+  - department: "Dis-patch No. 001"
+    title: "700 Pounds"
+    dek: "A World Ocean Day cleanup on Plum Island where every spot filled — and what a Sunday evening is actually worth."
+  - department: "Dis-patch No. 002"
+    title: "Five Hundred"
+    dek: "The five hundredth humpback logged in the New York Bight, and the forty unglamorous years of water-quality work that brought them back."
+  - department: "Dis-patch No. 003"
     title: "The Water Turned Blue"
     dek: "The phytoplankton bloom that turned the Jersey Shore Caribbean turquoise — from what people saw to what NASA saw."
-  - department: "Dis-patches"
-    title: "700 Pounds"
-    dek: "A World Oceans Day cleanup on Plum Island where every spot filled — and a media brand became a reason to show up."
 cover_image: ./summer-2026-cover.svg
 cover_image_alt: "Illustrated cover: a warm summer coastline with green water, a low sun, and a figure on a sandy peninsula."
+hero_image: ./summer-2026-hero.jpg
+hero_image_alt: "Tall ships anchored across Sandy Hook Bay in hazy summer light, seen past a figure standing on a boat in the foreground."
+editors_letter: arrival
 contributors:
   - Eric Kane
   - Mary McKiever
 photographers:
   - Eric Kane
+  - Susan Gardiner
 editors:
   - Mary McKiever
   - Eric Kane
+special_thanks:
+  - Susan Sandlass Gardiner and the Jersey Coast Heritage Museum
+  - Making Waves Coalition
+  - National Park Service at Gateway
+  - Monmouth County Clean Communities
+  - Gotham Whale
 order_print: true
 print_price_cents: 2500
 ---
 
 Summer arrived on this coast with more happening than any season we have
-documented. The Sail4th 250 fleet on the horizon. The harbor turning
-Caribbean blue. Music on the lawn at Monmouth. Strangers who drove two hours
-to pick up trash at sunset on Plum Island because a local media brand made
-them feel like this coast was theirs to care for.
+documented. The Sail4th 250 fleet on the horizon — forty-eight ships from
+twenty nations, every one of them crossing the mouth of Sandy Hook Bay
+before it ever saw Manhattan. The harbor turning Caribbean blue for weeks.
+Five hundred humpbacks now cataloged in these waters, counted one tail at a
+time. Fifty strangers giving up a Sunday evening in June to carry seven
+hundred pounds of garbage off Plum Island.
 
-Issue No. 03 is the record of that season — the fleet, the bloom, the
-cleanup, the music, and the gilded-age resort that made this shore famous
-before anyone was watching.
+And the thing we did not expect to learn: that a hundred years ago this
+month, a nineteen-year-old girl who learned to swim at the bottom of our
+street went to France and swam the English Channel faster than any man ever
+had. She trained here, in this water, two hours and forty minutes at a time.
 
-Shipping August 2026.
+Issue No. 03 is the record of that season — the fleet, the bloom, the whales,
+the cleanup, and the gilded-age resort that made this shore famous before
+anyone was watching.
