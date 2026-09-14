@@ -3,7 +3,7 @@ title: "Two Hours and Forty Minutes"
 type: feature
 issue: summer-2026
 issue_number: 3
-order: 3
+order: 4
 author: Eric & Mary
 byline: "Eric and Mary"
 dek: "A hundred years ago this month, a girl who learned to swim off Miller Street became the most famous athlete on earth. From our second floor, you can see the water she did it in."
