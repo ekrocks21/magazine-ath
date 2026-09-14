@@ -27,8 +27,8 @@ subscribers receive four mailed copies per year.
 print issues mailed each season and access to all digital content on the
 site while the subscription is active.
 
-**Single issue ($100).** One-time charge. Grants permanent digital access
-to that issue and one print copy mailed to the address you provide.
+Single issues are not currently sold. Readers who purchased one
+previously keep permanent digital access to that issue.
 
 Subscribers who hold a legacy Digital ($10/month) plan keep it, and keep
 digital access, for as long as that subscription stays active. It is no
@@ -42,10 +42,6 @@ Billing is handled by Stripe. By subscribing, you also agree to
 You may cancel your subscription at any time from your account page. Access
 continues through the end of the current billing period. We do not offer
 prorated refunds for partial periods.
-
-For single-issue purchases, refunds are available within 14 days of the
-charge if the print copy has not yet shipped. After it ships, no refund is
-available.
 
 If your print copy is lost or damaged in transit, write to us within 30 days
 of the expected ship date and we'll replace it.

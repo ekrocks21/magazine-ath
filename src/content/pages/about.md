@@ -56,9 +56,7 @@ Digital editions of each issue are available at this site.
 
 One subscription, one magazine. Seventy-five dollars a quarter buys
 four mailed issues a year, from Highlands, plus everything we publish
-online — subscriber-only features and previews of future issues. If you
-only want one specific issue, a hundred dollars buys that one, printed
-and digital, from that issue's own page.
+online — subscriber-only features and previews of future issues.
 
 Sign in with an email, no password. Cancel anytime from your account.
 
