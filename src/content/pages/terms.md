@@ -23,14 +23,16 @@ subscribers receive four mailed copies per year.
 
 ## Subscriptions and billing
 
-**Digital ($10/month).** Billed monthly via Stripe. Grants access to all
-digital content on the site while the subscription is active.
-
-**Print + Digital ($75/quarter).** Billed quarterly via Stripe. Includes
-digital access and four print issues mailed each season.
+**Subscription ($75/quarter).** Billed quarterly via Stripe. Includes four
+print issues mailed each season and access to all digital content on the
+site while the subscription is active.
 
 **Single issue ($100).** One-time charge. Grants permanent digital access
 to that issue and one print copy mailed to the address you provide.
+
+Subscribers who hold a legacy Digital ($10/month) plan keep it, and keep
+digital access, for as long as that subscription stays active. It is no
+longer offered to new subscribers.
 
 Billing is handled by Stripe. By subscribing, you also agree to
 [Stripe's terms of service](https://stripe.com/legal/ssa).
@@ -77,7 +79,7 @@ permitted under fair use.
 
 You agree not to:
 
-- Attempt to access content beyond your subscription tier by technical means.
+- Attempt to access content beyond your subscription by technical means.
 - Scrape, crawl, or systematically download the site's content.
 - Interfere with the site's operation or the accounts of other subscribers.
 - Use the site for any unlawful purpose.
