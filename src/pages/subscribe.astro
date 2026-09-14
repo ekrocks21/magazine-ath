@@ -1,35 +1,19 @@
 ---
 /**
- * /subscribe — Tier page.
+ * /subscribe — Subscription page.
  *
- * Live commerce. Three tiers plus single-issue purchase, all posting
- * to /api/checkout (handled by the Cloudflare Worker). Sign-in form
- * posts to /api/login-request (magic link via Resend).
+ * One plan: Print, $75 a quarter, posting to /api/checkout (handled
+ * by the Cloudflare Worker). Single issues are sold on each issue's
+ * own page, not here. Sign-in form posts to /api/login-request
+ * (magic link via Resend).
  */
 
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
-
-// Enumerate available single-issue purchases.
-const allIssues = await getCollection('issues');
-const singleIssueOptions = allIssues
-  .filter((i) => i.data.order_print === true)
-  .sort((a, b) => {
-    const aDate = a.data.publish_date ? new Date(a.data.publish_date).getTime() : 0;
-    const bDate = b.data.publish_date ? new Date(b.data.publish_date).getTime() : 0;
-    return bDate - aDate;
-  })
-  .map((i) => ({
-    slug: i.id.replace(/\.md$/, ''),
-    title: i.data.title,
-    issue_number: i.data.issue_number,
-    theme: i.data.theme,
-  }));
 ---
 
 <BaseLayout
   title="Subscribe — The Local Lookout"
-  description="Four issues a year, and the whole archive. Ten dollars a month for digital, seventy-five a quarter for print, one hundred for a single issue."
+  description="Four issues a year, mailed from Highlands, plus the whole archive online. Seventy-five dollars a quarter."
   ogImage="/og/default.png"
 >
   <!-- Checkout-cancelled notice (shown when Stripe redirects back with ?cancelled=1) -->
@@ -47,7 +31,7 @@ const singleIssueOptions = allIssues
   <section style="padding: 96px 0 56px;">
     <div class="mag-container-narrow" style="text-align: center;">
       <div class="meta-dotted" style="margin-bottom: 20px; justify-content: center;">
-        Subscribe<span class="dot">·</span>Three tiers, one magazine
+        Subscribe<span class="dot">·</span>One plan, one magazine
       </div>
       <h1
         style="font-family: var(--font-display); font-weight: 700; font-size: clamp(2.6rem, 5.2vw, 4rem); letter-spacing: -0.025em; color: var(--ink); line-height: 1.05; margin-bottom: 24px;"
@@ -57,9 +41,9 @@ const singleIssueOptions = allIssues
       <p
         style="font-family: var(--font-display); font-style: italic; font-size: 20px; line-height: 1.55; color: var(--ink-soft); max-width: 620px; margin: 0 auto;"
       >
-        The Local Lookout publishes quarterly. Pick the tier that
-        matches how you read — on a screen, in the mail, or once, for
-        the one issue that pulled you in.
+        The Local Lookout publishes quarterly. One subscription
+        covers all of it — four printed issues in the mail, and
+        everything we publish online.
       </p>
     </div>
   </section>
@@ -79,81 +63,29 @@ const singleIssueOptions = allIssues
     </div>
   </section>
 
-  <!-- Tier cards -->
-  <section style="padding: 40px 0 56px;">
-    <div class="mag-container">
+  <!-- Subscription card -->
+  <section style="padding: 40px 0 96px;">
+    <div class="mag-container-narrow">
       <div class="tier-cards">
-        <!-- Free -->
-        <div class="tier-card" data-mag-tier-card="free">
-          <div class="tier-card-kicker" style="color: var(--muted);">Free</div>
-          <div class="tier-card-price">
-            $0
-          </div>
-          <div class="tier-card-cadence">Forever</div>
-          <p class="tier-card-desc">
-            For readers new to The Lookout. Editor's letters, one free
-            feature per issue, and the archive of past free stories.
-          </p>
-          <ul class="tier-list">
-            <li>Editor's letter every issue</li>
-            <li>One free feature per issue</li>
-            <li>Full archive of past free stories</li>
-            <li>RSS feed</li>
-          </ul>
-          <span class="tier-cta tier-cta--disabled" data-mag-tier-cta="anon">Currently what you have</span>
-          <span class="tier-cta tier-cta--disabled" data-mag-tier-cta="included" hidden>Included with your plan</span>
-        </div>
-
-        <!-- Digital (featured) -->
-        <div class="tier-card tier-card--featured" data-mag-tier-card="digital">
-          <div class="tier-badge">Most read</div>
-          <div class="tier-card-kicker" style="color: var(--rust);">Digital</div>
-          <div class="tier-card-price">
-            $10<span class="tier-card-unit"> / month</span>
-          </div>
-          <div class="tier-card-cadence">Billed monthly</div>
-          <p class="tier-card-desc">
-            Everything we publish online. Subscriber-only features, the
-            preview of every future issue, and every story once it
-            leaves the front window.
-          </p>
-          <ul class="tier-list">
-            <li>All features and subscriber essays</li>
-            <li>Previews of future issues</li>
-            <li>Audio narration of every story</li>
-            <li>Cancel anytime from your account</li>
-          </ul>
-          <form method="POST" action="/api/checkout" class="tier-form" data-mag-tier-cta="anon">
-            <input type="hidden" name="tier" value="digital" />
-            <button type="submit" class="tier-cta tier-cta--live">
-              Subscribe — $10 / mo
-            </button>
-          </form>
-          <a href="/account" class="tier-cta tier-cta--current" data-mag-tier-cta="current" hidden>
-            ✓ Current plan · Manage
-          </a>
-          <a href="/account" class="tier-cta tier-cta--switch" data-mag-tier-cta="switch" hidden>
-            <span data-mag-switch-label>Switch to Digital</span> →
-          </a>
-        </div>
-
-        <!-- Print + Digital -->
-        <div class="tier-card" data-mag-tier-card="print">
-          <div class="tier-card-kicker" style="color: var(--muted);">Print + Digital</div>
+        <div class="tier-card tier-card--featured" data-mag-tier-card="print">
+          <div class="tier-card-kicker" style="color: var(--rust);">Print</div>
           <div class="tier-card-price">
             $75<span class="tier-card-unit"> / quarter</span>
           </div>
           <div class="tier-card-cadence">Billed quarterly</div>
           <p class="tier-card-desc">
             Four issues delivered by mail. Thick paper, real ink, wide
-            margins. Includes everything in Digital, plus the printed
-            edition mailed the week it ships.
+            margins. Everything we publish online comes with it —
+            subscriber features, previews of future issues, and the
+            full archive.
           </p>
           <ul class="tier-list">
-            <li>Everything in Digital</li>
-            <li>Four printed issues a year</li>
-            <li>Mailed from Highlands, NJ</li>
+            <li>Four printed issues a year, mailed from Highlands, NJ</li>
+            <li>All features and subscriber essays online</li>
+            <li>Previews of future issues</li>
+            <li>Audio narration of every story</li>
             <li>Back issues at half price ($50)</li>
+            <li>Cancel anytime from your account</li>
           </ul>
           <form method="POST" action="/api/checkout" class="tier-form" data-mag-tier-cta="anon">
             <input type="hidden" name="tier" value="print" />
@@ -165,57 +97,15 @@ const singleIssueOptions = allIssues
             ✓ Current plan · Manage
           </a>
           <a href="/account" class="tier-cta tier-cta--switch" data-mag-tier-cta="switch" hidden>
-            <span data-mag-switch-label>Upgrade to Print + Digital</span> →
+            Upgrade to Print →
           </a>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- Single-issue row -->
-  <section style="padding: 0 0 96px;">
-    <div class="mag-container-narrow">
-      <div class="single-issue">
-        <div class="single-issue-hdr">
-          <div>
-            <div class="single-issue-kicker">One issue at a time</div>
-            <h3 class="single-issue-title">
-              Buy a single issue — <em>$100</em>
-            </h3>
-            <p class="single-issue-desc">
-              One printed copy, plus digital access to that issue.
-              For readers who want one specific issue without a
-              subscription, or to gift the magazine one time.
-              <span class="single-issue-sub-note">
-                Print subscribers buy extras at $50 — sign in first
-                and the price adjusts automatically.
-              </span>
-            </p>
-          </div>
-        </div>
-        <div class="single-issue-grid">
-          {singleIssueOptions.length === 0 ? (
-            <p class="single-issue-empty">No issues available for single purchase yet.</p>
-          ) : (
-            singleIssueOptions.map((i) => (
-              <form method="POST" action="/api/checkout" class="single-issue-card" data-single-issue-form>
-                <input type="hidden" name="tier" value="single" />
-                <input type="hidden" name="issue" value={i.slug} />
-                <div class="single-issue-card-num">
-                  Issue No. {String(i.issue_number ?? '').padStart(2, '0')}
-                </div>
-                <div class="single-issue-card-title">{i.title}</div>
-                {i.theme && (
-                  <div class="single-issue-card-theme">{i.theme}</div>
-                )}
-                <button type="submit" class="single-issue-card-cta" data-single-issue-cta>
-                  Buy — <span data-single-issue-price>$100</span> →
-                </button>
-              </form>
-            ))
-          )}
-        </div>
-      </div>
+      <p class="tier-aside">
+        Want just one issue? Every issue in
+        <a href="/archive">the archive</a> can be bought on its own
+        page — one printed copy, plus digital access to that issue.
+      </p>
     </div>
   </section>
 
@@ -275,10 +165,10 @@ const singleIssueOptions = allIssues
         <div class="faq-item">
           <h3 class="faq-q">Can I cancel?</h3>
           <p class="faq-a">
-            Anytime, from your account page. Digital cancels end at the
-            close of the current billing month; print cancels end at
-            the close of the current quarter. You keep access through
-            whatever you already paid for.
+            Anytime, from your account page. A cancellation takes
+            effect at the close of the current quarter — you keep
+            access, and receive the issue, for whatever you already
+            paid for.
           </p>
         </div>
 
@@ -286,28 +176,31 @@ const singleIssueOptions = allIssues
           <h3 class="faq-q">What happens to the free version?</h3>
           <p class="faq-a">
             Nothing changes. The editor's letter, one free feature per
-            issue, and the archive of past free stories stay free. The
-            Digital tier is additive — subscriber features, previews,
-            and audio — not a paywall dropping in front of what you
+            issue, and the archive of past free stories stay free, with
+            no account required. The subscription is additive —
+            subscriber features, previews, audio, and the printed
+            magazine — not a paywall dropping in front of what you
             already read.
           </p>
         </div>
 
         <div class="faq-item">
-          <h3 class="faq-q">Does the print subscription include digital?</h3>
+          <h3 class="faq-q">Does the subscription include online access?</h3>
           <p class="faq-a">
-            Yes. Print is a superset of Digital. You get the mailed
-            magazine and everything online, signed in with the same
-            email.
+            Yes. There is no separate digital plan — the quarterly
+            subscription gets you the mailed magazine and everything
+            online, signed in with the same email.
           </p>
         </div>
 
         <div class="faq-item">
-          <h3 class="faq-q">How does the single-issue purchase work?</h3>
+          <h3 class="faq-q">Can I buy just one issue?</h3>
           <p class="faq-a">
-            Pick an issue, pay $100 once, give us a shipping address.
-            We mail the printed copy from Highlands, and the digital
-            version of that issue unlocks for you right away.
+            Yes, from that issue's own page in
+            <a href="/archive">the archive</a>. Pay $100 once and give
+            us a shipping address. We mail the printed copy from
+            Highlands, and the digital version of that issue unlocks
+            for you right away. Subscribers pay $50 for extras.
           </p>
         </div>
 
@@ -339,16 +232,17 @@ const singleIssueOptions = allIssues
 
   <script is:inline>
     (function () {
-      /* Reshape the tier grid to reflect the signed-in reader's
-         current plan. Anonymous / no-tier readers see the default
-         Subscribe CTAs. */
+      /* Reshape the subscription card to reflect the signed-in
+         reader's current plan. Anonymous readers see the default
+         Subscribe CTA.
+
+         "digital" is a legacy plan — no longer sold, but existing
+         subscribers still hold it, so it is recognised here and
+         offered an upgrade to Print. */
       var TIER_LABELS = {
-        digital: 'Digital — $10 / mo',
-        print:   'Print + Digital — $75 / quarter',
+        digital: 'Digital — $10 / mo (legacy)',
+        print:   'Print — $75 / quarter',
       };
-      // Only digital and print are switchable. "free" is always
-      // included for subscribers, never a separate purchase.
-      var TIER_RANK = { free: 0, digital: 1, print: 2 };
 
       fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' })
         .then(function (r) { return r.ok ? r.json() : null; })
@@ -370,43 +264,16 @@ const singleIssueOptions = allIssues
             if (label) label.textContent = TIER_LABELS[activeTier] || activeTier;
           }
 
-          // Update each tier card's CTA
-          var cards = document.querySelectorAll('[data-mag-tier-card]');
-          for (var c = 0; c < cards.length; c++) {
-            var card = cards[c];
-            var cardTier = card.getAttribute('data-mag-tier-card');
-
-            // Free card: show "Included" label for any paying tier
-            if (cardTier === 'free') {
-              setCtaState(card, 'included');
-              continue;
-            }
-            // Current plan
-            if (cardTier === activeTier) {
-              setCtaState(card, 'current');
-              card.classList.add('tier-card--current');
-              continue;
-            }
-            // Switch: either upgrade (to higher rank) or downgrade (to lower)
-            var fromRank = TIER_RANK[activeTier];
-            var toRank = TIER_RANK[cardTier];
-            var isUpgrade = toRank > fromRank;
-            var switchLabel = card.querySelector('[data-mag-switch-label]');
-            if (switchLabel) {
-              switchLabel.textContent = isUpgrade
-                ? 'Upgrade to ' + labelFor(cardTier)
-                : 'Downgrade to ' + labelFor(cardTier);
-            }
+          var card = document.querySelector('[data-mag-tier-card="print"]');
+          if (!card) return;
+          if (activeTier === 'print') {
+            setCtaState(card, 'current');
+            card.classList.add('tier-card--current');
+          } else {
             setCtaState(card, 'switch');
           }
         })
         .catch(function () { /* keep defaults on any failure */ });
-
-      function labelFor(tier) {
-        if (tier === 'print') return 'Print + Digital';
-        if (tier === 'digital') return 'Digital';
-        return tier;
-      }
 
       function setCtaState(card, state) {
         var ctas = card.querySelectorAll('[data-mag-tier-cta]');
@@ -425,9 +292,8 @@ const singleIssueOptions = allIssues
 <style>
   .tier-cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    align-items: stretch;
+    grid-template-columns: minmax(0, 460px);
+    justify-content: center;
   }
 
   .tier-card {
@@ -442,22 +308,22 @@ const singleIssueOptions = allIssues
   .tier-card--featured {
     border: 2px solid var(--rust);
     background: var(--cream-dark, var(--paper));
-    transform: translateY(-12px);
   }
 
-  .tier-badge {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--rust);
-    color: #fff;
-    padding: 6px 14px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    white-space: nowrap;
+  /* Note under the card pointing at single-issue purchase */
+  .tier-aside {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    text-align: center;
+    max-width: 460px;
+    margin: 24px auto 0;
+  }
+  .tier-aside a {
+    color: var(--rust);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   .tier-card-kicker {
@@ -541,13 +407,6 @@ const singleIssueOptions = allIssues
     border: 0;
     cursor: pointer;
     width: 100%;
-  }
-
-  .tier-cta--disabled {
-    background: var(--sand-light, #e8e0cd);
-    color: var(--muted);
-    cursor: not-allowed;
-    border: 1px solid var(--sand);
   }
 
   .tier-cta--live {
@@ -642,109 +501,6 @@ const singleIssueOptions = allIssues
     color: #fff;
   }
 
-  /* Single issue */
-  .single-issue {
-    background: var(--paper);
-    border: 1px solid var(--sand);
-    padding: 44px 48px;
-  }
-  .single-issue-hdr {
-    margin-bottom: 32px;
-  }
-  .single-issue-kicker {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--rust);
-    margin-bottom: 12px;
-  }
-  .single-issue-title {
-    font-family: var(--font-display);
-    font-size: 30px;
-    font-weight: 700;
-    letter-spacing: -0.015em;
-    margin: 0 0 10px;
-    color: var(--ink);
-  }
-  .single-issue-title em {
-    font-style: normal;
-    color: var(--rust);
-  }
-  .single-issue-desc {
-    font-family: var(--font-body);
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--ink-soft);
-    max-width: 62ch;
-    margin: 0;
-  }
-  .single-issue-sub-note {
-    display: block;
-    margin-top: 10px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    color: var(--rust);
-  }
-  .single-issue-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-  }
-  .single-issue-card {
-    border: 1px solid var(--sand);
-    padding: 24px 20px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    background: #fff;
-  }
-  .single-issue-card-num {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .single-issue-card-title {
-    font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--ink);
-    line-height: 1.2;
-  }
-  .single-issue-card-theme {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 14px;
-    color: var(--ink-soft);
-    margin-top: 2px;
-  }
-  .single-issue-card-cta {
-    background: transparent;
-    border: 1px solid var(--rust);
-    color: var(--rust);
-    padding: 10px 14px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin-top: 12px;
-    transition: background 0.15s ease-out, color 0.15s ease-out;
-  }
-  .single-issue-card-cta:hover {
-    background: var(--rust);
-    color: #fff;
-  }
-  .single-issue-empty {
-    font-family: var(--font-body);
-    font-style: italic;
-    color: var(--muted);
-  }
-
   /* Sign-in form */
   .signin-form {
     display: flex;
@@ -816,8 +572,7 @@ const singleIssueOptions = allIssues
   }
 
   @media (max-width: 900px) {
-    .tier-cards { grid-template-columns: 1fr; gap: 16px; }
-    .tier-card--featured { transform: none; }
-    .single-issue { padding: 28px 20px; }
+    .tier-cards { grid-template-columns: 1fr; }
+    .tier-card { padding: 32px 24px 24px; }
   }
 </style>

@@ -498,7 +498,7 @@ const statusWord = {
     </section>
   )}
 
-  <!-- ── 4. Subscribe tiers (visual, no functional flow in Phase 1) ─ -->
+  <!-- ── 4. Subscribe ──────────────────────────────────────────────── -->
   <section style="background: var(--navy); color: var(--on-dark-1); padding: 96px 0;">
     <div class="mag-container">
       <div class="subscribe-grid">
@@ -511,60 +511,24 @@ const statusWord = {
           <h2
             style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); color: #fff; line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 24px;"
           >
-            Four issues a year, and the whole archive, for ten dollars a month.
+            Four issues a year, and the whole archive, for seventy-five a quarter.
           </h2>
           <p
             style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--on-dark-3); max-width: 420px; margin-bottom: 28px;"
           >
-            The Lookout publishes quarterly. Read online, by mail, or
-            one issue at a time. Cancel anytime — no password, no
-            newsletter, no pressure.
+            The Lookout publishes quarterly. One subscription covers
+            the printed magazine and everything online. Cancel anytime
+            — no password, no newsletter, no pressure.
           </p>
-          <a href="/subscribe" class="btn-primary">See the tiers <span class="arrow">→</span></a>
+          <a href="/subscribe" class="btn-primary">Subscribe <span class="arrow">→</span></a>
         </div>
 
         <div class="tier-grid">
           <div class="tier-col">
             <div
-              style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--sand); margin-bottom: 12px;"
-            >
-              Free
-            </div>
-            <div
-              style="font-family: var(--font-display); font-size: 32px; color: #fff; letter-spacing: -0.02em; font-weight: 600; margin-bottom: 4px;"
-            >
-              $0
-            </div>
-            <div
-              style="font-family: var(--font-body); font-size: 13px; color: var(--on-dark-3); line-height: 1.4;"
-            >
-              For readers new to The Lookout.
-            </div>
-          </div>
-          <div class="tier-col">
-            <div
               style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--rust-light); margin-bottom: 12px;"
             >
-              Digital
-            </div>
-            <div
-              style="font-family: var(--font-display); font-size: 32px; color: #fff; letter-spacing: -0.02em; font-weight: 600; margin-bottom: 4px;"
-            >
-              $10<span
-                style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; color: var(--sand); margin-left: 4px; font-weight: 400;"
-              > / month</span>
-            </div>
-            <div
-              style="font-family: var(--font-body); font-size: 13px; color: var(--on-dark-3); line-height: 1.4;"
-            >
-              Everything we publish online.
-            </div>
-          </div>
-          <div class="tier-col tier-col--last">
-            <div
-              style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--sand); margin-bottom: 12px;"
-            >
-              Print + Digital
+              Subscription
             </div>
             <div
               style="font-family: var(--font-display); font-size: 32px; color: #fff; letter-spacing: -0.02em; font-weight: 600; margin-bottom: 4px;"
@@ -577,6 +541,23 @@ const statusWord = {
               style="font-family: var(--font-body); font-size: 13px; color: var(--on-dark-3); line-height: 1.4;"
             >
               Four issues by mail. Everything else online.
+            </div>
+          </div>
+          <div class="tier-col tier-col--last">
+            <div
+              style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--sand); margin-bottom: 12px;"
+            >
+              Single issue
+            </div>
+            <div
+              style="font-family: var(--font-display); font-size: 32px; color: #fff; letter-spacing: -0.02em; font-weight: 600; margin-bottom: 4px;"
+            >
+              $100
+            </div>
+            <div
+              style="font-family: var(--font-body); font-size: 13px; color: var(--on-dark-3); line-height: 1.4;"
+            >
+              One printed copy, from that issue's page.
             </div>
           </div>
         </div>
@@ -786,7 +767,7 @@ const statusWord = {
   }
   .tier-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     border-top: 1px solid rgba(255,255,255,0.12);
     border-bottom: 1px solid rgba(255,255,255,0.12);
   }

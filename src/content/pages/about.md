@@ -54,11 +54,11 @@ Digital editions of each issue are available at this site.
 
 ## Subscriptions
 
-Three tiers, one magazine. Digital is ten dollars a month — everything
-we publish online, subscriber-only features, and previews of future
-issues. Print is seventy-five a quarter — the Digital subscription plus
-four mailed issues a year, from Highlands. If you only want one specific
-issue, a hundred dollars buys that one, printed and digital.
+One subscription, one magazine. Seventy-five dollars a quarter buys
+four mailed issues a year, from Highlands, plus everything we publish
+online — subscriber-only features and previews of future issues. If you
+only want one specific issue, a hundred dollars buys that one, printed
+and digital, from that issue's own page.
 
 Sign in with an email, no password. Cancel anytime from your account.
 

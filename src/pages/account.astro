@@ -37,7 +37,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </p>
         <div class="account-actions">
           <a href="/signin" class="btn-primary">Sign in</a>
-          <a href="/subscribe" class="btn-ghost">See tiers</a>
+          <a href="/subscribe" class="btn-ghost">Subscribe</a>
         </div>
       </div>
 
@@ -77,38 +77,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <!-- No active subscription -->
         <div class="account-empty" data-when="no-subscription" hidden>
           <p>You're signed in, but there's no active subscription on this email.</p>
-          <a href="/subscribe" class="btn-primary">Pick a tier</a>
+          <a href="/subscribe" class="btn-primary">Subscribe</a>
         </div>
 
-        <!-- Change plan -->
-        <div class="account-section-block" data-when="has-subscription" hidden>
+        <!-- Change plan. Only shown to legacy Digital subscribers,
+             who are the only ones with another plan to move to. -->
+        <div class="account-section-block" data-when="can-upgrade" hidden>
           <h2 class="section-heading">Change plan</h2>
           <p class="section-lead">
-            Switch between tiers at any time. Stripe prorates the
-            charge automatically — you won't lose or double-pay.
+            Your Digital plan is no longer sold, but it keeps working
+            for as long as you hold it. Move to Print whenever you
+            like — Stripe prorates the charge automatically, so you
+            won't lose or double-pay.
           </p>
           <div class="account-plan-options">
             <button
               type="button"
               class="plan-option"
               data-action="change-tier"
-              data-tier="digital"
-            >
-              <span class="plan-option-name">Digital</span>
-              <span class="plan-option-price">$10 / month</span>
-              <span class="plan-option-current" data-when-tier="digital">Current plan</span>
-              <span class="plan-option-cta" data-when-not-tier="digital">Switch →</span>
-            </button>
-            <button
-              type="button"
-              class="plan-option"
-              data-action="change-tier"
               data-tier="print"
             >
-              <span class="plan-option-name">Print + Digital</span>
+              <span class="plan-option-name">Print</span>
               <span class="plan-option-price">$75 / quarter</span>
-              <span class="plan-option-current" data-when-tier="print">Current plan</span>
-              <span class="plan-option-cta" data-when-not-tier="print">Switch →</span>
+              <span class="plan-option-cta">Switch →</span>
             </button>
           </div>
 
@@ -229,11 +220,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <script is:inline>
     (function () {
-      var TIER_LABEL = { digital: 'Digital', print: 'Print + Digital' };
-      var TIER_PRICE = {
-        digital: '$10 / month',
-        print:   '$75 / quarter',
-      };
+      // "digital" is a legacy plan — no longer sold, still honored.
+      var TIER_LABEL = { digital: 'Digital (legacy)', print: 'Print' };
+      var TIER_PRICE = { print: '$75 / quarter' };
       // Publishable Stripe key — safe to expose in client JS. This is
       // the same key bound to the Worker as STRIPE_PUBLISHABLE_KEY.
       var STRIPE_PK = 'pk_live_51Ln2ElKglwHHJWzMZCsB03rbZfvHCCRXNB1CSRw8S3cr5C02voSnjA5r7V25AYFLAhQ69FpiUoTOudERirSu0nw6009AoOOuFt';
@@ -435,6 +424,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         var hasSub = data.tier === 'digital' || data.tier === 'print';
         toggle('[data-when="has-subscription"]', hasSub);
         toggle('[data-when="no-subscription"]', !hasSub);
+        toggle('[data-when="can-upgrade"]', data.tier === 'digital');
 
         if (hasSub) {
           setText('[data-field="tier-badge"]', TIER_LABEL[data.tier] || data.tier);
@@ -460,20 +450,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             setText('[data-field="card"]', capitalize(data.card.brand) + ' ending ' + data.card.last4);
           } else {
             toggle('[data-when="has-card"]', false);
-          }
-
-          // Mark which plan option is current
-          var options = root.querySelectorAll('[data-action="change-tier"]');
-          for (var i = 0; i < options.length; i++) {
-            var opt = options[i];
-            var optTier = opt.getAttribute('data-tier');
-            var isCurrent = optTier === data.tier;
-            opt.classList.toggle('plan-option--current', isCurrent);
-            opt.setAttribute('aria-current', isCurrent ? 'true' : 'false');
-            var currentLabel = opt.querySelector('[data-when-tier="' + optTier + '"]');
-            var switchLabel = opt.querySelector('[data-when-not-tier="' + optTier + '"]');
-            if (currentLabel) currentLabel.hidden = !isCurrent;
-            if (switchLabel) switchLabel.hidden = isCurrent;
           }
         }
 
@@ -882,14 +858,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     transition: border-color 0.15s ease-out, background 0.15s ease-out;
     font-family: var(--font-body);
   }
-  .plan-option:hover:not(.plan-option--current) {
+  .plan-option:hover {
     border-color: var(--rust);
     background: #FCF8F2;
-  }
-  .plan-option--current {
-    border-color: var(--rust);
-    border-width: 2px;
-    cursor: default;
   }
   .plan-option-name {
     font-family: var(--font-display);
@@ -903,14 +874,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     letter-spacing: 0.12em;
     color: var(--muted);
     text-transform: uppercase;
-  }
-  .plan-option-current {
-    margin-top: 8px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--rust);
   }
   .plan-option-cta {
     margin-top: 8px;
