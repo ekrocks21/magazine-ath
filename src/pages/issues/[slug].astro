@@ -312,34 +312,6 @@ const issueLabel = `${seasonLabel} ${data.year}`;
   <!-- Partners & Products -->
   {partnerProps && <IssuePartners {...partnerProps} />}
 
-  <!-- Order print card -->
-  {data.order_print && (
-    <section class="order-print">
-      <div class="mag-container-narrow">
-        <div class="order-print-card">
-          <SmallCapsLabel tone="rust" items={['The Print Edition']} />
-          <h3 class="order-print-title">Order this printed issue</h3>
-          <p class="order-print-body">
-            Uncoated stock, shipped from Highlands. One hundred dollars
-            includes the mailed copy and digital access to this issue.
-          </p>
-          <form method="POST" action="/api/checkout" class="order-print-cta" data-single-issue-form>
-            <input type="hidden" name="tier" value="single" />
-            <input type="hidden" name="issue" value={slug} />
-            <button type="submit" class="btn-primary" data-single-issue-cta>
-              Buy this issue — <span data-single-issue-price>$100</span> <span class="arrow">→</span>
-            </button>
-          </form>
-          <p class="order-print-note">
-            Print subscribers: your quarterly copy ships automatically
-            — back issues and extras are half price ($50) when you're
-            signed in.
-          </p>
-        </div>
-      </div>
-    </section>
-  )}
-
   <!-- Colophon -->
   <IssueColophon
     issueLabel={issueLabel}
@@ -543,41 +515,6 @@ const issueLabel = `${seasonLabel} ${data.year}`;
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .order-print {
-    padding: 56px 0 72px;
-  }
-  .order-print-card {
-    border: 1px solid var(--rust);
-    border-top-width: 3px;
-    background: var(--paper);
-    padding: 48px 40px;
-    text-align: center;
-  }
-  .order-print-title {
-    margin-top: 16px;
-    font-family: var(--font-display);
-    font-size: clamp(1.8rem, 3vw, 2.2rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-  .order-print-body {
-    margin: 16px auto 0;
-    max-width: 520px;
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--ink-soft);
-  }
-  .order-print-cta { margin-top: 28px; display: flex; justify-content: center; }
-  .order-print-note {
-    margin-top: 14px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--muted);
   }

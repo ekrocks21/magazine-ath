@@ -110,21 +110,8 @@ const leftNav = [
         }
         var entitlements = data.entitlements || [];
         unlockGatedCards(entitlements);
-        applySubscriberPricing(entitlements);
       })
       .catch(function () { /* offline / Worker not in front — keep defaults */ });
-
-    function applySubscriberPricing(entitlements) {
-      var isPrint = false;
-      for (var i = 0; i < entitlements.length; i++) {
-        if (entitlements[i].tier === 'print') { isPrint = true; break; }
-      }
-      if (!isPrint) return;
-      var priceEls = document.querySelectorAll('[data-single-issue-price]');
-      for (var j = 0; j < priceEls.length; j++) {
-        priceEls[j].textContent = '$50';
-      }
-    }
 
     function unlockGatedCards(entitlements) {
       var cards = document.querySelectorAll('[data-access="subscriber"][data-article-issue]');

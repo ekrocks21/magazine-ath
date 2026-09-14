@@ -16,7 +16,7 @@ why we collect it, and how we protect it.
 ## What we collect
 
 **Account and subscription data.** When you subscribe or sign in, we collect
-your email address. If you purchase a print subscription or single issue, we
+your email address. If you purchase a print subscription, we
 also collect the shipping name and address you provide at checkout. Payment
 processing is handled entirely by Stripe — we never see or store your credit
 card number.

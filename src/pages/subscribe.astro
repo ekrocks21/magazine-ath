@@ -3,8 +3,7 @@
  * /subscribe — Subscription page.
  *
  * One plan: Print, $75 a quarter, posting to /api/checkout (handled
- * by the Cloudflare Worker). Single issues are sold on each issue's
- * own page, not here. Sign-in form posts to /api/login-request
+ * by the Cloudflare Worker). Sign-in form posts to /api/login-request
  * (magic link via Resend).
  */
 
@@ -84,7 +83,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <li>All features and subscriber essays online</li>
             <li>Previews of future issues</li>
             <li>Audio narration of every story</li>
-            <li>Back issues at half price ($50)</li>
             <li>Cancel anytime from your account</li>
           </ul>
           <form method="POST" action="/api/checkout" class="tier-form" data-mag-tier-cta="anon">
@@ -101,11 +99,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </a>
         </div>
       </div>
-      <p class="tier-aside">
-        Want just one issue? Every issue in
-        <a href="/archive">the archive</a> can be bought on its own
-        page — one printed copy, plus digital access to that issue.
-      </p>
     </div>
   </section>
 
@@ -196,11 +189,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="faq-item">
           <h3 class="faq-q">Can I buy just one issue?</h3>
           <p class="faq-a">
-            Yes, from that issue's own page in
-            <a href="/archive">the archive</a>. Pay $100 once and give
-            us a shipping address. We mail the printed copy from
-            Highlands, and the digital version of that issue unlocks
-            for you right away. Subscribers pay $50 for extras.
+            Not at the moment — the quarterly subscription is the only
+            way to get the printed magazine. Readers who bought a
+            single issue previously keep permanent access to it.
           </p>
         </div>
 
@@ -308,22 +299,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .tier-card--featured {
     border: 2px solid var(--rust);
     background: var(--cream-dark, var(--paper));
-  }
-
-  /* Note under the card pointing at single-issue purchase */
-  .tier-aside {
-    font-family: var(--font-body);
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--ink-soft);
-    text-align: center;
-    max-width: 460px;
-    margin: 24px auto 0;
-  }
-  .tier-aside a {
-    color: var(--rust);
-    text-decoration: underline;
-    text-underline-offset: 3px;
   }
 
   .tier-card-kicker {
