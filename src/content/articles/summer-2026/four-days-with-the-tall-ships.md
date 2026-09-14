@@ -3,7 +3,7 @@ title: "Four Days with the Tall Ships"
 type: feature
 issue: summer-2026
 issue_number: 3
-order: 4
+order: 2
 author: Eric & Mary
 byline: "Eric and Mary"
 dek: "Forty-eight ships from twenty nations came to New York Harbor for the country's two hundred and fiftieth birthday. Every one of them passed our house first. We went out to meet them every day."

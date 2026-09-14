@@ -3,7 +3,7 @@ title: "The Gala Days at Highland Beach"
 type: feature
 issue: summer-2026
 issue_number: 3
-order: 2
+order: 3
 author: Eric & Mary
 byline: "Eric and Mary"
 dek: "Before the neighborhoods, before the toll booth, before the dune grass grew back over it — the southern tip of Sandy Hook was the first place the shore ever happened."
