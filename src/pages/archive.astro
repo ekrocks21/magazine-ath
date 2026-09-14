@@ -8,6 +8,7 @@
 
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import CoverImage from '../components/CoverImage.astro';
 import SmallCapsLabel from '../components/SmallCapsLabel.astro';
 
 const includeDrafts =
@@ -157,6 +158,17 @@ const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
                   href={`/issues/${slug}`}
                   class="block group no-underline h-full"
                 >
+                  {i.data.cover_image ? (
+                    <div class="aspect-[5/7] w-full overflow-hidden shadow transition-transform group-hover:-translate-y-1">
+                      <CoverImage
+                        src={i.data.cover_image}
+                        alt={i.data.cover_image_alt ?? `${i.data.title} cover`}
+                        widths={[240, 360, 480, 720]}
+                        sizes="(min-width: 1024px) 240px, (min-width: 768px) 30vw, 45vw"
+                        class="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
                   <div
                     class="aspect-[5/7] w-full flex flex-col items-center justify-center gap-3 shadow p-5 text-center transition-transform group-hover:-translate-y-1"
                     style="background: linear-gradient(135deg, var(--color-navy) 0%, #243e66 100%); color: var(--color-cream); border: 1px solid color-mix(in srgb, var(--color-cream) 15%, transparent);"
@@ -189,6 +201,7 @@ const pillars = Array.from(new Set(allArticles.map((a) => a.data.pillar)));
                       </p>
                     )}
                   </div>
+                  )}
                 </a>
               </li>
             );
