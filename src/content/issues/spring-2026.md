@@ -8,8 +8,8 @@ publish_date: 2026-04-15
 ship_date: 2026-06-30
 theme: "Return"
 tagline: "The return of the ospreys, thirteen shillings paid to the Lenape, and seven stories from the second issue."
-cover_image: ./spring-2026-cover.svg
-cover_image_alt: "Illustrated cover: the Sandy Hook Lighthouse in profile against a late-autumn sky."
+cover_image: ./spring-2026-cover.jpg
+cover_image_alt: "A white three-masted tall ship under full sail on deep blue open ocean beneath scattered cumulus cloud."
 editors_letter: editors-letter
 contributors:
   - Eric Kane

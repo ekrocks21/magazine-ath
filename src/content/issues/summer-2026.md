@@ -27,8 +27,8 @@ lineup:
   - department: "Dis-patch No. 003"
     title: "The Water Turned Blue"
     dek: "The phytoplankton bloom that turned the Jersey Shore Caribbean turquoise — from what people saw to what NASA saw."
-cover_image: ./summer-2026-cover.svg
-cover_image_alt: "Illustrated cover: a warm summer coastline with green water, a low sun, and a figure on a sandy peninsula."
+cover_image: ./summer-2026-cover.jpg
+cover_image_alt: "A tall ship and small boats anchored in hazy summer light off Sandy Hook, seen past a figure in the foreground."
 hero_image: ./summer-2026-hero.jpg
 hero_image_alt: "Tall ships anchored across Sandy Hook Bay in hazy summer light, seen past a figure standing on a boat in the foreground."
 editors_letter: arrival
