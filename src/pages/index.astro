@@ -89,6 +89,13 @@ const currentArticles = allArticles.filter(
 
 const editorsLetter = currentArticles.find((a) => a.data.type === 'editors_letter');
 
+// Spelled-out counts for the section heading. Past nine we just use the
+// numeral — an issue that size would be a different problem.
+const NUMBER_WORDS: Record<number, string> = {
+  1: 'One', 2: 'Two', 3: 'Three', 4: 'Four', 5: 'Five',
+  6: 'Six', 7: 'Seven', 8: 'Eight', 9: 'Nine',
+};
+
 // Honor frontmatter.order the way /issues/[slug] does, so the hero and the
 // card grid lead with the issue's flagship piece rather than whatever sorts
 // first alphabetically.
@@ -99,8 +106,7 @@ const featured = currentArticles
     const bo = b.data.order ?? Number.POSITIVE_INFINITY;
     if (ao !== bo) return ao - bo;
     return a.id.localeCompare(b.id);
-  })
-  .slice(0, 4);
+  });
 
 // First article drives the hero headline (split on last period for em).
 const heroArticle = featured[0] ?? editorsLetter;
@@ -357,7 +363,9 @@ const statusWord = {
             <h2
               style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -0.02em; font-weight: 700;"
             >
-              {featured.length === 1 ? 'One story to start.' : `${['','One','Two','Three','Four','Five','Six','Seven'][featured.length] || featured.length} stories, one free.`}
+              {featured.length === 1
+                ? 'One story to start.'
+                : `${NUMBER_WORDS[featured.length] ?? featured.length} stories, free to read.`}
             </h2>
           </div>
           <a href={`/issues/${currentSlug}`} class="btn-link">
@@ -381,9 +389,7 @@ const statusWord = {
                 data-article-issue={currentSlug}
               >
                 <div class="ed-card-img">
-                  {isFree ? (
-                    <div class="free-chip">Free</div>
-                  ) : (
+                  {isFree ? null : (
                     <>
                       <div class="lock-chip" data-chip-state="locked">
                         <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -404,7 +410,7 @@ const statusWord = {
                       src={a.data.hero_image}
                       alt={a.data.hero_image_alt ?? a.data.title}
                       widths={[320, 480, 640, 800]}
-                      sizes="(min-width: 1200px) 300px, (min-width: 900px) 22vw, (min-width: 640px) 45vw, 90vw"
+                      sizes="(min-width: 1200px) 352px, (min-width: 900px) 30vw, (min-width: 640px) 45vw, 90vw"
                       loading="lazy"
                       decoding="async"
                     />
@@ -673,7 +679,7 @@ const statusWord = {
   }
   .ed-card-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 32px;
   }
   .subscribe-grid {
