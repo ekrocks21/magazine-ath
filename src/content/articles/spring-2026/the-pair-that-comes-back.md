@@ -11,7 +11,7 @@ byline: "Eric"
 dek: "Ospreys almost disappeared from this coast. They didn't. Every spring, one pair returns to the same platform at the edge of the Hook and begins, again, the work of making more of themselves."
 status: published
 word_count: 1550
-access: subscriber
+access: free
 pillar: documentary
 tags:
   - ospreys

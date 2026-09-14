@@ -17,9 +17,9 @@ subscribing, you agree to these terms.
 ## The service
 
 The Local Lookout is a quarterly print-and-digital magazine covering the
-coastal communities of New Jersey. The site provides digital access to
-published issues, subscriber-only articles, and editorial features. Print
-subscribers receive four mailed copies per year.
+coastal communities of New Jersey. All published articles are free to read
+on the site, without an account. Subscribers receive four printed copies
+per year, mailed, plus previews of forthcoming issues.
 
 ## Subscriptions and billing
 

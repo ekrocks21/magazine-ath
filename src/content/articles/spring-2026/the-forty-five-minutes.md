@@ -11,7 +11,7 @@ byline: "Eric"
 dek: "There is a ferry that leaves Atlantic Highlands every morning and nobody who rides it ever takes it for granted. A round-trip across the most important piece of water in American history — and back."
 status: published
 word_count: 1820
-access: subscriber
+access: free
 pillar: documentary
 tags:
   - seastreak

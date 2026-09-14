@@ -12,7 +12,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout
   title="Subscribe — The Local Lookout"
-  description="Four issues a year, mailed from Highlands, plus the whole archive online. Seventy-five dollars a quarter."
+  description="Every story free to read online. Subscribe for the printed magazine — four issues a year, mailed from Highlands. Seventy-five dollars a quarter."
   ogImage="/og/default.png"
 >
   <!-- Checkout-cancelled notice (shown when Stripe redirects back with ?cancelled=1) -->
@@ -30,19 +30,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section style="padding: 96px 0 56px;">
     <div class="mag-container-narrow" style="text-align: center;">
       <div class="meta-dotted" style="margin-bottom: 20px; justify-content: center;">
-        Subscribe<span class="dot">·</span>One plan, one magazine
+        Subscribe<span class="dot">·</span>For the printed magazine
       </div>
       <h1
         style="font-family: var(--font-display); font-weight: 700; font-size: clamp(2.6rem, 5.2vw, 4rem); letter-spacing: -0.025em; color: var(--ink); line-height: 1.05; margin-bottom: 24px;"
       >
-        Four issues a year, <em style="font-weight: 400; color: var(--rust);">and the whole archive.</em>
+        Four issues a year, <em style="font-weight: 400; color: var(--rust);">in the mail.</em>
       </h1>
       <p
         style="font-family: var(--font-display); font-style: italic; font-size: 20px; line-height: 1.55; color: var(--ink-soft); max-width: 620px; margin: 0 auto;"
       >
-        The Local Lookout publishes quarterly. One subscription
-        covers all of it — four printed issues in the mail, and
-        everything we publish online.
+        The Local Lookout publishes quarterly, and every story is free
+        to read online. The subscription is for the printed magazine —
+        four issues a year, mailed from Highlands.
       </p>
     </div>
   </section>
@@ -73,16 +73,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
           <div class="tier-card-cadence">Billed quarterly</div>
           <p class="tier-card-desc">
-            Four issues delivered by mail. Thick paper, real ink, wide
-            margins. Everything we publish online comes with it —
-            subscriber features, previews of future issues, and the
-            full archive.
+            Four issues delivered by mail, in time with the season each
+            one covers. Everything we publish is free to read online —
+            subscribing is how the printing and mailing gets paid for,
+            and how a copy reaches your table instead of a screen.
           </p>
           <ul class="tier-list">
             <li>Four printed issues a year, mailed from Highlands, NJ</li>
-            <li>All features and subscriber essays online</li>
-            <li>Previews of future issues</li>
-            <li>Audio narration of every story</li>
+            <li>Uncoated stock, real ink, wide margins</li>
+            <li>Previews of future issues before they ship</li>
+            <li>Keeps the magazine funded and the writing free</li>
             <li>Cancel anytime from your account</li>
           </ul>
           <form method="POST" action="/api/checkout" class="tier-form" data-mag-tier-cta="anon">
@@ -159,30 +159,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <h3 class="faq-q">Can I cancel?</h3>
           <p class="faq-a">
             Anytime, from your account page. A cancellation takes
-            effect at the close of the current quarter — you keep
-            access, and receive the issue, for whatever you already
-            paid for.
+            effect at the close of the current quarter, and you still
+            receive the issue you have already paid for. The stories
+            stay readable online either way.
           </p>
         </div>
 
         <div class="faq-item">
-          <h3 class="faq-q">What happens to the free version?</h3>
+          <h3 class="faq-q">Do I need to subscribe to read?</h3>
           <p class="faq-a">
-            Nothing changes. The editor's letter, one free feature per
-            issue, and the archive of past free stories stay free, with
-            no account required. The subscription is additive —
-            subscriber features, previews, audio, and the printed
-            magazine — not a paywall dropping in front of what you
-            already read.
+            No. Every story we publish is free to read online, with no
+            account and no paywall — the whole archive, every issue.
+            Subscribing gets you the printed magazine, and pays for the
+            reporting, the printing, and the postage.
           </p>
         </div>
 
         <div class="faq-item">
-          <h3 class="faq-q">Does the subscription include online access?</h3>
+          <h3 class="faq-q">Then what am I paying for?</h3>
           <p class="faq-a">
-            Yes. There is no separate digital plan — the quarterly
-            subscription gets you the mailed magazine and everything
-            online, signed in with the same email.
+            The object. Four issues a year on uncoated stock, mailed
+            from Highlands in time with the season each one covers —
+            and the reporting that fills them. The writing stays free
+            for everyone because subscribers cover its cost.
           </p>
         </div>
 

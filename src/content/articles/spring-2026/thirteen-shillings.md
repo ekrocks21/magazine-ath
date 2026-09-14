@@ -10,7 +10,7 @@ byline: "Eric"
 dek: "In 1680, a Quaker merchant from Yorkshire paid less than a pound sterling for Sandy Hook. What he bought, and what he believed he was buying, were two very different things."
 status: published
 word_count: 2050
-access: subscriber
+access: free
 pillar: historical_storytelling
 tags:
   - sandy_hook_history

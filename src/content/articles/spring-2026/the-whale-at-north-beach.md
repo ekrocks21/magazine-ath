@@ -11,7 +11,7 @@ byline: "Eric"
 dek: "A young female humpback washed ashore at Sandy Hook on the first of April. I drove out to see her. I did not look."
 status: published
 word_count: 1740
-access: subscriber
+access: free
 pillar: documentary
 tags:
   - humpback_whale
