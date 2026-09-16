@@ -26,20 +26,20 @@ import { articleRoute } from '../utils/article-route';
 import { siteWebSite, siteOrganization } from '../utils/structured-data';
 
 /**
- * The hero is the tall-ships film itself, playing silently behind
- * nothing at all — the page's words live further down.
+ * The hero is a silent loop of the Twin Lights over Highlands, served
+ * from R2 as a plain file.
  *
- * The film is on YouTube rather than R2, so this is an embed rather
- * than a <video>. It is muted because autoplay requires it, looped via
- * the playlist parameter (YouTube's loop only works paired with it),
- * and stripped of chrome. The still underneath is a frame from the
- * same four days, painted on the container so the screen is never
- * empty: no JavaScript, a refused autoplay, or a stated preference
- * against motion all leave it standing.
+ * It used to be a YouTube embed, which cost an oversized frame to crop
+ * the player's own furniture off every edge, a player API to find out
+ * when frames were actually moving, and the weight of the player
+ * itself. A file needs none of that: the poster is painted on the
+ * container, the video covers it when it plays, and if it never plays
+ * the poster simply stays.
  */
-import heroStill from '../content/articles/summer-2026/tall-ship-skyline.jpg';
-
-const FILM_ID = '1W1yvWm06iM';
+const FILM = {
+  poster: 'https://site-assets.abovethehook.com/magazine/hero.jpg',
+  mp4: 'https://site-assets.abovethehook.com/magazine/hero.mp4',
+};
 
 /**
  * Provisional section names, read off `type`. Replaced wholesale by the
@@ -137,18 +137,21 @@ function tagFor(a: CollectionEntry<'articles'>): string {
   <StructuredData data={[siteWebSite(), siteOrganization()]} slot="head" />
 
   <!-- ── Hero: the film, and nothing over it ──────────────────── -->
-  <section class="hero" aria-label="Four days with the tall ships">
-    <div class="hero__still" aria-hidden="true">
-      <Image
-        src={heroStill}
-        alt=""
-        class="hero__img"
-        widths={[900, 1400, 2200]}
-        sizes="100vw"
-        loading="eager"
-      />
+  <section class="hero" aria-label="The Twin Lights over Highlands">
+    <div
+      class="hero__still"
+      aria-hidden="true"
+      style={`background-image: url(${FILM.poster});`}
+    >
+      <video
+        class="hero__video"
+        muted
+        loop
+        playsinline
+        preload="none"
+        poster={FILM.poster}
+        data-src={FILM.mp4}></video>
     </div>
-    <div class="hero__frame" data-film={FILM_ID} aria-hidden="true"></div>
   </section>
 
   <!-- ── One section per issue: the card, then what ran in it ── -->
@@ -231,69 +234,51 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     (function () {
       'use strict';
 
-      var frame = document.querySelector('[data-film]');
-      if (!frame) return;
+      var video = document.querySelector('.hero__video');
+      if (!video) return;
 
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
       var conn = navigator.connection || {};
 
       /* The two refusals a visitor actually asked for: a stated
          preference against motion, and a stated preference against
-         spending data. Either one and nothing is requested at all —
-         the still underneath is already the page. */
-      if (reduced.matches || conn.saveData) return;
+         spending data. Either one and the file is never fetched — the
+         poster is already painted on the container, so the screen is
+         the same picture either way. */
+      function wanted() {
+        return !reduced.matches && !conn.saveData;
+      }
 
-      var id = frame.getAttribute('data-film');
-
-      /* The player API rather than a bare embed, for one reason: it
-         says when frames are actually moving. A bare iframe only
-         reports that its document loaded, which is well before the
-         film starts, so revealing on load puts the player's black
-         ground and spinner over a perfectly good still. Here the
-         embed stays invisible until PLAYING arrives, and if autoplay
-         is refused — iOS in Low Power Mode, a browser that says no —
-         it simply never arrives and the still keeps the screen. */
-      var mount = document.createElement('div');
-      frame.appendChild(mount);
-
-      window.onYouTubeIframeAPIReady = function () {
-        new window.YT.Player(mount, {
-          videoId: id,
-          host: 'https://www.youtube-nocookie.com',
-          playerVars: {
-            autoplay: 1,
-            mute: 1, // autoplay is refused without it
-            loop: 1,
-            playlist: id, // YouTube's loop only works paired with this
-            controls: 0,
-            modestbranding: 1,
-            rel: 0,
-            playsinline: 1,
-            disablekb: 1,
-            fs: 0,
-            iv_load_policy: 3,
-          },
-          events: {
-            onReady: function (ev) {
-              ev.target.mute();
-              ev.target.playVideo();
-              var el = ev.target.getIframe();
-              el.setAttribute('tabindex', '-1');
-              el.setAttribute('aria-hidden', 'true');
-              el.setAttribute('title', 'Four days with the tall ships');
-            },
-            onStateChange: function (ev) {
-              if (ev.data === window.YT.PlayerState.PLAYING) {
-                ev.target.getIframe().style.opacity = '1';
-              }
-            },
-          },
+      /* Autoplay gets refused even for muted inline video — iOS in Low
+         Power Mode is the common case, and that is a real reader. The
+         poster is already up, so nothing looks broken; the first real
+         gesture is one free second chance, then we stop asking. */
+      function play() {
+        var p = video.play();
+        if (!p || !p.catch) return;
+        p.catch(function () {
+          var events = ['pointerdown', 'touchstart', 'keydown'];
+          var retry = function () {
+            events.forEach(function (e) { window.removeEventListener(e, retry); });
+            var again = video.play();
+            if (again && again.catch) again.catch(function () {});
+          };
+          events.forEach(function (e) {
+            window.addEventListener(e, retry, { once: true, passive: true });
+          });
         });
-      };
+      }
 
-      var api = document.createElement('script');
-      api.src = 'https://www.youtube.com/iframe_api';
-      document.head.appendChild(api);
+      if (wanted()) {
+        // Attached here rather than in the markup, so a visitor who is
+        // not being sent motion never downloads it to hide it.
+        var source = document.createElement('source');
+        source.src = video.getAttribute('data-src');
+        source.type = 'video/mp4';
+        video.appendChild(source);
+        video.load();
+        play();
+      }
     })();
   </script>
 </BaseLayout>
@@ -316,51 +301,23 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     position: absolute;
     inset: 0;
     background-color: var(--navy-dark);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
   }
-  /* :global, because scoped styles do not reach the element <Image>
-     renders — the class lands on it, the scope attribute does not. */
-  .hero__still :global(img) {
+  /* The film covers the poster while it plays. If it never plays —
+     no JavaScript, a refused autoplay, a stated preference against
+     motion — the poster underneath is already the picture. */
+  .hero__video {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
   }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__video { display: none; }
+  }
 
-  /* The embed sits above the still and below the wash. A 16:9 film in
-     a box of any shape: size it off whichever axis is short and let
-     the other overflow, then pull it back to centre. */
-  .hero__frame {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    overflow: hidden;
-  }
-  .hero__frame :global(iframe) {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    /* Oversized on purpose. The player paints its own furniture — the
-       film's title across the top, the wordmark bottom-right — and
-       neither controls=0 nor modestbranding suppresses it any more.
-       Blowing the frame up past the viewport pushes that furniture off
-       every edge, and the container clips it. */
-    transform: translate(-50%, -50%) scale(1.35);
-    width: 177.78vh;
-    min-width: 100%;
-    height: 56.25vw;
-    min-height: 100%;
-    border: 0;
-    /* It is scenery, not a player — clicks belong to the page. */
-    pointer-events: none;
-    /* Held back until it is actually running, so the still carries the
-       screen instead of the player's black ground. */
-    opacity: 0;
-    transition: opacity 0.6s ease-out;
-  }
-  /* The wash has to stay on top of the film. */
-  .hero__still::after {
-    z-index: 2;
-  }
   /* Wash, so cream type holds anywhere on the frame. */
   .hero__still::after {
     content: '';
