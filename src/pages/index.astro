@@ -62,8 +62,9 @@ const includeDrafts =
 const NOW = Date.now();
 
 // ── Issues, in reading order ──────────────────────────────────────
-// The one still to come leads, then the most recent, then back through
-// the archive. An issue with no publish_date sorts as forthcoming.
+// The one that is out leads, then back through the archive, and the
+// one still to come closes. An issue with no publish_date is
+// forthcoming.
 const allIssues = await getCollection('issues');
 const isForthcoming = (i: CollectionEntry<'issues'>) =>
   (i.data.publish_date?.valueOf() ?? Number.POSITIVE_INFINITY) > NOW;
@@ -82,13 +83,21 @@ const published = allIssues
       (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0),
   );
 
-// Next issue first, latest second, then older. Only the leading
-// forthcoming issue is billed as next; any beyond it just follow.
-const orderedIssues = [...forthcoming, ...published];
-const nextIssueId = forthcoming[0]?.id ?? null;
-const latestIssueId = published[0]?.id ?? null;
+const orderedIssues = [...published, ...forthcoming];
+const forthcomingIds = new Set(forthcoming.map((i) => i.id));
 
 const issueSlug = (i: CollectionEntry<'issues'>) => i.id.replace(/\.md$/, '');
+
+/**
+ * "The Summer Issue" — the season, said the way a masthead says it.
+ * Cased properly in the text rather than left to text-transform, so
+ * what a screen reader announces and what a copy-paste carries match
+ * what is on screen.
+ */
+const issueName = (i: CollectionEntry<'issues'>) => {
+  const season = i.data.season;
+  return `The ${season.charAt(0).toUpperCase()}${season.slice(1)} Issue`;
+};
 
 // ── Articles, grouped into rails ──────────────────────────────────
 const allArticles = await getCollection('articles', ({ data }) =>
@@ -102,29 +111,15 @@ function byIssueOrder(a: CollectionEntry<'articles'>, b: CollectionEntry<'articl
   return ao !== bo ? ao - bo : a.id.localeCompare(b.id);
 }
 
-interface Rail {
-  key: string;
-  heading: string;
-  articles: CollectionEntry<'articles'>[];
-}
-
-/**
- * One rail per issue, newest first, skipping issues with nothing in
- * them yet. Swap this for a section-based grouping when the map lands.
- */
-function railsFor(articles: CollectionEntry<'articles'>[]): Rail[] {
-  return published
-    .map((issue) => ({
-      key: issueSlug(issue),
-      heading: issue.data.title,
-      articles: articles
-        .filter((a) => a.data.issue === issueSlug(issue))
-        .sort(byIssueOrder),
-    }))
-    .filter((rail) => rail.articles.length > 0);
-}
-
-const rails = railsFor(allArticles);
+/** An issue and the pieces that ran in it, in the issue's own order. */
+const issueSections = orderedIssues.map((issue) => ({
+  issue,
+  slug: issueSlug(issue),
+  forthcoming: forthcomingIds.has(issue.id),
+  articles: allArticles
+    .filter((a) => a.data.issue === issueSlug(issue))
+    .sort(byIssueOrder),
+}));
 
 /** The tag under a tile: section, then the issue it ran in. */
 function tagFor(a: CollectionEntry<'articles'>): string {
@@ -156,64 +151,65 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     <div class="hero__frame" data-film={FILM_ID} aria-hidden="true"></div>
   </section>
 
-  <!-- ── Issues ───────────────────────────────────────────────── -->
-  <section class="rail">
-    <h2 class="rail__heading">Issues</h2>
-    <div class="rail__track">
-      {
-        orderedIssues.map((issue) => (
-          <a class="cover" href={`/issues/${issueSlug(issue)}`}>
-            <span class="cover__frame">
-              {issue.data.cover_image && (
-                <Image
-                  src={issue.data.cover_image}
-                  alt={issue.data.cover_image_alt ?? `${issue.data.title} cover`}
-                  class="cover__img"
-                  widths={[240, 480]}
-                  sizes="200px"
-                />
-              )}
-              {issue.id === nextIssueId && <span class="cover__flag">Next</span>}
-              {issue.id === latestIssueId && <span class="cover__flag">Latest</span>}
-            </span>
-            <span class="cover__name">{issue.data.title}</span>
-          </a>
-        ))
-      }
-    </div>
-  </section>
-
-  <!-- ── Articles, a rail per issue ───────────────────────────── -->
+  <!-- ── One section per issue: the card, then what ran in it ── -->
   {
-    rails.map((rail) => (
-      <section class="rail">
-        <h2 class="rail__heading">{rail.heading}</h2>
-        <div class="rail__track">
-          {rail.articles.map((a) => (
-            <a class="tile" href={articleRoute(a).href}>
-              <span class="tile__frame">
-                {a.data.hero_image ? (
-                  <Image
-                    src={a.data.hero_image}
-                    alt={a.data.hero_image_alt ?? a.data.title}
-                    class="tile__img"
-                    widths={[360, 720]}
-                    sizes="300px"
-                  />
-                ) : (
-                  <CardIllustration
-                    slug={articleRoute(a).articleSlug}
-                    title={a.data.title}
-                  />
-                )}
-              </span>
-              <span class="tile__foot">
-                <span class="tile__tag">{tagFor(a)}</span>
-                <span class="tile__title">{a.data.title}</span>
-              </span>
-            </a>
-          ))}
-        </div>
+    issueSections.map((sec) => (
+      <section class="issue">
+        <a class="issuecard" href={`/issues/${sec.slug}`}>
+          <span class="issuecard__art">
+            {sec.issue.data.cover_image && (
+              <Image
+                src={sec.issue.data.cover_image}
+                alt={sec.issue.data.cover_image_alt ?? `${sec.issue.data.title} cover`}
+                widths={[260, 520]}
+                sizes="220px"
+              />
+            )}
+          </span>
+          <span class="issuecard__body">
+            <span class="issuecard__meta">
+              {sec.forthcoming
+                ? 'Up next'
+                : `Issue ${String(sec.issue.data.issue_number).padStart(2, '0')}`}
+            </span>
+            <span class="issuecard__title">{issueName(sec.issue)}</span>
+            {sec.issue.data.theme && (
+              <span class="issuecard__theme">{sec.issue.data.theme}</span>
+            )}
+            <span class="issuecard__go">
+              {sec.forthcoming ? 'See what is coming' : 'Read the issue'} →
+            </span>
+          </span>
+        </a>
+
+        {sec.articles.length > 0 && (
+          <div class="rail__track">
+            {sec.articles.map((a) => (
+              <a class="tile" href={articleRoute(a).href}>
+                <span class="tile__frame">
+                  {a.data.hero_image ? (
+                    <Image
+                      src={a.data.hero_image}
+                      alt={a.data.hero_image_alt ?? a.data.title}
+                      class="tile__img"
+                      widths={[360, 720]}
+                      sizes="300px"
+                    />
+                  ) : (
+                    <CardIllustration
+                      slug={articleRoute(a).articleSlug}
+                      title={a.data.title}
+                    />
+                  )}
+                </span>
+                <span class="tile__foot">
+                  <span class="tile__tag">{tagFor(a)}</span>
+                  <span class="tile__title">{a.data.title}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        )}
       </section>
     ))
   }
@@ -377,104 +373,111 @@ function tagFor(a: CollectionEntry<'articles'>): string {
         rgba(16, 25, 43, 0.55) 100%);
   }
 
-  /* ── Rails ────────────────────────────────────────────────────── */
-  .rail {
+  /* ── One issue, and what ran in it ───────────────────────────── */
+  .issue {
     max-width: 1180px;
     margin: 0 auto;
-    padding: 44px 0 0;
+    padding: 60px 0 0;
   }
-  .rail:last-of-type {
-    padding-bottom: 64px;
+  .issue:last-of-type {
+    padding-bottom: 84px;
   }
-  .rail__heading {
+
+  /* The card: the cover, and the issue said large. */
+  .issuecard {
+    display: grid;
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: 34px;
+    align-items: center;
+    padding: 0 28px 30px;
+    text-decoration: none;
+  }
+  .issuecard__art {
+    display: block;
+    /* A real cover's trim, whatever shape the source is — Fall's is a
+       landscape placeholder and would otherwise sit short. */
+    aspect-ratio: 962 / 1250;
+    overflow: hidden;
+    background: var(--navy);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+  }
+  .issuecard__art :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease-out;
+  }
+  .issuecard:hover .issuecard__art :global(img) {
+    transform: scale(1.03);
+  }
+  .issuecard__body {
+    display: block;
+  }
+  .issuecard__meta {
+    display: block;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: var(--sand);
-    margin: 0 0 18px;
-    padding: 0 28px;
+    color: var(--rust-light);
+    margin-bottom: 12px;
   }
-  /* Horizontal shelf. Scrolls on its own so a long issue never forces
-     the page wide. */
+  .issuecard__title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5.2vw, 3.7rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.015em;
+    line-height: 1.02;
+    color: var(--on-dark-1);
+    margin-bottom: 14px;
+  }
+  .issuecard__theme {
+    display: block;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.05rem, 2vw, 1.4rem);
+    line-height: 1.4;
+    color: var(--on-dark-3);
+    margin-bottom: 18px;
+  }
+  .issuecard__go {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--sand);
+    transition: color 0.18s ease-out;
+  }
+  .issuecard:hover .issuecard__go {
+    color: var(--on-dark-1);
+  }
+  .issuecard:focus-visible {
+    outline: 2px solid var(--rust-light);
+    outline-offset: 4px;
+  }
+
+  /* Horizontal shelf of the issue's pieces. Scrolls on its own so a
+     long issue never forces the page wide. */
   .rail__track {
     display: flex;
     gap: 18px;
     overflow-x: auto;
     scroll-snap-type: x proximity;
     padding: 0 28px 6px;
-    /* Without this the browser snaps the first card's edge to the
-       scrollport on load, swallowing the gutter and clipping it
-       against the window. Inset the snapport by the same gutter so
-       scrollLeft 0 is itself a valid snap position. */
-    scroll-padding-inline: 28px;
     scrollbar-width: thin;
     scrollbar-color: var(--navy-light) transparent;
+    /* Without this the browser snaps the first card's edge to the
+       scrollport on load, swallowing the gutter and clipping it
+       against the window. */
+    scroll-padding-inline: 28px;
   }
   .rail__track > * {
     scroll-snap-align: start;
     flex: none;
-  }
-
-  /* ── Issue covers ─────────────────────────────────────────────── */
-  .cover {
-    display: block;
-    width: 200px;
-    text-decoration: none;
-  }
-  .cover__frame {
-    position: relative;
-    display: block;
-    overflow: hidden;
-    background: var(--navy);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
-    /* Every cover keeps the trim of a real one, whatever shape the
-       source is. Fall's placeholder is landscape; without this it sits
-       short next to the others and the captions stop lining up. */
-    aspect-ratio: 962 / 1250;
-  }
-  .cover__img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* Grey until you point at it. */
-    filter: grayscale(1) contrast(1.06);
-    transition: filter 0.35s ease-out, transform 0.35s ease-out;
-  }
-  .cover:hover .cover__img,
-  .cover:focus-visible .cover__img {
-    filter: grayscale(0);
-    transform: scale(1.03);
-  }
-  .cover__flag {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: var(--rust);
-    color: #fff;
-    font-family: var(--font-mono);
-    font-size: 8px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 4px 8px;
-  }
-  .cover__name {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--on-dark-4);
-    margin-top: 10px;
-    transition: color 0.2s ease-out;
-  }
-  .cover:hover .cover__name {
-    color: var(--on-dark-1);
-  }
-  .cover:focus-visible {
-    outline: 2px solid var(--rust-light);
-    outline-offset: 4px;
   }
 
   /* ── Article tiles ────────────────────────────────────────────── */
@@ -575,12 +578,12 @@ function tagFor(a: CollectionEntry<'articles'>): string {
 
   /* An animated zoom is exactly what this setting asks not to see. */
   @media (prefers-reduced-motion: reduce) {
-    .cover__img,
-    .tile__frame :global(img) {
+    .tile__frame :global(img),
+    .issuecard__art :global(img) {
       transition: none;
     }
-    .cover:hover .cover__img,
-    .tile:hover .tile__frame :global(img) {
+    .tile:hover .tile__frame :global(img),
+    .issuecard:hover .issuecard__art :global(img) {
       transform: none;
     }
   }
@@ -588,10 +591,14 @@ function tagFor(a: CollectionEntry<'articles'>): string {
   @media (max-width: 640px) {
     .statement { padding: 60px 0 68px; }
     .statement__inner { padding: 0 18px; }
-    .rail__heading,
-    .rail__track { padding-left: 18px; padding-right: 18px; }
-    .rail__track { scroll-padding-inline: 18px; }
-    .cover { width: 150px; }
     .tile { width: 260px; }
+    .issue { padding-top: 40px; }
+    .issuecard {
+      grid-template-columns: 1fr;
+      gap: 18px;
+      padding: 0 18px 22px;
+    }
+    .issuecard__art { width: 150px; }
+    .rail__track { padding-left: 18px; padding-right: 18px; scroll-padding-inline: 18px; }
   }
 </style>
