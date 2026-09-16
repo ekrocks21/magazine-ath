@@ -1,139 +1,334 @@
 ---
 /**
- * Three-zone masthead: left nav | centered wordmark | right CTA.
+ * Masthead — the boxed mark, and a hamburger that opens a full-screen
+ * menu. Laid out and behaved like the one on abovethehook.com: mark
+ * left, toggle right, and an overlay that takes the whole window with
+ * the mark still in place and a close ✕ opposite it.
  *
- * On pages with data-hero-fullbleed on <body> the header begins
- * position:fixed + transparent, overlaying the full-bleed hero.
- * An IntersectionObserver watches #hero-sentinel (placed at the
- * bottom of the hero section) and adds .is-solid once the hero
- * scrolls out of view, triggering the navy background.
- *
- * On all other pages the header renders as position:sticky with
- * the standard navy background — no JS needed.
+ * The bar is navy on every page so the cream mark always has ground
+ * under it. On a page that declares a full-bleed hero
+ * (body[data-hero-fullbleed]) it goes fixed and transparent instead
+ * and sits over the artwork — no scroll observer, because the pages
+ * that do this are dark the whole way down.
  */
 
 import { getCollection } from 'astro:content';
 
 const NOW = Date.now();
 const allIssues = await getCollection('issues');
+
+// The issue that is out now drives the first menu item, so it reads
+// "Summer Issue" today and "Fall Issue" the day Fall publishes.
 const currentIssue = allIssues
   .filter((i) => (i.data.publish_date?.valueOf() ?? 0) <= NOW)
   .sort(
     (a, b) =>
-      (b.data.publish_date?.valueOf() ?? 0) -
-      (a.data.publish_date?.valueOf() ?? 0),
+      (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0),
   )[0];
+
 const currentIssueHref = currentIssue
   ? `/issues/${currentIssue.id.replace(/\.md$/, '')}`
   : '/archive';
+const currentIssueLabel = currentIssue
+  ? `${currentIssue.data.season.charAt(0).toUpperCase()}${currentIssue.data.season.slice(1)} Issue`
+  : 'Current Issue';
 
 const currentPath = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath === href || currentPath.startsWith(href + '/');
 
-function isActiveFor(href: string): boolean {
-  if (href === '/') return currentPath === '/';
-  return currentPath === href || currentPath.startsWith(href + '/');
-}
-
-const leftNav = [
-  { label: 'Current Issue', href: currentIssueHref },
-  { label: 'Archive', href: '/archive' },
+const links = [
+  { label: currentIssueLabel, href: currentIssueHref },
+  { label: 'Up Next', href: '/next' },
+  { label: 'Past Issues', href: '/archive' },
   { label: 'About', href: '/about' },
+  { label: 'Subscribe', href: '/subscribe' },
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Terms of Service', href: '/terms' },
 ];
 ---
 
-<header class="mag-masthead">
-  <div class="mag-masthead-inner">
-
-    <nav class="mag-nav-left" aria-label="Primary">
-      {leftNav.map((item) => (
-        <a
-          href={item.href}
-          class={isActiveFor(item.href) ? 'is-active' : ''}
-          aria-current={isActiveFor(item.href) ? 'page' : undefined}
-        >
-          {item.label}
-        </a>
-      ))}
-    </nav>
-
-    <a href="/" class="mag-wordmark" aria-label="The Local Lookout — home">
-      <span class="mag-wordmark-sup">Above the Hook · Quarterly</span>
-      <span class="mag-wordmark-main">The Local <em>Lookout</em></span>
-    </a>
-
-    <nav class="mag-nav-right" aria-label="Account">
-      <a href="/next" class="mag-nav-secondary">Next Issue</a>
-      {/* Subscribe chip swaps to Account after /api/me responds. */}
-      <a href="/subscribe" class="mag-subscribe-btn" data-mag-subscribe-cta>Subscribe</a>
-      <a href="/account" class="mag-subscribe-btn" data-mag-account-cta hidden>Account</a>
-    </nav>
-
-  </div>
-  <div class="mag-rust-rule"></div>
+<header class="mast">
+  <a class="boxmark" href="/">The Local Lookout</a>
+  <button
+    class="mast__toggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="site-menu"
+    data-menu-open
+  >
+    <span class="sr-only">Menu</span>
+    <span class="mast__bars" aria-hidden="true"></span>
+  </button>
 </header>
 
+<div class="menu" id="site-menu" hidden data-menu>
+  <div class="menu__bar">
+    <a class="boxmark" href="/">The Local Lookout</a>
+    <button class="menu__close" type="button" data-menu-close>
+      <span class="sr-only">Close menu</span>
+      <span class="menu__x" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <nav class="menu__primary" aria-label="Primary">
+    {
+      links.map((l) => (
+        <a
+          href={l.href}
+          class={isActive(l.href) ? 'is-current' : undefined}
+          aria-current={isActive(l.href) ? 'page' : undefined}
+        >
+          {l.label}
+        </a>
+      ))
+    }
+  </nav>
+
+  <div class="menu__foot">
+    <a class="boxmark boxmark--sm" href="https://abovethehook.com">ATH</a>
+    <span class="menu__foot-note">Back to Above the Hook</span>
+  </div>
+</div>
+
 <script>
-  /* ── Transparent-hero scroll logic ──────────────────────────────────
-     Only active when body carries data-hero-fullbleed (home page).
-     IntersectionObserver watches #hero-sentinel (zero-height div at
-     the bottom of the hero section). While the sentinel is visible the
-     masthead stays transparent; once it scrolls out we add .is-solid. */
+  /* The menu is a real element that starts [hidden]; everything here
+     only toggles that and keeps focus somewhere sensible. With no JS
+     the page still has all of its links — they live in the markup. */
   (function () {
-    var body = document.body;
-    var masthead = document.querySelector('.mag-masthead');
-    if (!body || !masthead) return;
+    const menu = document.querySelector<HTMLElement>('[data-menu]');
+    const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+    const closeBtn = document.querySelector<HTMLButtonElement>('[data-menu-close]');
+    if (!menu || !openBtn || !closeBtn) return;
 
-    if (body.hasAttribute('data-hero-fullbleed')) {
-      var sentinel = document.getElementById('hero-sentinel');
-      if (sentinel) {
-        var observer = new IntersectionObserver(
-          function (entries) {
-            masthead.classList.toggle('is-solid', !entries[0].isIntersecting);
-          },
-          { threshold: 0 },
-        );
-        observer.observe(sentinel);
+    const FOCUSABLE = 'a[href], button:not([disabled])';
+
+    function open() {
+      menu.hidden = false;
+      openBtn.setAttribute('aria-expanded', 'true');
+      // The page behind must not scroll under the overlay.
+      document.body.style.overflow = 'hidden';
+      menu.querySelector<HTMLElement>(FOCUSABLE)?.focus();
+      document.addEventListener('keydown', onKeydown);
+    }
+
+    function close() {
+      menu.hidden = true;
+      openBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKeydown);
+      openBtn.focus();
+    }
+
+    function onKeydown(ev: KeyboardEvent) {
+      if (ev.key === 'Escape') {
+        close();
+        return;
+      }
+      if (ev.key !== 'Tab') return;
+      // Keep Tab inside the overlay while it is up.
+      const items = Array.from(menu.querySelectorAll<HTMLElement>(FOCUSABLE));
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (ev.shiftKey && document.activeElement === first) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && document.activeElement === last) {
+        ev.preventDefault();
+        first.focus();
       }
     }
 
-    /* ── Session / paywall logic (unchanged) ───────────────────────── */
-    var subscribeCta = document.querySelector('[data-mag-subscribe-cta]');
-    var accountCta = document.querySelector('[data-mag-account-cta]');
-
-    fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (data) {
-        if (!data || !data.signedIn) return;
-        if (subscribeCta && accountCta) {
-          subscribeCta.setAttribute('hidden', '');
-          accountCta.removeAttribute('hidden');
-        }
-        var entitlements = data.entitlements || [];
-        unlockGatedCards(entitlements);
-      })
-      .catch(function () { /* offline / Worker not in front — keep defaults */ });
-
-    function unlockGatedCards(entitlements) {
-      var cards = document.querySelectorAll('[data-access="subscriber"][data-article-issue]');
-      if (!cards.length) return;
-      for (var i = 0; i < cards.length; i++) {
-        var card = cards[i];
-        var issueSlug = card.getAttribute('data-article-issue');
-        if (!hasAccess(entitlements, issueSlug)) continue;
-        var lockedChip = card.querySelector('[data-chip-state="locked"]');
-        var unlockedChip = card.querySelector('[data-chip-state="unlocked"]');
-        if (lockedChip) lockedChip.setAttribute('hidden', '');
-        if (unlockedChip) unlockedChip.removeAttribute('hidden');
-      }
-    }
-
-    function hasAccess(entitlements, issueSlug) {
-      for (var i = 0; i < entitlements.length; i++) {
-        var tier = entitlements[i].tier;
-        if (tier === 'digital' || tier === 'print') return true;
-        if (tier === 'issue:' + issueSlug) return true;
-      }
-      return false;
-    }
+    openBtn.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
   })();
 </script>
+
+<style>
+  /* ── The boxed mark ───────────────────────────────────────────────
+     The master brand's mark, set the way that site sets it: boxed,
+     Inter, wide caps. */
+  .boxmark {
+    display: inline-block;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--on-dark-2);
+    border: 1px solid var(--on-dark-2);
+    padding: 5px 10px 6px;
+    text-decoration: none;
+    line-height: 1;
+    white-space: nowrap;
+    transition: color 0.18s ease-out, border-color 0.18s ease-out;
+  }
+  .boxmark:hover {
+    color: var(--on-dark-1);
+    border-color: var(--on-dark-1);
+  }
+  .boxmark--sm {
+    font-size: 13px;
+    padding: 4px 8px 5px;
+  }
+
+  /* ── Bar ──────────────────────────────────────────────────────── */
+  .mast {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 30px;
+    background: var(--navy);
+  }
+  /* Over a full-bleed hero the bar floats on the artwork instead. */
+  :global(body[data-hero-fullbleed]) .mast {
+    position: fixed;
+    left: 0;
+    right: 0;
+    background: transparent;
+  }
+
+  .mast__toggle,
+  .menu__close {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: 10px;
+    margin: -10px;
+    color: var(--on-dark-2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mast__toggle:hover,
+  .menu__close:hover {
+    color: var(--on-dark-1);
+  }
+  .mast__toggle:focus-visible,
+  .menu__close:focus-visible,
+  .boxmark:focus-visible {
+    outline: 2px solid var(--rust-light);
+    outline-offset: 3px;
+  }
+
+  /* Three rules, drawn with the box and its two borders. */
+  .mast__bars,
+  .mast__bars::before,
+  .mast__bars::after {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: currentColor;
+  }
+  .mast__bars {
+    position: relative;
+  }
+  .mast__bars::before,
+  .mast__bars::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+  .mast__bars::before { top: -7px; }
+  .mast__bars::after { top: 7px; }
+
+  /* ── Overlay ──────────────────────────────────────────────────── */
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    background: var(--navy-dark);
+    overflow-y: auto;
+  }
+  .menu[hidden] {
+    display: none;
+  }
+  .menu__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 30px;
+    flex: none;
+  }
+
+  /* The ✕, drawn from one box and two rules. */
+  .menu__x {
+    position: relative;
+    display: block;
+    width: 20px;
+    height: 20px;
+  }
+  .menu__x::before,
+  .menu__x::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 20px;
+    height: 1.5px;
+    background: currentColor;
+  }
+  .menu__x::before { transform: rotate(45deg); }
+  .menu__x::after { transform: rotate(-45deg); }
+
+  .menu__primary {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 30px;
+    gap: 2px;
+  }
+  .menu__primary a {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5.4vw, 3.5rem);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.16;
+    color: var(--on-dark-2);
+    text-decoration: none;
+    transition: color 0.18s ease-out;
+  }
+  .menu__primary a:hover,
+  .menu__primary a:focus-visible {
+    color: var(--rust-light);
+  }
+  .menu__primary a.is-current {
+    color: var(--rust-light);
+  }
+  .menu__primary a:focus-visible {
+    outline: 2px solid var(--rust-light);
+    outline-offset: 4px;
+  }
+
+  .menu__foot {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 24px 30px 32px;
+    border-top: 1px solid rgba(201, 185, 154, 0.18);
+  }
+  .menu__foot-note {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--on-dark-4);
+  }
+
+  @media (max-width: 640px) {
+    .mast,
+    .menu__bar { padding: 16px 18px; }
+    .boxmark { font-size: 15px; letter-spacing: 0.14em; padding: 4px 8px 5px; }
+    .menu__primary { padding: 16px 18px; gap: 0; }
+    .menu__foot { padding: 20px 18px 26px; }
+  }
+</style>

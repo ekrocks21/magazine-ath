@@ -7,13 +7,17 @@
  *   </BaseLayout>
  *
  * Renders html/head with SEO tags, then <Masthead /> / <slot /> / <Footer />.
+ *
+ * The cross-property FamilyStrip used to sit above the masthead. The
+ * masthead's menu now carries the boxed ATH mark back to
+ * abovethehook.com, so the strip was two ways out saying the same
+ * thing. The component is still in the tree for the other properties.
  */
 
 import '../styles/global.css';
 import SEO from '../components/SEO.astro';
 import MetaPixel from '../components/MetaPixel.astro';
 import Analytics from '../components/Analytics.astro';
-import FamilyStrip from '../components/FamilyStrip.astro';
 import Masthead from '../components/Masthead.astro';
 import Footer from '../components/Footer.astro';
 
@@ -93,7 +97,6 @@ const {
       Skip to main content
     </a>
 
-    <FamilyStrip current="magazine" />
     <Masthead />
 
     <main id="main-content" class="flex-1">

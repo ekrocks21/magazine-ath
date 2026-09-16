@@ -6,6 +6,7 @@
    :root tokens verbatim. See decisions.md 2026-04-18 entry.
    ────────────────────────────────────────────────────────────── */
 
+@import "@fontsource-variable/inter/index.css";
 @import "@fontsource-variable/playfair-display/index.css";
 @import "@fontsource-variable/source-serif-4/index.css";
 @import "@fontsource/dm-mono/300.css";
@@ -46,6 +47,7 @@
   --font-display: "Playfair Display Variable", "Playfair Display", Georgia, "Times New Roman", serif;
   --font-body: "Source Serif 4 Variable", "Source Serif 4", Georgia, "Times New Roman", serif;
   --font-mono: "DM Mono", "IBM Plex Mono", "Courier New", monospace;
+  --font-ui: "Inter Variable", Inter, -apple-system, system-ui, "Segoe UI", sans-serif;
 
   /* Editorial measure for article body */
   --measure: 65ch;
@@ -79,6 +81,7 @@
   --font-display: "Playfair Display Variable", "Playfair Display", Georgia, "Times New Roman", serif;
   --font-body: "Source Serif 4 Variable", "Source Serif 4", Georgia, "Times New Roman", serif;
   --font-mono: "DM Mono", "IBM Plex Mono", "Courier New", monospace;
+  --font-ui: "Inter Variable", Inter, -apple-system, system-ui, "Segoe UI", sans-serif;
 
   --dur-fast: 0.15s;
   --dur-base: 0.2s;
