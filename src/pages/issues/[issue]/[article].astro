@@ -67,6 +67,35 @@ const useDropCap = data.type === 'feature';
 // ── Issue title for breadcrumb ─────────────────────────────────────────
 const issues = await getCollection('issues');
 const issue = issues.find((i) => i.id.replace(/\.md$/, '') === data.issue);
+
+/**
+ * Only the issue that is out now reads free. Everything behind it is
+ * for subscribers.
+ *
+ * Worked out here rather than written into frontmatter, so the gate
+ * moves on its own when the next issue publishes — the alternative is
+ * remembering to edit every article of the outgoing issue on the day
+ * the new one lands. An article that asks to be gated in frontmatter
+ * stays gated either way.
+ *
+ * The Worker reads this off <body data-access> and rewrites the prose
+ * for anyone without a qualifying entitlement. Note it is decided at
+ * build time, so publishing a new issue needs a rebuild to close the
+ * gate on the old one — which is already how publishing works here.
+ */
+const NOW = Date.now();
+const currentIssueSlug = issues
+  .filter((i) => (i.data.publish_date?.valueOf() ?? 0) <= NOW)
+  .sort(
+    (a, b) =>
+      (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0),
+  )[0]
+  ?.id.replace(/\.md$/, '');
+
+const access =
+  data.access === 'subscriber' || data.issue !== currentIssueSlug
+    ? 'subscriber'
+    : 'free';
 const issueTitle = issue?.data.title ?? data.issue;
 
 // ── OG image: sharp-generated composite per article ────────────────────
@@ -110,7 +139,7 @@ const jsonLd = [
   publishedTime={data.publish_date?.toISOString()}
   author={data.author}
   noindex={data.status === 'draft'}
-  dataAccess={data.access}
+  dataAccess={access}
   dataArticleIssue={data.issue}
 >
   <StructuredData data={jsonLd} slot="head" />

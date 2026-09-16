@@ -98,7 +98,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               data-tier="print"
             >
               <span class="plan-option-name">Print</span>
-              <span class="plan-option-price">$75 / quarter</span>
+              <span class="plan-option-price">$25 / month</span>
               <span class="plan-option-cta">Switch →</span>
             </button>
           </div>
@@ -222,7 +222,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     (function () {
       // "digital" is a legacy plan — no longer sold, still honored.
       var TIER_LABEL = { digital: 'Digital (legacy)', print: 'Print' };
-      var TIER_PRICE = { print: '$75 / quarter' };
+      var TIER_PRICE = { print: '$25 / month' };
       // Publishable Stripe key — safe to expose in client JS. This is
       // the same key bound to the Worker as STRIPE_PUBLISHABLE_KEY.
       var STRIPE_PK = 'pk_live_51Ln2ElKglwHHJWzMZCsB03rbZfvHCCRXNB1CSRw8S3cr5C02voSnjA5r7V25AYFLAhQ69FpiUoTOudERirSu0nw6009AoOOuFt';

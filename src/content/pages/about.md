@@ -54,10 +54,12 @@ Digital editions of each issue are available at this site.
 
 ## Subscriptions
 
-Every story we publish is free to read online — the whole archive, no
-account, no paywall. Seventy-five dollars a quarter buys the printed
-magazine: four mailed issues a year from Highlands, and previews of
-future issues. Subscribers are why the writing stays free.
+The current issue is free to read online, in full, without an account.
+Once the next issue lands, the one before it joins the archive, which
+is for subscribers. Twenty-five dollars a month buys the printed
+magazine — four mailed issues a year from Highlands — along with
+previews of future issues and the run of back issues. Subscribers are
+why the current issue stays free for everyone.
 
 Sign in with an email, no password. Cancel anytime from your account.
 

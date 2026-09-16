@@ -3,11 +3,10 @@
  * /subscribe — one screen, one decision.
  *
  * Leads with the issue that is out now, because a thing you can hold
- * is easier to say yes to than a commitment. Clicking Buy opens the
- * choice between that issue and the subscription, with the
- * subscription already selected — $75 a quarter is one issue for $25
- * less than buying it outright, so the option carries its own
- * argument.
+ * is easier to say yes to than a commitment — and puts the choice
+ * right under it rather than behind a click. The subscription is
+ * already selected: $25 a month is one issue for $25 less than buying
+ * it outright, so the option carries its own argument.
  *
  * Both options POST to the Worker's /api/checkout. `tier` comes from
  * the selected radio and `issue` rides along for the single-issue
@@ -27,7 +26,7 @@ import BareLayout from '../layouts/BareLayout.astro';
  * wrangler.toml, which is what a reader is actually charged.
  */
 const ISSUE_PRICE = '$100';
-const SUBSCRIPTION_PRICE = '$75';
+const SUBSCRIPTION_PRICE = '$25';
 
 // The issue that is out now — most recently published, same rule the
 // home page uses so the two can never disagree.
@@ -87,8 +86,7 @@ const FILM = {
         No charge was made.
       </p>
 
-      <!-- ── Step one: the issue that is out now ──────────────── -->
-      <section data-step="issue">
+      <section>
         {
           cover_image && (
             <Image
@@ -104,17 +102,11 @@ const FILM = {
         <p class="card__kicker">Issue {issueNumber} · Out now</p>
         <h1 class="card__title">{issueTitle}</h1>
         <p class="card__lede">
-          The printed magazine, mailed from Highlands. Every story in it
-          is free to read online — this is the object.
+          The printed magazine, mailed from Highlands. This issue is free
+          to read online — subscribing brings the object, and everything
+          behind it.
         </p>
-        <button type="button" class="btn btn--primary" data-go="choose">
-          Buy this issue — {ISSUE_PRICE}
-        </button>
-      </section>
 
-      <!-- ── Step two: the choice, subscription pre-selected ───── -->
-      <section data-step="choose" hidden>
-        <p class="card__kicker">Choose how</p>
         <form method="POST" action="/api/checkout" class="pick">
           <input type="hidden" name="issue" value={currentSlug} />
 
@@ -123,11 +115,11 @@ const FILM = {
             <span class="opt__body">
               <span class="opt__head">
                 <span class="opt__name">Subscribe</span>
-                <span class="opt__price">{SUBSCRIPTION_PRICE}<span class="opt__unit">/quarter</span></span>
+                <span class="opt__price">{SUBSCRIPTION_PRICE}<span class="opt__unit">/month</span></span>
               </span>
               <span class="opt__desc">
-                Four a year, starting with {issueTitle} — $25 less an
-                issue. Cancel anytime.
+                Four printed issues a year, starting with {issueTitle},
+                and the run of back issues. Cancel anytime.
               </span>
             </span>
             <span class="opt__flag">Best value</span>
@@ -146,21 +138,9 @@ const FILM = {
 
           <button type="submit" class="btn btn--primary">Continue to payment</button>
         </form>
-
-        <button type="button" class="btn btn--quiet" data-go="issue">← Back</button>
       </section>
     </div>
   </main>
-
-  <noscript>
-    <style>
-      /* Without JavaScript the two steps collapse into one: show the
-         choice, which is the form that actually buys something. */
-      [data-step='issue'] { display: none; }
-      [data-step='choose'] { display: block !important; }
-      [data-go] { display: none; }
-    </style>
-  </noscript>
 
   <script is:inline>
     (function () {
@@ -171,33 +151,6 @@ const FILM = {
         var note = document.querySelector('[data-cancelled]');
         if (note) note.hidden = false;
       }
-
-      // ── The two steps ──────────────────────────────────────────
-      // Nothing here is load-bearing for the purchase: the form is a
-      // real form and posts on its own. This only decides which half
-      // of the card is on screen.
-      var steps = {};
-      ['issue', 'choose'].forEach(function (name) {
-        steps[name] = document.querySelector('[data-step="' + name + '"]');
-      });
-
-      function show(name) {
-        Object.keys(steps).forEach(function (k) {
-          if (steps[k]) steps[k].hidden = k !== name;
-        });
-        // Moving focus keeps a keyboard and a screen reader with the
-        // card instead of stranding them where the old step was.
-        var focusTarget = steps[name] && steps[name].querySelector(
-          'input:checked, button, [href]',
-        );
-        if (focusTarget) focusTarget.focus({ preventScroll: true });
-      }
-
-      document.addEventListener('click', function (ev) {
-        var trigger = ev.target.closest && ev.target.closest('[data-go]');
-        if (!trigger) return;
-        show(trigger.getAttribute('data-go'));
-      });
 
       // ── The film ───────────────────────────────────────────────
       // Sources are attached here, not in the markup, so a visitor who
