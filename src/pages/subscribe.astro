@@ -114,12 +114,13 @@ const FILM = {
             <input type="radio" name="tier" value="print" checked />
             <span class="opt__body">
               <span class="opt__head">
-                <span class="opt__name">Subscribe</span>
+                <span class="opt__name">Founding Subscriber</span>
                 <span class="opt__price">{SUBSCRIPTION_PRICE}<span class="opt__unit">/month</span></span>
               </span>
               <span class="opt__desc">
                 Four printed issues a year, starting with {issueTitle},
-                and the run of back issues. Cancel anytime.
+                and the run of back issues — at the founding rate, for
+                as long as you hold it. Cancel anytime.
               </span>
             </span>
             <span class="opt__flag">Best value</span>
@@ -286,7 +287,7 @@ const FILM = {
     background: var(--paper);
     border: 1px solid rgba(201, 185, 154, 0.5);
     box-shadow: 0 24px 60px rgba(16, 25, 43, 0.4);
-    padding: 26px 26px 18px;
+    padding: 24px 26px 14px;
     text-align: center;
     /* If a screen really is too short, the card scrolls rather than
        the page — the film stays put behind it. */
@@ -332,7 +333,7 @@ const FILM = {
     font-size: 14px;
     line-height: 1.55;
     color: var(--ink-soft);
-    margin: 0 0 20px;
+    margin: 0 0 15px;
   }
   /* ── Buttons ──────────────────────────────────────────────────── */
   .btn {
@@ -448,9 +449,10 @@ const FILM = {
 
   /* ── Short screens: the cover is the first thing to go ─────────── */
   @media (max-height: 720px) {
-    .card__cover { width: 108px; margin-bottom: 12px; }
-    .card__title { font-size: 25px; }
-    .stage { padding-top: 76px; }
+    .card__cover { width: 104px; margin-bottom: 10px; }
+    .card__title { font-size: 25px; margin-bottom: 8px; }
+    .card__lede { margin-bottom: 12px; }
+    .stage { padding: 72px 20px 20px; }
   }
   @media (max-height: 600px) {
     .card__cover { display: none; }
@@ -480,6 +482,11 @@ const FILM = {
   @media (max-width: 420px) {
     .bar { padding: 16px 18px; }
     .mark__main { font-size: 18px; }
-    .card { padding: 22px 20px 16px; }
+    .card { padding: 20px 20px 14px; }
+    /* Narrow columns wrap the option copy onto more lines, so the
+       cover gives up the room that costs. */
+    .card__cover { width: 116px; margin-bottom: 12px; }
+    .card__title { font-size: 26px; }
+    .stage { padding: 76px 16px 18px; }
   }
 </style>
