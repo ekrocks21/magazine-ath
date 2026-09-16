@@ -47,6 +47,11 @@ You may cancel your subscription at any time from your account page. Access
 continues through the end of the current billing period. We do not offer
 prorated refunds for partial periods.
 
+Single issues are not refundable. A one-time issue purchase is final once
+placed, and the digital access to that issue it carries is permanent.
+Replacement of a copy lost or damaged in transit is a separate matter and
+is unaffected — see below.
+
 If your print copy is lost or damaged in transit, write to us within 30 days
 of the expected ship date and we'll replace it.
 
