@@ -26,17 +26,20 @@ import { articleRoute } from '../utils/article-route';
 import { siteWebSite, siteOrganization } from '../utils/structured-data';
 
 /**
- * Hero still — a frame from the same four days the film covers.
+ * The hero is the tall-ships film itself, playing silently behind
+ * nothing at all — the page's words live further down.
  *
- * Not the film's own poster: that image is its title card, with
- * "SAIL4TH 250 / A STORY FROM THE JERSEY SIDE" burned into the
- * artwork, which fights the masthead for the same space. This one is
- * clean, and wide enough to crop hard on a phone.
- *
- * When a video cut of the film lands on R2 this becomes a <video> and
- * this image becomes its poster.
+ * The film is on YouTube rather than R2, so this is an embed rather
+ * than a <video>. It is muted because autoplay requires it, looped via
+ * the playlist parameter (YouTube's loop only works paired with it),
+ * and stripped of chrome. The still underneath is a frame from the
+ * same four days, painted on the container so the screen is never
+ * empty: no JavaScript, a refused autoplay, or a stated preference
+ * against motion all leave it standing.
  */
 import heroStill from '../content/articles/summer-2026/tall-ship-skyline.jpg';
+
+const FILM_ID = '1W1yvWm06iM';
 
 /**
  * Provisional section names, read off `type`. Replaced wholesale by the
@@ -138,8 +141,8 @@ function tagFor(a: CollectionEntry<'articles'>): string {
 >
   <StructuredData data={[siteWebSite(), siteOrganization()]} slot="head" />
 
-  <!-- ── Hero ─────────────────────────────────────────────────── -->
-  <section class="hero">
+  <!-- ── Hero: the film, and nothing over it ──────────────────── -->
+  <section class="hero" aria-label="Four days with the tall ships">
     <div class="hero__still" aria-hidden="true">
       <Image
         src={heroStill}
@@ -150,14 +153,7 @@ function tagFor(a: CollectionEntry<'articles'>): string {
         loading="eager"
       />
     </div>
-    <div class="hero__inner">
-      <p class="hero__kicker">Above the Hook · Quarterly</p>
-      <h1 class="hero__title">The Local <em>Lookout</em></h1>
-      <p class="hero__dek">
-        Four issues a year about this stretch of coast — the harbor, the
-        history, and the people still living it. Every story free to read.
-      </p>
-    </div>
+    <div class="hero__frame" data-film={FILM_ID} aria-hidden="true"></div>
   </section>
 
   <!-- ── Issues ───────────────────────────────────────────────── -->
@@ -221,6 +217,88 @@ function tagFor(a: CollectionEntry<'articles'>): string {
       </section>
     ))
   }
+
+  <!-- ── What this is, after you have seen what is in it ───────── -->
+  <section class="statement">
+    <div class="statement__inner">
+      <p class="statement__kicker">Above the Hook · Quarterly</p>
+      <h1 class="statement__title">The Local <em>Lookout</em></h1>
+      <p class="statement__dek">
+        Four issues a year about this stretch of coast — the harbor, the
+        history, and the people still living it. Every story free to read.
+      </p>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      'use strict';
+
+      var frame = document.querySelector('[data-film]');
+      if (!frame) return;
+
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var conn = navigator.connection || {};
+
+      /* The two refusals a visitor actually asked for: a stated
+         preference against motion, and a stated preference against
+         spending data. Either one and nothing is requested at all —
+         the still underneath is already the page. */
+      if (reduced.matches || conn.saveData) return;
+
+      var id = frame.getAttribute('data-film');
+
+      /* The player API rather than a bare embed, for one reason: it
+         says when frames are actually moving. A bare iframe only
+         reports that its document loaded, which is well before the
+         film starts, so revealing on load puts the player's black
+         ground and spinner over a perfectly good still. Here the
+         embed stays invisible until PLAYING arrives, and if autoplay
+         is refused — iOS in Low Power Mode, a browser that says no —
+         it simply never arrives and the still keeps the screen. */
+      var mount = document.createElement('div');
+      frame.appendChild(mount);
+
+      window.onYouTubeIframeAPIReady = function () {
+        new window.YT.Player(mount, {
+          videoId: id,
+          host: 'https://www.youtube-nocookie.com',
+          playerVars: {
+            autoplay: 1,
+            mute: 1, // autoplay is refused without it
+            loop: 1,
+            playlist: id, // YouTube's loop only works paired with this
+            controls: 0,
+            modestbranding: 1,
+            rel: 0,
+            playsinline: 1,
+            disablekb: 1,
+            fs: 0,
+            iv_load_policy: 3,
+          },
+          events: {
+            onReady: function (ev) {
+              ev.target.mute();
+              ev.target.playVideo();
+              var el = ev.target.getIframe();
+              el.setAttribute('tabindex', '-1');
+              el.setAttribute('aria-hidden', 'true');
+              el.setAttribute('title', 'Four days with the tall ships');
+            },
+            onStateChange: function (ev) {
+              if (ev.data === window.YT.PlayerState.PLAYING) {
+                ev.target.getIframe().style.opacity = '1';
+              }
+            },
+          },
+        });
+      };
+
+      var api = document.createElement('script');
+      api.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(api);
+    })();
+  </script>
 </BaseLayout>
 
 <style>
@@ -232,9 +310,9 @@ function tagFor(a: CollectionEntry<'articles'>): string {
   /* ── Hero ─────────────────────────────────────────────────────── */
   .hero {
     position: relative;
-    min-height: min(78vh, 720px);
-    display: flex;
-    align-items: flex-end;
+    /* svh, so a phone's collapsing URL bar does not crop the film. */
+    height: 100svh;
+    min-height: 460px;
     overflow: hidden;
   }
   .hero__still {
@@ -250,6 +328,42 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     object-fit: cover;
     display: block;
   }
+
+  /* The embed sits above the still and below the wash. A 16:9 film in
+     a box of any shape: size it off whichever axis is short and let
+     the other overflow, then pull it back to centre. */
+  .hero__frame {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .hero__frame :global(iframe) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Oversized on purpose. The player paints its own furniture — the
+       film's title across the top, the wordmark bottom-right — and
+       neither controls=0 nor modestbranding suppresses it any more.
+       Blowing the frame up past the viewport pushes that furniture off
+       every edge, and the container clips it. */
+    transform: translate(-50%, -50%) scale(1.35);
+    width: 177.78vh;
+    min-width: 100%;
+    height: 56.25vw;
+    min-height: 100%;
+    border: 0;
+    /* It is scenery, not a player — clicks belong to the page. */
+    pointer-events: none;
+    /* Held back until it is actually running, so the still carries the
+       screen instead of the player's black ground. */
+    opacity: 0;
+    transition: opacity 0.6s ease-out;
+  }
+  /* The wash has to stay on top of the film. */
+  .hero__still::after {
+    z-index: 2;
+  }
   /* Wash, so cream type holds anywhere on the frame. */
   .hero__still::after {
     content: '';
@@ -257,46 +371,10 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     inset: 0;
     background:
       linear-gradient(to bottom,
-        rgba(16, 25, 43, 0.62) 0%,
-        rgba(16, 25, 43, 0.22) 38%,
-        rgba(16, 25, 43, 0.92) 100%);
-  }
-  .hero__inner {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 0 28px 64px;
-  }
-  .hero__kicker {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--sand);
-    margin: 0 0 14px;
-  }
-  .hero__title {
-    font-family: var(--font-display);
-    font-size: clamp(2.8rem, 7vw, 5.2rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    color: var(--on-dark-1);
-    margin: 0 0 18px;
-  }
-  .hero__title em {
-    font-weight: 400;
-    font-style: italic;
-  }
-  .hero__dek {
-    font-family: var(--font-body);
-    font-size: 17px;
-    line-height: 1.6;
-    color: var(--on-dark-3);
-    max-width: 520px;
-    margin: 0;
+        rgba(16, 25, 43, 0.46) 0%,
+        rgba(16, 25, 43, 0) 30%,
+        rgba(16, 25, 43, 0) 72%,
+        rgba(16, 25, 43, 0.55) 100%);
   }
 
   /* ── Rails ────────────────────────────────────────────────────── */
@@ -306,7 +384,7 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     padding: 44px 0 0;
   }
   .rail:last-of-type {
-    padding-bottom: 72px;
+    padding-bottom: 64px;
   }
   .rail__heading {
     font-family: var(--font-mono);
@@ -455,6 +533,46 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     outline-offset: 4px;
   }
 
+  /* ── The statement, on blue ───────────────────────────────────── */
+  .statement {
+    background: var(--navy);
+    padding: 88px 0 96px;
+  }
+  .statement__inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+  .statement__kicker {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--sand);
+    margin: 0 0 16px;
+  }
+  .statement__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 6.4vw, 4.6rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--on-dark-1);
+    margin: 0 0 22px;
+  }
+  .statement__title em {
+    font-weight: 400;
+    font-style: italic;
+  }
+  .statement__dek {
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--on-dark-3);
+    max-width: 560px;
+    margin: 0;
+  }
+
   /* An animated zoom is exactly what this setting asks not to see. */
   @media (prefers-reduced-motion: reduce) {
     .cover__img,
@@ -468,8 +586,8 @@ function tagFor(a: CollectionEntry<'articles'>): string {
   }
 
   @media (max-width: 640px) {
-    .hero { min-height: 62vh; }
-    .hero__inner { padding: 0 18px 44px; }
+    .statement { padding: 60px 0 68px; }
+    .statement__inner { padding: 0 18px; }
     .rail__heading,
     .rail__track { padding-left: 18px; padding-right: 18px; }
     .rail__track { scroll-padding-inline: 18px; }
