@@ -42,7 +42,11 @@ const links = [
   { label: 'Up Next', href: '/next' },
   { label: 'Past Issues', href: '/archive' },
   { label: 'About', href: '/about' },
-  { label: 'Subscribe', href: '/subscribe' },
+  // Subscribe and Account are one slot: the reader sees whichever
+  // fits. Anonymous is the default, so a failed /api/me leaves the
+  // menu offering the thing a stranger needs.
+  { label: 'Subscribe', href: '/subscribe', cta: 'anon' },
+  { label: 'Account', href: '/account', cta: 'member' },
   { label: 'Privacy Policy', href: '/privacy' },
   { label: 'Terms of Service', href: '/terms' },
 ];
@@ -78,6 +82,8 @@ const links = [
           href={l.href}
           class={isActive(l.href) ? 'is-current' : undefined}
           aria-current={isActive(l.href) ? 'page' : undefined}
+          data-cta={l.cta}
+          hidden={l.cta === 'member' || undefined}
         >
           {l.label}
         </a>
@@ -101,7 +107,8 @@ const links = [
     const closeBtn = document.querySelector<HTMLButtonElement>('[data-menu-close]');
     if (!menu || !openBtn || !closeBtn) return;
 
-    const FOCUSABLE = 'a[href], button:not([disabled])';
+    const FOCUSABLE =
+      'a[href]:not([hidden]), button:not([disabled]):not([hidden])';
 
     function open() {
       menu.hidden = false;
@@ -142,6 +149,26 @@ const links = [
 
     openBtn.addEventListener('click', open);
     closeBtn.addEventListener('click', close);
+
+    /* Swap the Subscribe slot for Account once we know there is a
+       session. Runs on load rather than on open, so the menu is right
+       the first time it is shown. Any failure — offline, or the Worker
+       not in front of this origin in local dev — leaves the anonymous
+       default standing, which is the safe way to be wrong. */
+    const anonCta = menu.querySelector<HTMLElement>('[data-cta="anon"]');
+    const memberCta = menu.querySelector<HTMLElement>('[data-cta="member"]');
+    if (!anonCta || !memberCta) return;
+
+    fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data || !data.signedIn) return;
+        anonCta.hidden = true;
+        memberCta.hidden = false;
+      })
+      .catch(() => {
+        /* keep the anonymous default */
+      });
   })();
 </script>
 
