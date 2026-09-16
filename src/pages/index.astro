@@ -20,7 +20,7 @@ import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CardIllustration from '../components/CardIllustration.astro';
+import ArticleTile from '../components/ArticleTile.astro';
 import StructuredData from '../components/StructuredData.astro';
 import { articleRoute } from '../utils/article-route';
 import { siteWebSite, siteOrganization } from '../utils/structured-data';
@@ -121,6 +121,14 @@ const issueSections = orderedIssues.map((issue) => ({
     .sort(byIssueOrder),
 }));
 
+/**
+ * The issue that is out now takes the opening screens: its name over
+ * the film, and its cover on the screen after. The rest keep the card
+ * treatment.
+ */
+const currentSection = issueSections.find((sec) => !sec.forthcoming) ?? null;
+const restSections = issueSections.filter((sec) => sec !== currentSection);
+
 /** The tag under a tile: section, then the issue it ran in. */
 function tagFor(a: CollectionEntry<'articles'>): string {
   const section = SECTION_LABEL[a.data.type] ?? a.data.type;
@@ -152,11 +160,61 @@ function tagFor(a: CollectionEntry<'articles'>): string {
         poster={FILM.poster}
         data-src={FILM.mp4}></video>
     </div>
+
+    {
+      currentSection && (
+        <a class="hero__jump" href="#current-issue">
+          <span class="hero__issue">{issueName(currentSection.issue)}</span>
+          <span class="hero__cue" aria-hidden="true" />
+          <span class="sr-only">Skip to the current issue</span>
+        </a>
+      )
+    }
   </section>
+
+  <!-- ── The current issue's cover, given the screen ───────────── -->
+  {
+    currentSection && (
+      <section class="coverscreen" id="current-issue">
+        <a class="coverscreen__link" href={`/issues/${currentSection.slug}`}>
+          {currentSection.issue.data.cover_image && (
+            <Image
+              src={currentSection.issue.data.cover_image}
+              alt={
+                currentSection.issue.data.cover_image_alt ??
+                `${currentSection.issue.data.title} cover`
+              }
+              class="coverscreen__img"
+              {/* The cover is sized by the height available, so the
+                  hint has to describe the width that results from it
+                  — about 0.77 of the height, this being a 962x1250
+                  trim. A viewport-height hint picks a variant far too
+                  small and the cover then cannot grow past it. */}
+              widths={[500, 1000]}
+              sizes="(max-width: 700px) 78vw, 500px"
+            />
+          )}
+        </a>
+      </section>
+    )
+  }
+
+  <!-- ── and what ran in it ───────────────────────────────────── -->
+  {
+    currentSection && currentSection.articles.length > 0 && (
+      <section class="issue issue--current">
+        <div class="rail__track">
+          {currentSection.articles.map((a) => (
+            <ArticleTile article={a} tag={tagFor(a)} />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   <!-- ── One section per issue: the card, then what ran in it ── -->
   {
-    issueSections.map((sec) => (
+    restSections.map((sec) => (
       <section class="issue">
         <a class="issuecard" href={`/issues/${sec.slug}`}>
           <span class="issuecard__art">
@@ -188,28 +246,7 @@ function tagFor(a: CollectionEntry<'articles'>): string {
         {sec.articles.length > 0 && (
           <div class="rail__track">
             {sec.articles.map((a) => (
-              <a class="tile" href={articleRoute(a).href}>
-                <span class="tile__frame">
-                  {a.data.hero_image ? (
-                    <Image
-                      src={a.data.hero_image}
-                      alt={a.data.hero_image_alt ?? a.data.title}
-                      class="tile__img"
-                      widths={[360, 720]}
-                      sizes="300px"
-                    />
-                  ) : (
-                    <CardIllustration
-                      slug={articleRoute(a).articleSlug}
-                      title={a.data.title}
-                    />
-                  )}
-                </span>
-                <span class="tile__foot">
-                  <span class="tile__tag">{tagFor(a)}</span>
-                  <span class="tile__title">{a.data.title}</span>
-                </span>
-              </a>
+              <ArticleTile article={a} tag={tagFor(a)} />
             ))}
           </div>
         )}
@@ -325,10 +362,98 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     inset: 0;
     background:
       linear-gradient(to bottom,
-        rgba(16, 25, 43, 0.46) 0%,
-        rgba(16, 25, 43, 0) 30%,
-        rgba(16, 25, 43, 0) 72%,
-        rgba(16, 25, 43, 0.55) 100%);
+        rgba(16, 25, 43, 0.5) 0%,
+        rgba(16, 25, 43, 0.12) 28%,
+        rgba(16, 25, 43, 0.12) 72%,
+        rgba(16, 25, 43, 0.6) 100%),
+      radial-gradient(70% 46% at 50% 50%,
+        rgba(16, 25, 43, 0.42) 0%, rgba(16, 25, 43, 0) 100%);
+  }
+
+  /* ── The issue's name, over the film ──────────────────────────
+     The whole block is the way down: a real anchor, so it works
+     before any script and reads as a link to a keyboard. */
+  .hero__jump {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    text-decoration: none;
+    padding: 0 24px;
+  }
+  .hero__issue {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 8vw, 6.4rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 0.98;
+    text-align: center;
+    color: var(--on-dark-1);
+    text-shadow: 0 2px 30px rgba(16, 25, 43, 0.5);
+    transition: opacity 0.2s ease-out;
+  }
+  .hero__jump:hover .hero__issue {
+    opacity: 0.86;
+  }
+  /* A chevron, drawn from two borders of a rotated box. */
+  .hero__cue {
+    width: 15px;
+    height: 15px;
+    border-right: 1.5px solid var(--on-dark-2);
+    border-bottom: 1.5px solid var(--on-dark-2);
+    transform: rotate(45deg);
+    opacity: 0.8;
+    animation: cue 2.4s ease-in-out infinite;
+  }
+  @keyframes cue {
+    0%, 100% { transform: rotate(45deg) translate(0, 0); }
+    50% { transform: rotate(45deg) translate(4px, 4px); }
+  }
+  .hero__jump:focus-visible {
+    outline: 2px solid var(--rust-light);
+    outline-offset: -10px;
+  }
+
+  /* ── The cover, given a screen of its own ─────────────────────── */
+  .coverscreen {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 84px 24px;
+    box-sizing: border-box;
+    /* The bar is fixed over the film above; land clear of it. */
+    scroll-margin-top: 0;
+  }
+  .coverscreen__link {
+    display: block;
+    line-height: 0;
+  }
+  .coverscreen__img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-height: calc(100svh - 168px);
+    max-width: min(78vw, 560px);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+    transition: transform 0.4s ease-out;
+  }
+  .coverscreen__link:hover .coverscreen__img {
+    transform: translateY(-6px);
+  }
+  .coverscreen__link:focus-visible {
+    outline: 2px solid var(--rust-light);
+    outline-offset: 8px;
+  }
+  /* The current issue's pieces follow its cover directly — no card
+     above them, because the screen before was the card. */
+  .issue--current {
+    padding-top: 0;
   }
 
   /* ── One issue, and what ran in it ───────────────────────────── */
@@ -438,118 +563,23 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     flex: none;
   }
 
-  /* ── Article tiles ────────────────────────────────────────────── */
-  .tile {
-    display: block;
-    width: 300px;
-    text-decoration: none;
-  }
-  .tile__frame {
-    position: relative;
-    display: block;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    background: var(--navy);
-  }
-  .tile__frame :global(img),
-  .tile__frame :global(svg) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.4s ease-out;
-  }
-  .tile:hover .tile__frame :global(img),
-  .tile:focus-visible .tile__frame :global(img) {
-    transform: scale(1.04);
-  }
-  .tile__foot {
-    display: block;
-    padding-top: 12px;
-  }
-  .tile__tag {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--rust-light);
-    margin-bottom: 6px;
-  }
-  .tile__title {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -0.01em;
-    color: var(--on-dark-1);
-    transition: color 0.2s ease-out;
-  }
-  .tile:hover .tile__title {
-    color: var(--sand-light);
-  }
-  .tile:focus-visible {
-    outline: 2px solid var(--rust-light);
-    outline-offset: 4px;
-  }
-
-  /* ── The statement, on blue ───────────────────────────────────── */
-  .statement {
-    background: var(--navy);
-    padding: 88px 0 96px;
-  }
-  .statement__inner {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 0 28px;
-  }
-  .statement__kicker {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--sand);
-    margin: 0 0 16px;
-  }
-  .statement__title {
-    font-family: var(--font-display);
-    font-size: clamp(2.6rem, 6.4vw, 4.6rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    color: var(--on-dark-1);
-    margin: 0 0 22px;
-  }
-  .statement__title em {
-    font-weight: 400;
-    font-style: italic;
-  }
-  .statement__dek {
-    font-family: var(--font-body);
-    font-size: 18px;
-    line-height: 1.6;
-    color: var(--on-dark-3);
-    max-width: 560px;
-    margin: 0;
-  }
-
   /* An animated zoom is exactly what this setting asks not to see. */
   @media (prefers-reduced-motion: reduce) {
-    .tile__frame :global(img),
+    .hero__cue { animation: none; }
+    .coverscreen__link:hover .coverscreen__img { transform: none; }
     .issuecard__art :global(img) {
       transition: none;
     }
-    .tile:hover .tile__frame :global(img),
     .issuecard:hover .issuecard__art :global(img) {
       transform: none;
     }
   }
 
   @media (max-width: 640px) {
+    .coverscreen { padding: 76px 20px; }
+    .coverscreen__img { max-height: calc(100svh - 152px); }
     .statement { padding: 60px 0 68px; }
     .statement__inner { padding: 0 18px; }
-    .tile { width: 260px; }
     .issue { padding-top: 40px; }
     .issuecard {
       grid-template-columns: 1fr;
