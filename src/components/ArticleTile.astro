@@ -17,14 +17,16 @@ interface Props {
   article: CollectionEntry<'articles'>;
   /** Pre-composed "Section · Issue" line. */
   tag: string;
+  /** The issue's lead piece — same card, said louder. */
+  lead?: boolean;
 }
 
-const { article, tag } = Astro.props;
+const { article, tag, lead = false } = Astro.props;
 const route = articleRoute(article);
 const { title, hero_image, hero_image_alt } = article.data;
 ---
 
-<a class="tile" href={route.href}>
+<a class:list={["tile", lead && "tile--lead"]} href={route.href}>
   <span class="tile__frame">
     {
       hero_image ? (
@@ -32,8 +34,8 @@ const { title, hero_image, hero_image_alt } = article.data;
           src={hero_image}
           alt={hero_image_alt ?? title}
           class="tile__img"
-          widths={[360, 720]}
-          sizes="300px"
+          widths={lead ? [640, 1280] : [420, 840]}
+          sizes={lead ? '(max-width: 860px) 92vw, 46vw' : '(max-width: 860px) 92vw, 30vw'}
         />
       ) : (
         <CardIllustration slug={route.articleSlug} title={title} />
@@ -50,7 +52,7 @@ const { title, hero_image, hero_image_alt } = article.data;
   /* ── Article tiles ────────────────────────────────────────────── */
   .tile {
     display: block;
-    width: 300px;
+    width: 100%;
     text-decoration: none;
   }
   .tile__frame {
@@ -149,7 +151,19 @@ const { title, hero_image, hero_image_alt } = article.data;
     .tile:hover .tile__frame :global(img) { transform: none; }
   }
 
-  @media (max-width: 640px) {
-    .tile { width: 260px; }
+  /* The lead: the same card, given more room and more voice. */
+  .tile--lead .tile__frame {
+    aspect-ratio: 3 / 2;
+  }
+  .tile--lead .tile__tag {
+    font-size: 10px;
+  }
+  .tile--lead .tile__title {
+    font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+    line-height: 1.12;
+  }
+
+  @media (max-width: 860px) {
+    .tile--lead .tile__frame { aspect-ratio: 16 / 9; }
   }
 </style>

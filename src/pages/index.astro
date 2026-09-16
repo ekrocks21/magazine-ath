@@ -111,15 +111,34 @@ function byIssueOrder(a: CollectionEntry<'articles'>, b: CollectionEntry<'articl
   return ao !== bo ? ao - bo : a.id.localeCompare(b.id);
 }
 
-/** An issue and the pieces that ran in it, in the issue's own order. */
-const issueSections = orderedIssues.map((issue) => ({
-  issue,
-  slug: issueSlug(issue),
-  forthcoming: forthcomingIds.has(issue.id),
-  articles: allArticles
+/**
+ * The piece that runs beside the cover: the issue's first feature, or
+ * failing that its first piece that is not the editor's letter. A
+ * letter opens an issue but it is not what an issue is about.
+ */
+function leadOf(articles: CollectionEntry<'articles'>[]) {
+  return (
+    articles.find((a) => a.data.type === 'feature') ??
+    articles.find((a) => a.data.type !== 'editors_letter') ??
+    articles[0] ??
+    null
+  );
+}
+
+/** An issue, its lead, and everything else it ran. */
+const issueSections = orderedIssues.map((issue) => {
+  const articles = allArticles
     .filter((a) => a.data.issue === issueSlug(issue))
-    .sort(byIssueOrder),
-}));
+    .sort(byIssueOrder);
+  const lead = leadOf(articles);
+  return {
+    issue,
+    slug: issueSlug(issue),
+    forthcoming: forthcomingIds.has(issue.id),
+    lead,
+    rest: articles.filter((a) => a !== lead),
+  };
+});
 
 /**
  * The issue that is out now takes the opening screens: its name over
@@ -127,7 +146,6 @@ const issueSections = orderedIssues.map((issue) => ({
  * treatment.
  */
 const currentSection = issueSections.find((sec) => !sec.forthcoming) ?? null;
-const restSections = issueSections.filter((sec) => sec !== currentSection);
 
 /** The tag under a tile: section, then the issue it ran in. */
 function tagFor(a: CollectionEntry<'articles'>): string {
@@ -172,80 +190,53 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     }
   </section>
 
-  <!-- ── The current issue's cover, given the screen ───────────── -->
+  <!-- ── One section per issue: the cover beside its lead, then
+          everything else it ran ──────────────────────────────── -->
   {
-    currentSection && (
-      <section class="coverscreen" id="current-issue">
-        <a class="coverscreen__link" href={`/issues/${currentSection.slug}`}>
-          {currentSection.issue.data.cover_image && (
-            <Image
-              src={currentSection.issue.data.cover_image}
-              alt={
-                currentSection.issue.data.cover_image_alt ??
-                `${currentSection.issue.data.title} cover`
-              }
-              class="coverscreen__img"
-              {/* The cover is sized by the height available, so the
-                  hint has to describe the width that results from it
-                  — about 0.77 of the height, this being a 962x1250
-                  trim. A viewport-height hint picks a variant far too
-                  small and the cover then cannot grow past it. */}
-              widths={[500, 1000]}
-              sizes="(max-width: 700px) 78vw, 500px"
-            />
+    issueSections.map((sec) => (
+      <section
+        class="issue"
+        id={sec === currentSection ? 'current-issue' : undefined}
+      >
+        <header class="issue__head">
+          <p class="issue__meta">
+            {sec.forthcoming
+              ? 'Up next'
+              : `Issue ${String(sec.issue.data.issue_number).padStart(2, '0')}`}
+          </p>
+          <h2 class="issue__name">{issueName(sec.issue)}</h2>
+          {sec.issue.data.theme && (
+            <p class="issue__theme">{sec.issue.data.theme}</p>
           )}
-        </a>
-      </section>
-    )
-  }
+        </header>
 
-  <!-- ── and what ran in it ───────────────────────────────────── -->
-  {
-    currentSection && currentSection.articles.length > 0 && (
-      <section class="issue issue--current">
-        <div class="rail__track">
-          {currentSection.articles.map((a) => (
-            <ArticleTile article={a} tag={tagFor(a)} />
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ── One section per issue: the card, then what ran in it ── -->
-  {
-    restSections.map((sec) => (
-      <section class="issue">
-        <a class="issuecard" href={`/issues/${sec.slug}`}>
-          <span class="issuecard__art">
+        <div class="issue__lead">
+          <a class="issue__cover" href={`/issues/${sec.slug}`}>
             {sec.issue.data.cover_image && (
               <Image
                 src={sec.issue.data.cover_image}
-                alt={sec.issue.data.cover_image_alt ?? `${sec.issue.data.title} cover`}
-                widths={[260, 520]}
-                sizes="220px"
+                alt={
+                  sec.issue.data.cover_image_alt ??
+                  `${sec.issue.data.title} cover`
+                }
+                widths={[420, 840]}
+                sizes="(max-width: 860px) 62vw, 30vw"
               />
             )}
-          </span>
-          <span class="issuecard__body">
-            <span class="issuecard__meta">
-              {sec.forthcoming
-                ? 'Up next'
-                : `Issue ${String(sec.issue.data.issue_number).padStart(2, '0')}`}
-            </span>
-            <span class="issuecard__title">{issueName(sec.issue)}</span>
-            {sec.issue.data.theme && (
-              <span class="issuecard__theme">{sec.issue.data.theme}</span>
-            )}
-            <span class="issuecard__go">
-              {sec.forthcoming ? 'See what is coming' : 'Read the issue'} →
-            </span>
-          </span>
-        </a>
+          </a>
 
-        {sec.articles.length > 0 && (
-          <div class="rail__track">
-            {sec.articles.map((a) => (
+          {sec.lead ? (
+            <ArticleTile article={sec.lead} tag={tagFor(sec.lead)} lead />
+          ) : (
+            <p class="issue__soon">
+              {sec.issue.data.tagline ?? 'Still being made.'}
+            </p>
+          )}
+        </div>
+
+        {sec.rest.length > 0 && (
+          <div class="issue__grid">
+            {sec.rest.map((a) => (
               <ArticleTile article={a} tag={tagFor(a)} />
             ))}
           </div>
@@ -419,174 +410,107 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     outline-offset: -10px;
   }
 
-  /* ── The cover, given a screen of its own ─────────────────────── */
-  .coverscreen {
-    min-height: 100svh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 84px 24px;
-    box-sizing: border-box;
-    /* The bar is fixed over the film above; land clear of it. */
-    scroll-margin-top: 0;
+  /* ── One issue ────────────────────────────────────────────────
+     Its name, then the cover beside the piece the issue is about,
+     then everything else it ran. */
+  .issue__head {
+    padding: 0 28px 26px;
   }
-  .coverscreen__link {
-    display: block;
-    line-height: 0;
-  }
-  .coverscreen__img {
-    display: block;
-    width: auto;
-    height: auto;
-    max-height: calc(100svh - 168px);
-    max-width: min(78vw, 560px);
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
-    transition: transform 0.4s ease-out;
-  }
-  .coverscreen__link:hover .coverscreen__img {
-    transform: translateY(-6px);
-  }
-  .coverscreen__link:focus-visible {
-    outline: 2px solid var(--rust-light);
-    outline-offset: 8px;
-  }
-  /* The current issue's pieces follow its cover directly — no card
-     above them, because the screen before was the card. */
-  .issue--current {
-    padding-top: 0;
-  }
-
-  /* ── One issue, and what ran in it ───────────────────────────── */
-  .issue {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 60px 0 0;
-  }
-  .issue:last-of-type {
-    padding-bottom: 84px;
-  }
-
-  /* The card: the cover, and the issue said large. */
-  .issuecard {
-    display: grid;
-    grid-template-columns: 210px minmax(0, 1fr);
-    gap: 34px;
-    align-items: center;
-    padding: 0 28px 30px;
-    text-decoration: none;
-  }
-  .issuecard__art {
-    display: block;
-    /* A real cover's trim, whatever shape the source is — Fall's is a
-       landscape placeholder and would otherwise sit short. */
-    aspect-ratio: 962 / 1250;
-    overflow: hidden;
-    background: var(--navy);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
-  }
-  .issuecard__art :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.4s ease-out;
-  }
-  .issuecard:hover .issuecard__art :global(img) {
-    transform: scale(1.03);
-  }
-  .issuecard__body {
-    display: block;
-  }
-  .issuecard__meta {
-    display: block;
+  .issue__meta {
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.24em;
     text-transform: uppercase;
     color: var(--rust-light);
-    margin-bottom: 12px;
+    margin: 0 0 10px;
   }
-  .issuecard__title {
-    display: block;
+  .issue__name {
     font-family: var(--font-display);
-    font-size: clamp(2.2rem, 5.2vw, 3.7rem);
+    font-size: clamp(2rem, 4.6vw, 3.2rem);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: -0.015em;
     line-height: 1.02;
     color: var(--on-dark-1);
-    margin-bottom: 14px;
+    margin: 0 0 10px;
   }
-  .issuecard__theme {
-    display: block;
+  .issue__theme {
     font-family: var(--font-display);
     font-style: italic;
-    font-size: clamp(1.05rem, 2vw, 1.4rem);
+    font-size: clamp(1.05rem, 1.9vw, 1.35rem);
     line-height: 1.4;
     color: var(--on-dark-3);
-    margin-bottom: 18px;
-  }
-  .issuecard__go {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--sand);
-    transition: color 0.18s ease-out;
-  }
-  .issuecard:hover .issuecard__go {
-    color: var(--on-dark-1);
-  }
-  .issuecard:focus-visible {
-    outline: 2px solid var(--rust-light);
-    outline-offset: 4px;
+    margin: 0;
   }
 
-  /* Horizontal shelf of the issue's pieces. Scrolls on its own so a
-     long issue never forces the page wide. */
-  .rail__track {
-    display: flex;
-    gap: 18px;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    padding: 0 28px 6px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--navy-light) transparent;
-    /* Without this the browser snaps the first card's edge to the
-       scrollport on load, swallowing the gutter and clipping it
-       against the window. */
-    scroll-padding-inline: 28px;
+  /* Cover left, the issue's lead piece right. */
+  .issue__lead {
+    display: grid;
+    grid-template-columns: minmax(0, 32%) minmax(0, 1fr);
+    gap: 40px;
+    align-items: center;
+    padding: 0 28px 44px;
   }
-  .rail__track > * {
-    scroll-snap-align: start;
-    flex: none;
+  .issue__cover {
+    display: block;
+    line-height: 0;
+  }
+  .issue__cover :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+    box-shadow: 0 22px 54px rgba(0, 0, 0, 0.5);
+    transition: transform 0.4s ease-out;
+  }
+  .issue__cover:hover :global(img) {
+    transform: translateY(-6px);
+  }
+  .issue__cover:focus-visible {
+    outline: 2px solid var(--rust-light);
+    outline-offset: 6px;
+  }
+  .issue__soon {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    line-height: 1.5;
+    color: var(--on-dark-3);
+    margin: 0;
+  }
+
+  /* Everything else the issue ran, two across. */
+  .issue__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 44px 34px;
+    padding: 0 28px;
   }
 
   /* An animated zoom is exactly what this setting asks not to see. */
   @media (prefers-reduced-motion: reduce) {
     .hero__cue { animation: none; }
-    .coverscreen__link:hover .coverscreen__img { transform: none; }
-    .issuecard__art :global(img) {
-      transition: none;
-    }
-    .issuecard:hover .issuecard__art :global(img) {
-      transform: none;
-    }
+    .issue__cover :global(img) { transition: none; }
+    .issue__cover:hover :global(img) { transform: none; }
   }
 
   @media (max-width: 640px) {
-    .coverscreen { padding: 76px 20px; }
-    .coverscreen__img { max-height: calc(100svh - 152px); }
     .statement { padding: 60px 0 68px; }
     .statement__inner { padding: 0 18px; }
-    .issue { padding-top: 40px; }
-    .issuecard {
+    .issue { padding-top: 44px; }
+    .issue__head { padding: 0 18px 20px; }
+    /* Stacked: the cover stops being a column and becomes a plate
+       above the lead, at a size that does not eat the screen. */
+    .issue__lead {
       grid-template-columns: 1fr;
-      gap: 18px;
-      padding: 0 18px 22px;
+      gap: 22px;
+      padding: 0 18px 32px;
+      justify-items: start;
     }
-    .issuecard__art { width: 150px; }
-    .rail__track { padding-left: 18px; padding-right: 18px; scroll-padding-inline: 18px; }
+    .issue__cover { width: 58%; max-width: 230px; }
+    .issue__grid {
+      grid-template-columns: 1fr;
+      gap: 34px;
+      padding: 0 18px;
+    }
   }
 </style>
