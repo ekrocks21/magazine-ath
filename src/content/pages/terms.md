@@ -27,8 +27,10 @@ per year, mailed, plus previews of forthcoming issues.
 print issues mailed each season and access to all digital content on the
 site while the subscription is active.
 
-Single issues are not currently sold. Readers who purchased one
-previously keep permanent digital access to that issue.
+**Single issue ($100).** A one-time purchase of the current issue: the
+printed copy, mailed, plus permanent digital access to that issue. It
+does not renew and includes no other issue. Readers who purchased a
+single issue previously keep permanent digital access to it.
 
 Subscribers who hold a legacy Digital ($10/month) plan keep it, and keep
 digital access, for as long as that subscription stays active. It is no

@@ -1,0 +1,68 @@
+---
+/**
+ * A chromeless page shell — same head as BaseLayout, none of the
+ * furniture. No family strip, no masthead, no footer, no skip link to
+ * a nav that isn't there.
+ *
+ * For single-screen pages that are one decision and nothing else, where
+ * a nav bar would only offer ways to leave. The page supplies its own
+ * mark. See /subscribe.
+ *
+ * The body is locked to the viewport: the page never scrolls, so
+ * whatever it renders has to fit. Keep it to one card.
+ */
+
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+import MetaPixel from '../components/MetaPixel.astro';
+import Analytics from '../components/Analytics.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalPath?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const { title, description, canonicalPath, ogImage, noindex } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#1B2E4B" />
+    <MetaPixel />
+    <SEO
+      title={title}
+      description={description}
+      canonicalPath={canonicalPath}
+      ogImage={ogImage}
+      noindex={noindex}
+    />
+    <slot name="head" />
+    <Analytics />
+    <script>
+      import '../lib/analytics.ts';
+    </script>
+  </head>
+  <body class="bare-body">
+    <slot />
+    <style is:global>
+      /* One screen, nothing under it. */
+      html,
+      body.bare-body {
+        height: 100%;
+        overflow: hidden;
+      }
+      body.bare-body {
+        margin: 0;
+        background: var(--navy);
+      }
+    </style>
+  </body>
+</html>

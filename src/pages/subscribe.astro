@@ -1,552 +1,532 @@
 ---
 /**
- * /subscribe — Subscription page.
+ * /subscribe — one screen, one decision.
  *
- * One plan: Print, $75 a quarter, posting to /api/checkout (handled
- * by the Cloudflare Worker). Sign-in form posts to /api/login-request
- * (magic link via Resend).
+ * Leads with the issue that is out now, because a thing you can hold
+ * is easier to say yes to than a commitment. Clicking Buy opens the
+ * choice between that issue and the subscription, with the
+ * subscription already selected — $75 a quarter is one issue for $25
+ * less than buying it outright, so the option carries its own
+ * argument.
+ *
+ * Both options POST to the Worker's /api/checkout. `tier` comes from
+ * the selected radio and `issue` rides along for the single-issue
+ * path, where it names the issue being bought.
+ *
+ * No masthead and no footer: see BareLayout. The film behind it is the
+ * same loop the shop opens on, served from the shared R2 bucket.
  */
 
-import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BareLayout from '../layouts/BareLayout.astro';
+
+/**
+ * Display prices only — Stripe is the source of truth. These must
+ * track PRICE_SINGLE_ISSUE and PRICE_PRINT_QUARTERLY in the Worker's
+ * wrangler.toml, which is what a reader is actually charged.
+ */
+const ISSUE_PRICE = '$100';
+const SUBSCRIPTION_PRICE = '$75';
+
+// The issue that is out now — most recently published, same rule the
+// home page uses so the two can never disagree.
+const NOW = Date.now();
+const issues = (await getCollection('issues')).sort(
+  (a, b) =>
+    (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0),
+);
+const current =
+  issues.filter((i) => (i.data.publish_date?.valueOf() ?? 0) <= NOW)[0] ??
+  issues[0];
+
+const currentSlug = current.id.replace(/\.md$/, '');
+const issueNumber = String(current.data.issue_number).padStart(2, '0');
+const { title: issueTitle, cover_image, cover_image_alt } = current.data;
+
+// Shared brand film, served from R2. Same cut the shop opens on.
+const FILM = {
+  poster: 'https://site-assets.abovethehook.com/home/hero.jpg',
+  mp4: 'https://site-assets.abovethehook.com/home/hero.mp4',
+  webm: 'https://site-assets.abovethehook.com/home/hero.webm',
+};
 ---
 
-<BaseLayout
+<BareLayout
   title="Subscribe — The Local Lookout"
-  description="Every story free to read online. Subscribe for the printed magazine — four issues a year, mailed from Highlands. Seventy-five dollars a quarter."
+  description={`Buy ${issueTitle} on its own, or subscribe for four printed issues a year, mailed from Highlands.`}
   ogImage="/og/default.png"
 >
-  <!-- Checkout-cancelled notice (shown when Stripe redirects back with ?cancelled=1) -->
-  <div id="checkout-cancelled-banner" hidden style="background: var(--cream-dark); border-bottom: 1px solid var(--sand); padding: 14px 24px; text-align: center; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft);">
-    No charge was made. Pick a plan below whenever you're ready.
-    <button onclick="this.parentElement.hidden=true" style="margin-left: 16px; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 14px; line-height: 1;" aria-label="Dismiss">✕</button>
+  <!-- The film. Poster is painted on the container, so the screen is
+       never empty: no JavaScript, a refused autoplay, or a stated
+       preference against motion all still leave the frame standing. -->
+  <div class="film" aria-hidden="true" style={`background-image: url(${FILM.poster});`}>
+    <video
+      class="film__video"
+      muted
+      loop
+      playsinline
+      preload="none"
+      poster={FILM.poster}
+      data-src={FILM.mp4}
+      data-src-webm={FILM.webm}></video>
   </div>
-  <script>
-    if (new URLSearchParams(location.search).get('cancelled') === '1') {
-      document.getElementById('checkout-cancelled-banner').hidden = false;
-    }
-  </script>
 
-  <!-- Hero -->
-  <section style="padding: 96px 0 56px;">
-    <div class="mag-container-narrow" style="text-align: center;">
-      <div class="meta-dotted" style="margin-bottom: 20px; justify-content: center;">
-        Subscribe<span class="dot">·</span>For the printed magazine
-      </div>
-      <h1
-        style="font-family: var(--font-display); font-weight: 700; font-size: clamp(2.6rem, 5.2vw, 4rem); letter-spacing: -0.025em; color: var(--ink); line-height: 1.05; margin-bottom: 24px;"
-      >
-        Four issues a year, <em style="font-weight: 400; color: var(--rust);">in the mail.</em>
-      </h1>
-      <p
-        style="font-family: var(--font-display); font-style: italic; font-size: 20px; line-height: 1.55; color: var(--ink-soft); max-width: 620px; margin: 0 auto;"
-      >
-        The Local Lookout publishes quarterly, and every story is free
-        to read online. The subscription is for the printed magazine —
-        four issues a year, mailed from Highlands.
+  <!-- Transparent nav: the mark, and nothing to leave by. -->
+  <header class="bar">
+    <a href="/" class="mark" aria-label="The Local Lookout — home">
+      <span class="mark__sup">Above the Hook · Quarterly</span>
+      <span class="mark__main">The Local <em>Lookout</em></span>
+    </a>
+  </header>
+
+  <main class="stage">
+    <div class="card">
+      <!-- Cancelled checkout returns here; say so without alarming. -->
+      <p class="card__note" data-cancelled hidden>
+        No charge was made.
       </p>
-    </div>
-  </section>
 
-  <!-- Signed-in subscriber banner (revealed by JS when /api/me
-       reports an active tier). Sits above the tier cards so the
-       page reads as "you're in" before they scan the grid. -->
-  <section class="subscriber-banner-section" data-mag-subscriber-banner hidden>
-    <div class="mag-container-narrow">
-      <div class="subscriber-banner">
-        <div class="subscriber-banner-copy">
-          <span class="subscriber-banner-kicker">You're subscribed</span>
-          <strong data-mag-current-tier-label></strong>
-        </div>
-        <a href="/account" class="subscriber-banner-cta">Manage your plan →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Subscription card -->
-  <section style="padding: 40px 0 96px;">
-    <div class="mag-container-narrow">
-      <div class="tier-cards">
-        <div class="tier-card tier-card--featured" data-mag-tier-card="print">
-          <div class="tier-card-kicker" style="color: var(--rust);">Print</div>
-          <div class="tier-card-price">
-            $75<span class="tier-card-unit"> / quarter</span>
-          </div>
-          <div class="tier-card-cadence">Billed quarterly</div>
-          <p class="tier-card-desc">
-            Four issues delivered by mail, in time with the season each
-            one covers. Everything we publish is free to read online —
-            subscribing is how the printing and mailing gets paid for,
-            and how a copy reaches your table instead of a screen.
-          </p>
-          <ul class="tier-list">
-            <li>Four printed issues a year, mailed from Highlands, NJ</li>
-            <li>Uncoated stock, real ink, wide margins</li>
-            <li>Previews of future issues before they ship</li>
-            <li>Keeps the magazine funded and the writing free</li>
-            <li>Cancel anytime from your account</li>
-          </ul>
-          <form method="POST" action="/api/checkout" class="tier-form" data-mag-tier-cta="anon">
-            <input type="hidden" name="tier" value="print" />
-            <button type="submit" class="tier-cta tier-cta--live">
-              Subscribe — $75 / quarter
-            </button>
-          </form>
-          <a href="/account" class="tier-cta tier-cta--current" data-mag-tier-cta="current" hidden>
-            ✓ Current plan · Manage
-          </a>
-          <a href="/account" class="tier-cta tier-cta--switch" data-mag-tier-cta="switch" hidden>
-            Upgrade to Print →
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sign-in -->
-  <section id="signin" style="background: var(--navy); color: var(--on-dark-1); padding: 80px 0;">
-    <div class="mag-container-narrow" style="text-align: center;">
-      <div
-        style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand-light); margin-bottom: 20px;"
-      >
-        <span style="color: var(--rust-light);">—</span>&nbsp;&nbsp;Already subscribed
-      </div>
-      <h2
-        style="font-family: var(--font-display); font-size: clamp(1.8rem, 3.4vw, 2.4rem); color: #fff; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px;"
-      >
-        Sign in to read.
-      </h2>
-      <p
-        style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--on-dark-3); max-width: 540px; margin: 0 auto 32px;"
-      >
-        Type your email and we'll send a one-click sign-in link. No
-        password to forget, no newsletter to unsubscribe from.
-      </p>
-      <form class="signin-form" method="POST" action="/api/login-request">
-        <input
-          type="email"
-          name="email"
-          required
-          placeholder="your@email.com"
-          class="signin-input"
-          aria-label="Email address"
-        />
-        <button type="submit" class="signin-button">
-          Send sign-in link <span class="arrow">→</span>
-        </button>
-      </form>
-      <p
-        style="margin-top: 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand);"
-      >
-        The link expires in 15 minutes
-      </p>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section style="padding: 96px 0;">
-    <div class="mag-container-narrow">
-      <div class="meta-dotted" style="margin-bottom: 16px; justify-content: center;">
-        Questions we get
-      </div>
-      <h2
-        style="font-family: var(--font-display); font-size: clamp(1.8rem, 3.4vw, 2.4rem); font-weight: 700; letter-spacing: -0.02em; text-align: center; margin-bottom: 48px;"
-      >
-        A few things to know.
-      </h2>
-
-      <div class="faq-list">
-        <div class="faq-item">
-          <h3 class="faq-q">Can I cancel?</h3>
-          <p class="faq-a">
-            Anytime, from your account page. A cancellation takes
-            effect at the close of the current quarter, and you still
-            receive the issue you have already paid for. The stories
-            stay readable online either way.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-q">Do I need to subscribe to read?</h3>
-          <p class="faq-a">
-            No. Every story we publish is free to read online, with no
-            account and no paywall — the whole archive, every issue.
-            Subscribing gets you the printed magazine, and pays for the
-            reporting, the printing, and the postage.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-q">Then what am I paying for?</h3>
-          <p class="faq-a">
-            The object. Four issues a year on uncoated stock, mailed
-            from Highlands in time with the season each one covers —
-            and the reporting that fills them. The writing stays free
-            for everyone because subscribers cover its cost.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-q">Can I buy just one issue?</h3>
-          <p class="faq-a">
-            Not at the moment — the quarterly subscription is the only
-            way to get the printed magazine. Readers who bought a
-            single issue previously keep permanent access to it.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-q">Who is behind the magazine?</h3>
-          <p class="faq-a">
-            The Local Lookout is the quarterly print publication of
-            Above the Hook, a place-based coastal storytelling brand
-            founded in 2025 by Eric Kane and Mary McKiever, based in
-            Highlands, New Jersey.
-          </p>
-        </div>
-      </div>
-
-      <div style="text-align: center; margin-top: 56px;">
-        <p
-          style="font-family: var(--font-body); font-size: 16px; line-height: 1.65; color: var(--ink-soft);"
-        >
-          Still have a question? Write us at
-          <a
-            href="mailto:hello@abovethehook.com"
-            style="color: var(--rust); text-decoration: underline; text-underline-offset: 3px;"
-            >hello@abovethehook.com</a
-          >.
+      <!-- ── Step one: the issue that is out now ──────────────── -->
+      <section data-step="issue">
+        {
+          cover_image && (
+            <Image
+              src={cover_image}
+              alt={cover_image_alt ?? `${issueTitle} cover`}
+              class="card__cover"
+              widths={[220, 440]}
+              sizes="180px"
+              loading="eager"
+            />
+          )
+        }
+        <p class="card__kicker">Issue {issueNumber} · Out now</p>
+        <h1 class="card__title">{issueTitle}</h1>
+        <p class="card__lede">
+          The printed magazine, mailed from Highlands. Every story in it
+          is free to read online — this is the object.
         </p>
-      </div>
+        <button type="button" class="btn btn--primary" data-go="choose">
+          Buy this issue — {ISSUE_PRICE}
+        </button>
+      </section>
+
+      <!-- ── Step two: the choice, subscription pre-selected ───── -->
+      <section data-step="choose" hidden>
+        <p class="card__kicker">Choose how</p>
+        <form method="POST" action="/api/checkout" class="pick">
+          <input type="hidden" name="issue" value={currentSlug} />
+
+          <label class="opt">
+            <input type="radio" name="tier" value="print" checked />
+            <span class="opt__body">
+              <span class="opt__head">
+                <span class="opt__name">Subscribe</span>
+                <span class="opt__price">{SUBSCRIPTION_PRICE}<span class="opt__unit">/quarter</span></span>
+              </span>
+              <span class="opt__desc">
+                Four a year, starting with {issueTitle} — $25 less an
+                issue. Cancel anytime.
+              </span>
+            </span>
+            <span class="opt__flag">Best value</span>
+          </label>
+
+          <label class="opt">
+            <input type="radio" name="tier" value="single" />
+            <span class="opt__body">
+              <span class="opt__head">
+                <span class="opt__name">Just this issue</span>
+                <span class="opt__price">{ISSUE_PRICE}<span class="opt__unit">once</span></span>
+              </span>
+              <span class="opt__desc">{issueTitle} on its own, mailed to you.</span>
+            </span>
+          </label>
+
+          <button type="submit" class="btn btn--primary">Continue to payment</button>
+        </form>
+
+        <button type="button" class="btn btn--quiet" data-go="issue">← Back</button>
+      </section>
     </div>
-  </section>
+  </main>
+
+  <noscript>
+    <style>
+      /* Without JavaScript the two steps collapse into one: show the
+         choice, which is the form that actually buys something. */
+      [data-step='issue'] { display: none; }
+      [data-step='choose'] { display: block !important; }
+      [data-go] { display: none; }
+    </style>
+  </noscript>
 
   <script is:inline>
     (function () {
-      /* Reshape the subscription card to reflect the signed-in
-         reader's current plan. Anonymous readers see the default
-         Subscribe CTA.
+      'use strict';
 
-         "digital" is a legacy plan — no longer sold, but existing
-         subscribers still hold it, so it is recognised here and
-         offered an upgrade to Print. */
-      var TIER_LABELS = {
-        digital: 'Digital — $10 / mo (legacy)',
-        print:   'Print — $75 / quarter',
-      };
+      // ── Cancelled-checkout note ────────────────────────────────
+      if (new URLSearchParams(location.search).get('cancelled') === '1') {
+        var note = document.querySelector('[data-cancelled]');
+        if (note) note.hidden = false;
+      }
 
-      fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' })
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (data) {
-          if (!data || !data.signedIn) return;
-          var ents = data.entitlements || [];
-          var activeTier = null;
-          for (var i = 0; i < ents.length; i++) {
-            if (ents[i].tier === 'print') { activeTier = 'print'; break; }
-            if (ents[i].tier === 'digital') activeTier = 'digital';
-          }
-          if (!activeTier) return;
+      // ── The two steps ──────────────────────────────────────────
+      // Nothing here is load-bearing for the purchase: the form is a
+      // real form and posts on its own. This only decides which half
+      // of the card is on screen.
+      var steps = {};
+      ['issue', 'choose'].forEach(function (name) {
+        steps[name] = document.querySelector('[data-step="' + name + '"]');
+      });
 
-          // Reveal the top banner
-          var banner = document.querySelector('[data-mag-subscriber-banner]');
-          if (banner) {
-            banner.removeAttribute('hidden');
-            var label = banner.querySelector('[data-mag-current-tier-label]');
-            if (label) label.textContent = TIER_LABELS[activeTier] || activeTier;
-          }
+      function show(name) {
+        Object.keys(steps).forEach(function (k) {
+          if (steps[k]) steps[k].hidden = k !== name;
+        });
+        // Moving focus keeps a keyboard and a screen reader with the
+        // card instead of stranding them where the old step was.
+        var focusTarget = steps[name] && steps[name].querySelector(
+          'input:checked, button, [href]',
+        );
+        if (focusTarget) focusTarget.focus({ preventScroll: true });
+      }
 
-          var card = document.querySelector('[data-mag-tier-card="print"]');
-          if (!card) return;
-          if (activeTier === 'print') {
-            setCtaState(card, 'current');
-            card.classList.add('tier-card--current');
-          } else {
-            setCtaState(card, 'switch');
-          }
-        })
-        .catch(function () { /* keep defaults on any failure */ });
+      document.addEventListener('click', function (ev) {
+        var trigger = ev.target.closest && ev.target.closest('[data-go]');
+        if (!trigger) return;
+        show(trigger.getAttribute('data-go'));
+      });
 
-      function setCtaState(card, state) {
-        var ctas = card.querySelectorAll('[data-mag-tier-cta]');
-        for (var i = 0; i < ctas.length; i++) {
-          if (ctas[i].getAttribute('data-mag-tier-cta') === state) {
-            ctas[i].removeAttribute('hidden');
-          } else {
-            ctas[i].setAttribute('hidden', '');
-          }
-        }
+      // ── The film ───────────────────────────────────────────────
+      // Sources are attached here, not in the markup, so a visitor who
+      // is not being sent motion never downloads it to hide it.
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var conn = navigator.connection || {};
+      var video = document.querySelector('.film__video');
+
+      function wanted() {
+        return !reduced.matches && !conn.saveData;
+      }
+
+      function addSource(src, type) {
+        if (!src) return;
+        var s = document.createElement('source');
+        s.src = src;
+        s.type = type;
+        video.appendChild(s);
+      }
+
+      /* Autoplay gets refused even for muted inline video — iOS in Low
+         Power Mode is the common case, and that is a real reader. The
+         poster is already painted, so nothing looks broken; the first
+         real gesture is one free second chance, then we stop asking. */
+      function play() {
+        var p = video.play();
+        if (!p || !p.catch) return;
+        p.catch(function () {
+          var events = ['pointerdown', 'touchstart', 'keydown'];
+          var retry = function () {
+            events.forEach(function (e) { window.removeEventListener(e, retry); });
+            var again = video.play();
+            if (again && again.catch) again.catch(function () {});
+          };
+          events.forEach(function (e) {
+            window.addEventListener(e, retry, { once: true, passive: true });
+          });
+        });
+      }
+
+      if (video && wanted()) {
+        // WebM first — a third of the size, and anything that doesn't
+        // understand it falls straight through to the MP4.
+        addSource(video.getAttribute('data-src-webm'), 'video/webm');
+        addSource(video.getAttribute('data-src'), 'video/mp4');
+        video.load();
+        play();
       }
     })();
   </script>
-</BaseLayout>
+</BareLayout>
 
 <style>
-  .tier-cards {
-    display: grid;
-    grid-template-columns: minmax(0, 460px);
-    justify-content: center;
+  /* ── The film ─────────────────────────────────────────────────── */
+  .film {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background-color: var(--navy);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  .film__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* A wash over the footage so the card holds on every frame of it,
+     not just on the poster. */
+  .film::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 100% at 50% 50%, rgba(27, 46, 75, 0.28) 0%, rgba(27, 46, 75, 0.66) 100%),
+      linear-gradient(to bottom, rgba(27, 46, 75, 0.58) 0%, rgba(27, 46, 75, 0.2) 42%, rgba(27, 46, 75, 0.62) 100%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .film__video { display: none; }
   }
 
-  .tier-card {
-    position: relative;
-    background: var(--paper);
-    border: 1px solid var(--sand);
-    padding: 40px 32px 32px;
-    display: flex;
+  /* ── Transparent bar: the mark only ───────────────────────────── */
+  .bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 22px 28px;
+  }
+  .mark {
+    display: inline-flex;
     flex-direction: column;
+    gap: 3px;
+    text-decoration: none;
   }
-
-  .tier-card--featured {
-    border: 2px solid var(--rust);
-    background: var(--cream-dark, var(--paper));
-  }
-
-  .tier-card-kicker {
+  .mark__sup {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 9px;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    color: var(--on-dark-4);
   }
-
-  .tier-card-price {
+  .mark__main {
     font-family: var(--font-display);
-    font-size: 52px;
+    font-size: 21px;
     font-weight: 700;
-    color: var(--ink);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
+    color: var(--on-dark-1);
     line-height: 1;
-    margin-bottom: 4px;
   }
-
-  .tier-card-unit {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    letter-spacing: 0.12em;
-    color: var(--muted);
+  .mark__main em {
     font-weight: 400;
-    margin-left: 6px;
+    font-style: italic;
   }
 
-  .tier-card-cadence {
+  /* ── The card, centred on the screen ──────────────────────────── */
+  .stage {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 84px 20px 28px;
+    box-sizing: border-box;
+  }
+  .card {
+    width: 100%;
+    max-width: 404px;
+    background: var(--paper);
+    border: 1px solid rgba(201, 185, 154, 0.5);
+    box-shadow: 0 24px 60px rgba(16, 25, 43, 0.4);
+    padding: 26px 26px 18px;
+    text-align: center;
+    /* If a screen really is too short, the card scrolls rather than
+       the page — the film stays put behind it. */
+    max-height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  .card__note {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin: 0 0 14px;
+  }
+  .card__cover {
+    display: block;
+    width: 148px;
+    height: auto;
+    margin: 0 auto 18px;
+    box-shadow: 0 8px 22px rgba(16, 25, 43, 0.28);
+  }
+  .card__kicker {
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 20px;
+    color: var(--rust);
+    margin: 0 0 8px;
   }
-
-  .tier-card-desc {
-    font-family: var(--font-body);
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--ink-soft);
-    margin-bottom: 24px;
+  .card__title {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--ink);
+    margin: 0 0 10px;
   }
-
-  .tier-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 28px;
-    border-top: 1px solid var(--sand);
-  }
-  .tier-list li {
+  .card__lede {
     font-family: var(--font-body);
     font-size: 14px;
-    line-height: 1.5;
-    color: var(--ink);
-    padding: 12px 0;
-    border-bottom: 1px solid var(--sand);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
   }
-  .tier-list li::before {
-    content: '·';
-    color: var(--rust);
-    margin-right: 10px;
-    font-weight: 700;
-  }
-
-  .tier-form {
-    margin-top: auto;
-  }
-
-  .tier-cta {
+  /* ── Buttons ──────────────────────────────────────────────────── */
+  .btn {
     display: block;
-    text-align: center;
-    padding: 14px 18px;
+    width: 100%;
+    padding: 13px 16px;
     font-family: var(--font-mono);
     font-size: 11px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    margin-top: auto;
     border: 0;
     cursor: pointer;
-    width: 100%;
+    box-sizing: border-box;
   }
-
-  .tier-cta--live {
+  .btn--primary {
     background: var(--rust);
     color: #fff;
     transition: background 0.15s ease-out;
   }
-  .tier-cta--live:hover {
-    background: var(--rust-light, #C4583E);
-  }
-
-  /* Current-plan CTA: solid navy with a checkmark, links to /account */
-  .tier-cta--current {
-    background: var(--navy);
-    color: #fff;
-    text-decoration: none;
-    border: 0;
-  }
-  .tier-cta--current:hover {
-    background: var(--navy-light, #1C4472);
-  }
-
-  /* Switch-plan CTA (upgrade/downgrade): outlined, understated */
-  .tier-cta--switch {
+  .btn--primary:hover { background: var(--rust-light); }
+  .btn--quiet {
     background: transparent;
-    color: var(--rust);
-    border: 1px solid var(--rust);
-    text-decoration: none;
-    transition: background 0.15s ease-out, color 0.15s ease-out;
+    color: var(--ink-soft);
+    margin-top: 8px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
-  .tier-cta--switch:hover {
-    background: var(--rust);
-    color: #fff;
-  }
+  .btn--quiet:hover { color: var(--rust); }
 
-  /* Current-plan card gets a subtle ring so the eye lands on it */
-  .tier-card--current {
-    border-color: var(--navy);
+  /* ── The choice ───────────────────────────────────────────────── */
+  .pick { margin: 0; }
+  .opt {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+    padding: 13px 14px;
+    margin-bottom: 9px;
+    border: 1px solid var(--sand);
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.15s ease-out, background 0.15s ease-out;
+  }
+  .opt:hover { border-color: var(--rust-light); }
+  .opt:has(input:checked) {
+    border-color: var(--rust);
     border-width: 2px;
+    padding: 12px 13px;
+    background: var(--cream);
   }
-
-  /* Subscriber banner */
-  .subscriber-banner-section {
-    padding: 16px 0 0;
+  .opt:has(input:focus-visible) {
+    outline: 2px solid var(--rust);
+    outline-offset: 2px;
   }
-  .subscriber-banner {
+  .opt input {
+    margin: 2px 0 0;
+    accent-color: var(--rust);
+    flex: none;
+  }
+  .opt__body { display: block; flex: 1; min-width: 0; }
+  .opt__head {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    padding: 16px 22px;
-    background: var(--cream-dark, #EFE6D2);
-    border: 1px solid var(--sand);
-  }
-  .subscriber-banner-copy {
-    font-family: var(--font-body);
-    font-size: 15px;
-    color: var(--ink);
-    display: flex;
     align-items: baseline;
-    gap: 14px;
-    flex-wrap: wrap;
-  }
-  .subscriber-banner-kicker {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--rust);
-  }
-  .subscriber-banner-copy strong {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-  }
-  .subscriber-banner-cta {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--rust);
-    text-decoration: none;
-    border: 1px solid var(--rust);
-    padding: 9px 14px;
-    transition: background 0.15s ease-out, color 0.15s ease-out;
-  }
-  .subscriber-banner-cta:hover {
-    background: var(--rust);
-    color: #fff;
-  }
-
-  /* Sign-in form */
-  .signin-form {
-    display: flex;
-    gap: 12px;
-    max-width: 520px;
-    margin: 0 auto;
-    flex-wrap: wrap;
-  }
-  .signin-input {
-    flex: 1;
-    min-width: 220px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    color: #fff;
-    padding: 14px 16px;
-    font-family: var(--font-body);
-    font-size: 15px;
-  }
-  .signin-input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-  .signin-input:focus {
-    outline: 2px solid var(--rust-light, #C4583E);
-    outline-offset: -1px;
-  }
-  .signin-button {
-    background: var(--rust);
-    color: #fff;
-    border: 0;
-    padding: 14px 24px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.15s ease-out;
-  }
-  .signin-button:hover {
-    background: var(--rust-light, #C4583E);
-  }
-
-  /* FAQ */
-  .faq-list {
-    display: grid;
     gap: 8px;
   }
-  .faq-item {
-    padding: 28px 0;
-    border-top: 1px solid var(--sand);
-  }
-  .faq-item:last-child {
-    border-bottom: 1px solid var(--sand);
-  }
-  .faq-q {
+  .opt__name {
     font-family: var(--font-display);
-    font-size: 20px;
+    font-size: 17px;
     font-weight: 700;
-    letter-spacing: -0.01em;
     color: var(--ink);
-    margin: 0 0 12px;
+    letter-spacing: -0.01em;
   }
-  .faq-a {
+  .opt__price {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .opt__unit {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--muted, #6B6158);
+    font-weight: 400;
+    margin-left: 3px;
+  }
+  .opt__desc {
+    display: block;
     font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.7;
+    font-size: 13px;
+    line-height: 1.45;
     color: var(--ink-soft);
-    margin: 0;
-    max-width: 640px;
+    margin-top: 3px;
+  }
+  .opt__flag {
+    position: absolute;
+    top: -8px;
+    /* Left, not right: the price is right-aligned, and a badge
+       directly above it reads as one crowded column. */
+    left: 12px;
+    background: var(--rust);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+  }
+  .pick .btn--primary { margin-top: 13px; }
+
+  /* ── Short screens: the cover is the first thing to go ─────────── */
+  @media (max-height: 720px) {
+    .card__cover { width: 108px; margin-bottom: 12px; }
+    .card__title { font-size: 25px; }
+    .stage { padding-top: 76px; }
+  }
+  @media (max-height: 600px) {
+    .card__cover { display: none; }
+    .card__lede { margin-bottom: 16px; }
+  }
+  /* Landscape phone. Everything that is texture rather than
+     information comes out, so the choice still fits without the card
+     growing its own scrollbar. */
+  @media (max-height: 480px) {
+    .bar { padding: 10px 18px; }
+    .mark__sup { display: none; }
+    .mark__main { font-size: 17px; }
+    .stage { padding: 46px 16px 12px; }
+    .card { padding: 14px 18px 10px; }
+    .card__lede { display: none; }
+    .card__kicker { margin-bottom: 4px; }
+    .card__title { font-size: 21px; margin-bottom: 8px; }
+    .opt { padding: 9px 11px; margin-bottom: 6px; }
+    .opt:has(input:checked) { padding: 8px 10px; }
+    .opt__desc { display: none; }
+    .opt__name, .opt__price { font-size: 15px; }
+    .btn { padding: 10px 14px; }
+    .pick .btn--primary { margin-top: 9px; }
+    .btn--quiet { margin-top: 5px; }
   }
 
-  @media (max-width: 900px) {
-    .tier-cards { grid-template-columns: 1fr; }
-    .tier-card { padding: 32px 24px 24px; }
+  @media (max-width: 420px) {
+    .bar { padding: 16px 18px; }
+    .mark__main { font-size: 18px; }
+    .card { padding: 22px 20px 16px; }
   }
 </style>
