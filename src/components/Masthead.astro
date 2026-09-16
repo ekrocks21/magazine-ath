@@ -54,16 +54,20 @@ const links = [
 
 <header class="mast">
   <a class="boxmark" href="/">The Local Lookout</a>
-  <button
-    class="mast__toggle"
-    type="button"
-    aria-expanded="false"
-    aria-controls="site-menu"
-    data-menu-open
-  >
-    <span class="sr-only">Menu</span>
-    <span class="mast__bars" aria-hidden="true"></span>
-  </button>
+  <div class="mast__end">
+    <a href="/subscribe" class="mast__cta mast__cta--solid" data-cta="anon">Subscribe</a>
+    <a href="/account" class="mast__cta mast__cta--quiet" data-cta="member" hidden>Account</a>
+    <button
+      class="mast__toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-menu"
+      data-menu-open
+    >
+      <span class="sr-only">Menu</span>
+      <span class="mast__bars" aria-hidden="true"></span>
+    </button>
+  </div>
 </header>
 
 <div class="menu" id="site-menu" hidden data-menu>
@@ -150,21 +154,21 @@ const links = [
     openBtn.addEventListener('click', open);
     closeBtn.addEventListener('click', close);
 
-    /* Swap the Subscribe slot for Account once we know there is a
-       session. Runs on load rather than on open, so the menu is right
-       the first time it is shown. Any failure — offline, or the Worker
+    /* Swap every Subscribe slot for Account once we know there is a
+       session — the one in the bar and the one in the menu. Runs on
+       load rather than on open, so the menu is right the first time it
+       is shown. Any failure — offline, or the Worker
        not in front of this origin in local dev — leaves the anonymous
        default standing, which is the safe way to be wrong. */
-    const anonCta = menu.querySelector<HTMLElement>('[data-cta="anon"]');
-    const memberCta = menu.querySelector<HTMLElement>('[data-cta="member"]');
-    if (!anonCta || !memberCta) return;
+    const anonCtas = document.querySelectorAll<HTMLElement>('[data-cta="anon"]');
+    const memberCtas = document.querySelectorAll<HTMLElement>('[data-cta="member"]');
 
     fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data || !data.signedIn) return;
-        anonCta.hidden = true;
-        memberCta.hidden = false;
+        anonCtas.forEach((el) => { el.hidden = true; });
+        memberCtas.forEach((el) => { el.hidden = false; });
       })
       .catch(() => {
         /* keep the anonymous default */
@@ -217,6 +221,49 @@ const links = [
     left: 0;
     right: 0;
     background: transparent;
+  }
+
+  .mast__end {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* Subscribe is a conversion, Account is a utility, so they are not
+     asking for the same amount of attention. */
+  .mast__cta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 8px 13px;
+    line-height: 1;
+    white-space: nowrap;
+    transition: background 0.18s ease-out, color 0.18s ease-out,
+      border-color 0.18s ease-out;
+  }
+  .mast__cta--solid {
+    background: var(--rust);
+    color: #fff;
+    border: 1px solid var(--rust);
+  }
+  .mast__cta--solid:hover {
+    background: var(--rust-light);
+    border-color: var(--rust-light);
+  }
+  .mast__cta--quiet {
+    background: transparent;
+    color: var(--on-dark-2);
+    border: 1px solid rgba(201, 185, 154, 0.5);
+  }
+  .mast__cta--quiet:hover {
+    color: var(--on-dark-1);
+    border-color: var(--on-dark-1);
+  }
+  .mast__cta:focus-visible {
+    outline: 2px solid var(--rust-light);
+    outline-offset: 3px;
   }
 
   .mast__toggle,
@@ -355,6 +402,8 @@ const links = [
     .mast,
     .menu__bar { padding: 16px 18px; }
     .boxmark { font-size: 15px; letter-spacing: 0.14em; padding: 4px 8px 5px; }
+    .mast__end { gap: 12px; }
+    .mast__cta { font-size: 9px; letter-spacing: 0.16em; padding: 7px 9px; }
     .menu__primary { padding: 16px 18px; gap: 0; }
     .menu__foot { padding: 20px 18px 26px; }
   }
