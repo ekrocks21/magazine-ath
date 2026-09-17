@@ -2,9 +2,10 @@
 /**
  * /signin — one screen, one thing to do.
  *
- * A card over the same film the landing page opens on, with no
- * masthead and no footer: a reader who came here came to get in, and
- * everything else is a way to leave without doing it.
+ * A card over the same film /subscribe opens on, with no masthead and
+ * no footer: a reader who came here came to get in, and everything
+ * else is a way to leave without doing it. The two commerce screens
+ * match each other rather than the landing page.
  *
  * This is a STATIC page, so it cannot branch server-side on ?sent=1 —
  * that would evaluate at build time, not per request. Both states are
@@ -13,7 +14,7 @@
 
 import BareLayout from '../layouts/BareLayout.astro';
 import FilmBackdrop from '../components/FilmBackdrop.astro';
-import { TWIN_LIGHTS } from '../data/films';
+import { BAY_AT_LAST_LIGHT } from '../data/films';
 ---
 
 <BareLayout
@@ -21,7 +22,7 @@ import { TWIN_LIGHTS } from '../data/films';
   description="Sign in to The Local Lookout with a magic link."
   ogImage="/og/default.png"
 >
-  <FilmBackdrop film={TWIN_LIGHTS} />
+  <FilmBackdrop film={BAY_AT_LAST_LIGHT} />
 
   <!-- Transparent bar: the mark, and nothing to leave by. -->
   <header class="bar">
