@@ -25,6 +25,7 @@ import StructuredData from '../components/StructuredData.astro';
 import { TWIN_LIGHTS } from '../data/films';
 import { articleRoute } from '../utils/article-route';
 import { getCompanion } from '../data/companions';
+import { SUBSCRIPTION_PRICE } from '../data/pricing';
 import { siteWebSite, siteOrganization } from '../utils/structured-data';
 
 /**
@@ -146,6 +147,13 @@ const issueSections = orderedIssues.map((issue) => {
  */
 const currentSection = issueSections.find((sec) => !sec.forthcoming) ?? null;
 
+/**
+ * "Read the Summer Issue" — the issue's own name, with its article
+ * lowered so the label reads as a sentence rather than a title.
+ */
+const readLabel = (i: CollectionEntry<'issues'>) =>
+  `Read ${issueName(i).replace(/^The /, 'the ')}`;
+
 /** True when a piece opens on a film, so its card can say so. */
 function hasVideo(a: CollectionEntry<'articles'>): boolean {
   const c = getCompanion(a.data.companion_to);
@@ -167,7 +175,7 @@ function tagFor(a: CollectionEntry<'articles'>): string {
 >
   <StructuredData data={[siteWebSite(), siteOrganization()]} slot="head" />
 
-  <!-- ── Hero: the film, and nothing over it ──────────────────── -->
+  <!-- ── Hero: the film, the issue, and what this is ──────────── -->
   <section class="hero" aria-label="The Twin Lights over Highlands">
     <div
       class="hero__still"
@@ -186,11 +194,32 @@ function tagFor(a: CollectionEntry<'articles'>): string {
 
     {
       currentSection && (
-        <a class="hero__jump" href="#current-issue">
+        <div class="hero__copy">
           <h1 class="hero__issue">{issueName(currentSection.issue)}</h1>
-          <span class="hero__cue" aria-hidden="true" />
-          <span class="sr-only">Skip to the current issue</span>
-        </a>
+
+          <p class="hero__standfirst">
+            A quarterly magazine of this coast — Sandy Hook, the Highlands, the
+            Navesink, and the water between. This issue is free to read online.
+            Four a year arrive in the mail.
+          </p>
+
+          <div class="hero__actions">
+            <a class="hero__cta hero__cta--solid" href="#current-issue">
+              <span class="hero__cta-label">{readLabel(currentSection.issue)}</span>
+              <span class="hero__cta-sub">Free, in full, no account</span>
+            </a>
+            <a class="hero__cta hero__cta--ghost" href="/subscribe/">
+              <span class="hero__cta-label">
+                Get it in print — {SUBSCRIPTION_PRICE.perMonth}
+              </span>
+              <span class="hero__cta-sub">Four issues a year, mailed from Highlands</span>
+            </a>
+          </div>
+
+          <p class="hero__note">
+            Subscribers are why the current issue stays free for everyone.
+          </p>
+        </div>
       )
     }
   </section>
@@ -357,54 +386,131 @@ function tagFor(a: CollectionEntry<'articles'>): string {
         rgba(16, 25, 43, 0.42) 0%, rgba(16, 25, 43, 0) 100%);
   }
 
-  /* ── The issue's name, over the film ──────────────────────────
-     The whole block is the way down: a real anchor, so it works
-     before any script and reads as a link to a keyboard. */
-  .hero__jump {
+  /* ── The issue's name, and what this magazine is ──────────────
+     The block sits over the film and carries the two ways in: read
+     this issue now, or have the printed one posted. */
+  .hero__copy {
     position: absolute;
     inset: 0;
     z-index: 2;
+    isolation: isolate;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 28px;
-    text-decoration: none;
+    gap: clamp(14px, 2.2vh, 24px);
     padding: 0 24px;
+    text-align: center;
   }
+  /* A scrim under the words only.
+     The film's own overlay is enough for display type, which needs
+     3:1, but not for the standfirst and the note, which need 4.5 and
+     would fall to about 3.3 against a bright frame. This pools a
+     little more dark where the text actually sits and fades out well
+     before the edges, so the picture keeps its corners. */
+  .hero__copy::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(58% 42% at 50% 50%,
+      rgba(16, 25, 43, 0.40) 0%,
+      rgba(16, 25, 43, 0.26) 58%,
+      rgba(16, 25, 43, 0) 100%);
+  }
+
   .hero__issue {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(2.4rem, 8vw, 6.4rem);
+    font-size: clamp(2.1rem, 6.2vw, 5rem);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: -0.02em;
     line-height: 0.98;
-    text-align: center;
     color: var(--on-dark-1);
     text-shadow: 0 2px 30px rgba(16, 25, 43, 0.5);
-    transition: opacity 0.2s ease-out;
   }
-  .hero__jump:hover .hero__issue {
-    opacity: 0.86;
+  .hero__standfirst {
+    margin: 0;
+    max-width: min(58ch, 92vw);
+    font-family: var(--font-body);
+    font-size: clamp(0.98rem, 1.5vw, 1.15rem);
+    line-height: 1.55;
+    color: var(--on-dark-1);
+    text-shadow: 0 1px 16px rgba(16, 25, 43, 0.7);
   }
-  /* A chevron, drawn from two borders of a rotated box. */
-  .hero__cue {
-    width: 15px;
-    height: 15px;
-    border-right: 1.5px solid var(--on-dark-2);
-    border-bottom: 1.5px solid var(--on-dark-2);
-    transform: rotate(45deg);
-    opacity: 0.8;
-    animation: cue 2.4s ease-in-out infinite;
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
   }
-  @keyframes cue {
-    0%, 100% { transform: rotate(45deg) translate(0, 0); }
-    50% { transform: rotate(45deg) translate(4px, 4px); }
+  /* Two ways in, side by side: the free one solid, the paid one
+     outlined. Each says what it costs before it is clicked. */
+  .hero__cta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 44px;
+    padding: 10px 22px;
+    text-decoration: none;
+    font-family: var(--font-ui);
+    transition: background 0.18s ease-out, border-color 0.18s ease-out;
   }
-  .hero__jump:focus-visible {
-    outline: 2px solid var(--rust-light);
-    outline-offset: -10px;
+  .hero__cta-label {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  .hero__cta-sub {
+    font-size: 11.5px;
+    letter-spacing: 0.03em;
+  }
+  .hero__cta--solid {
+    background: var(--rust);
+    border: 1px solid var(--rust);
+    color: #fff;
+  }
+  .hero__cta--solid:hover {
+    background: var(--rust-light);
+    border-color: var(--rust-light);
+  }
+  .hero__cta--ghost {
+    background: rgba(16, 25, 43, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.48);
+    color: #fff;
+  }
+  .hero__cta--ghost:hover {
+    background: rgba(16, 25, 43, 0.78);
+    border-color: #fff;
+  }
+  .hero__cta:focus-visible {
+    outline: 2px solid var(--rust-on-dark);
+    outline-offset: 3px;
+  }
+
+  /* Once they stack, two buttons of different widths read as a
+     mistake — give them a common edge. */
+  @media (max-width: 600px) {
+    .hero__actions {
+      flex-direction: column;
+      align-items: stretch;
+      width: min(320px, 100%);
+    }
+    .hero__cta {
+      align-items: center;
+    }
+  }
+
+  .hero__note {
+    margin: 0;
+    max-width: min(54ch, 92vw);
+    font-family: var(--font-ui);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--on-dark-2);
+    text-shadow: 0 1px 14px rgba(16, 25, 43, 0.75);
   }
 
   /* ── One issue ────────────────────────────────────────────────
@@ -518,7 +624,6 @@ function tagFor(a: CollectionEntry<'articles'>): string {
 
   /* An animated zoom is exactly what this setting asks not to see. */
   @media (prefers-reduced-motion: reduce) {
-    .hero__cue { animation: none; }
     .issue__cover :global(img) { transition: none; }
     .issue__cover:hover :global(img) { transform: none; }
   }

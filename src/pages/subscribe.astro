@@ -17,6 +17,7 @@
  */
 
 import { getCollection } from 'astro:content';
+import { SUBSCRIPTION_PRICE } from '../data/pricing';
 import { Image } from 'astro:assets';
 import BareLayout from '../layouts/BareLayout.astro';
 import FilmBackdrop from '../components/FilmBackdrop.astro';
@@ -28,7 +29,6 @@ import { BAY_AT_LAST_LIGHT } from '../data/films';
  * wrangler.toml, which is what a reader is actually charged.
  */
 const ISSUE_PRICE = '$100';
-const SUBSCRIPTION_PRICE = '$25';
 
 // The issue that is out now — most recently published, same rule the
 // home page uses so the two can never disagree.
@@ -98,7 +98,7 @@ const { title: issueTitle, cover_image, cover_image_alt } = current.data;
             <span class="opt__body">
               <span class="opt__head">
                 <span class="opt__name">Founding Subscriber</span>
-                <span class="opt__price">{SUBSCRIPTION_PRICE}<span class="opt__unit">/month</span></span>
+                <span class="opt__price">{SUBSCRIPTION_PRICE.amount}<span class="opt__unit">{SUBSCRIPTION_PRICE.unit}</span></span>
               </span>
               <span class="opt__desc">
                 Four printed issues a year, starting with {issueTitle},
