@@ -38,3 +38,8 @@ export async function currentIssueHref(): Promise<string> {
   const i = await getCurrentIssue();
   return i ? `/issues/${issueSlug(i)}` : '/archive';
 }
+
+/** True when an issue's date is still ahead of us — not out yet. */
+export function isForthcoming(publishDate: Date | undefined): boolean {
+  return (publishDate?.valueOf() ?? Number.POSITIVE_INFINITY) > Date.now();
+}

@@ -7,6 +7,7 @@
  */
 
 import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { isForthcoming } from '../../utils/current-issue';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SmallCapsLabel from '../../components/SmallCapsLabel.astro';
 import IssuePartners from '../../components/IssuePartners.astro';
@@ -228,7 +229,9 @@ const issueLabel = `${seasonLabel} ${data.year}`;
         )}
 
         {dateLabel && (
-          <p class="issue-hero-date">Published {dateLabel}</p>
+          <p class="issue-hero-date">
+            {isForthcoming(data.publish_date) ? 'Expected' : 'Published'} {dateLabel}
+          </p>
         )}
       </div>
     </div>
