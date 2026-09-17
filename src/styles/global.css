@@ -64,6 +64,10 @@
   --navy-dark: #10192B;
   --rust: #8B3A2A;
   --rust-light: #C4583E;
+  /* Rust for small text on a dark ground. --rust-light is 4.02 on
+     navy-dark, which fails AA below 24px; this is 5.88 there and 4.57
+     on navy. */
+  --rust-on-dark: #DA7C61;
   --rust-dark: #6B2A1D;
   --cream: #F5F0E8;
   --cream-dark: #EDE7D9;
