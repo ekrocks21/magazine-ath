@@ -849,6 +849,51 @@ body[data-hero-fullbleed] .mag-masthead.is-solid .mag-rust-rule {
   background: rgba(255, 255, 255, 0.16);
 }
 
+/* Step through the set. Keyboard has the arrow keys; these are the
+   same thing for a mouse or a thumb. Only rendered when the gallery
+   holds more than one image. */
+.ath-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 72px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: background 0.15s ease-out;
+}
+.ath-lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+.ath-lightbox-nav--prev { left: 12px; }
+.ath-lightbox-nav--next { right: 12px; }
+.ath-lightbox-close:focus-visible,
+.ath-lightbox-nav:focus-visible {
+  outline: 2px solid var(--color-rust, #8B3A2A);
+  outline-offset: 2px;
+}
+.ath-lightbox-counter {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+@media (max-width: 640px) {
+  .ath-lightbox-nav { width: 44px; height: 60px; font-size: 28px; }
+  .ath-lightbox-nav--prev { left: 4px; }
+  .ath-lightbox-nav--next { right: 4px; }
+}
+
 /* ── Pull quote ────────────────────────────────────────────────────
    Inline in markdown via raw HTML:
      <aside class="article-pullquote">

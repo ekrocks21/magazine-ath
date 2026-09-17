@@ -72,38 +72,89 @@ const { items, title } = Astro.props;
 )}
 
 <script>
-  // Lightweight lightbox, no dependencies. Attaches once per page.
+  /* Lightweight lightbox, no dependencies. Attaches once per page.
+   *
+   * It opens on a set rather than on a single image: the arrow keys
+   * walk the gallery the thumbnail came from, wrapping at both ends,
+   * and the same set drives the prev/next controls so a mouse can do
+   * what the keyboard can.
+   */
   (function () {
     if (typeof document === 'undefined') return;
     if ((window as any).__athLightboxBound) return;
     (window as any).__athLightboxBound = true;
 
-    function openLightbox(href: string, label: string) {
+    function openLightbox(links: HTMLAnchorElement[], startIndex: number) {
+      let index = startIndex;
+      const many = links.length > 1;
+      const opener = document.activeElement as HTMLElement | null;
+
       const overlay = document.createElement('div');
       overlay.className = 'ath-lightbox';
       overlay.setAttribute('role', 'dialog');
       overlay.setAttribute('aria-modal', 'true');
-      overlay.setAttribute('aria-label', label);
-      overlay.innerHTML =
-        '<button class="ath-lightbox-close" aria-label="Close">\u00d7</button>' +
-        '<img src="' + href + '" alt="' + label.replace(/"/g, '&quot;') + '" />';
+
+      const img = document.createElement('img');
+
+      const close = document.createElement('button');
+      close.className = 'ath-lightbox-close';
+      close.setAttribute('aria-label', 'Close');
+      close.textContent = '\u00d7';
+
+      const prev = document.createElement('button');
+      prev.className = 'ath-lightbox-nav ath-lightbox-nav--prev';
+      prev.setAttribute('aria-label', 'Previous image');
+      prev.textContent = '\u2039';
+
+      const next = document.createElement('button');
+      next.className = 'ath-lightbox-nav ath-lightbox-nav--next';
+      next.setAttribute('aria-label', 'Next image');
+      next.textContent = '\u203a';
+
+      const counter = document.createElement('div');
+      counter.className = 'ath-lightbox-counter';
+
+      overlay.append(close, img);
+      if (many) overlay.append(prev, next, counter);
       document.body.appendChild(overlay);
       document.body.style.overflow = 'hidden';
 
-      function close() {
+      /* Text is set as text, never as markup: these captions come from
+         frontmatter and have no business being parsed as HTML. */
+      function show(i: number) {
+        index = (i + links.length) % links.length;   // wraps both ways
+        const link = links[index];
+        const label = link.getAttribute('aria-label') || '';
+        img.src = link.href;
+        img.alt = label;
+        overlay.setAttribute('aria-label', label);
+        counter.textContent = index + 1 + ' / ' + links.length;
+      }
+
+      function dismiss() {
         overlay.remove();
         document.body.style.overflow = '';
         document.removeEventListener('keydown', onKey);
+        if (opener && typeof opener.focus === 'function') opener.focus();
       }
+
       function onKey(e: KeyboardEvent) {
-        if (e.key === 'Escape') close();
+        if (e.key === 'Escape') { dismiss(); return; }
+        if (!many) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); show(index + 1); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); show(index - 1); }
       }
+
       overlay.addEventListener('click', (e) => {
-        if (e.target === overlay || (e.target as HTMLElement).classList.contains('ath-lightbox-close')) {
-          close();
-        }
+        const t = e.target as HTMLElement;
+        if (t === overlay || t === close) dismiss();
       });
+      prev.addEventListener('click', () => show(index - 1));
+      next.addEventListener('click', () => show(index + 1));
       document.addEventListener('keydown', onKey);
+
+      show(index);
+      close.focus();
     }
 
     document.addEventListener('click', function (e) {
@@ -111,8 +162,13 @@ const { items, title } = Astro.props;
       const link = target.closest('a[data-lightbox]') as HTMLAnchorElement | null;
       if (!link) return;
       e.preventDefault();
-      const label = link.getAttribute('aria-label') || '';
-      openLightbox(link.href, label);
+      // The set is the grid this thumbnail belongs to, so two galleries
+      // on one page stay separate.
+      const grid = link.closest('[data-gallery-grid]');
+      const links = grid
+        ? (Array.from(grid.querySelectorAll('a[data-lightbox]')) as HTMLAnchorElement[])
+        : [link];
+      openLightbox(links, Math.max(0, links.indexOf(link)));
     });
   })();
 </script>
