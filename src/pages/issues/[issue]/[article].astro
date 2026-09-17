@@ -10,6 +10,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ArticleHeader from '../../../components/ArticleHeader.astro';
 import ArticleHeroImage from '../../../components/ArticleHeroImage.astro';
 import ArticleHeroPlaceholder from '../../../components/ArticleHeroPlaceholder.astro';
+import ArticleHeroVideo from '../../../components/ArticleHeroVideo.astro';
 import SmallCapsLabel from '../../../components/SmallCapsLabel.astro';
 import Gallery from '../../../components/Gallery.astro';
 import CompanionCallout from '../../../components/CompanionCallout.astro';
@@ -104,6 +105,20 @@ const ogImageResolved = `/og/${data.issue}/${articleRoute(article).articleSlug}.
 // ── Companion artifact (video/podcast/film) ────────────────────────────
 const companion = getCompanion(data.companion_to);
 
+/**
+ * A companion that names a video leads the page; the film is the
+ * piece's own footage and belongs at the top of it, not beneath the
+ * prose. One that names a channel, a post or the harbor stays a
+ * callout at the foot, there being nothing to play.
+ *
+ * On a back issue this also puts the film in front of the paywall
+ * rather than inside it, since the Worker only rewrites the prose.
+ */
+const heroVideo =
+  companion && companion.platform === 'youtube' && companion.videoId
+    ? { ...companion, videoId: companion.videoId }
+    : null;
+
 // ── Structured data ────────────────────────────────────────────────────
 const SITE_ORIGIN = 'https://magazine.abovethehook.com';
 const canonicalUrl = `${SITE_ORIGIN}${articleRoute(article).href}`;
@@ -164,7 +179,13 @@ const jsonLd = [
       readingTime={readingTime}
     />
 
-    {data.hero_image ? (
+    {heroVideo ? (
+      <ArticleHeroVideo
+        companion={heroVideo}
+        poster={data.hero_image}
+        posterAlt={data.hero_image_alt ?? data.hero_image_caption}
+      />
+    ) : data.hero_image ? (
       <ArticleHeroImage
         src={data.hero_image}
         alt={data.hero_image_alt ?? data.hero_image_caption}
@@ -192,7 +213,7 @@ const jsonLd = [
         <Gallery items={data.gallery} title={data.gallery_title ?? 'From the day'} />
       )}
 
-      {companion && <CompanionCallout companion={companion} />}
+      {companion && !heroVideo && <CompanionCallout companion={companion} />}
     </div>
 
     <!-- End-of-article: tags + related articles from same issue -->

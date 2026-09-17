@@ -1,0 +1,124 @@
+---
+/**
+ * Article hero, as a film.
+ *
+ * Used when a piece names a companion video: the film leads the page
+ * instead of sitting under the prose, which is where a piece's own
+ * footage belongs. It also puts the film in front of the paywall on a
+ * back issue — a reason to subscribe rather than something hidden
+ * behind the reason.
+ *
+ * Takes the same frame and caption treatment as ArticleHeroImage, so a
+ * page led by a film and one led by a photograph sit the same way.
+ */
+
+import { type ImageMetadata } from 'astro:assets';
+import VideoFacade from './VideoFacade.astro';
+import type { Companion } from '../data/companions';
+
+interface Props {
+  companion: Companion & { videoId: string };
+  /** The article's own hero art, used as the still. */
+  poster?: ImageMetadata;
+  posterAlt?: string;
+  caption?: string;
+  credit?: string;
+}
+
+const { companion, poster, posterAlt, caption, credit } = Astro.props;
+---
+
+<figure class="article-hero article-hero--video">
+  <div class="article-hero-frame">
+    <VideoFacade
+      videoId={companion.videoId}
+      label={companion.title}
+      poster={poster}
+      posterAlt={posterAlt}
+      eager
+    />
+  </div>
+
+  <figcaption class="article-hero-caption">
+    <span class="article-hero-caption-text">
+      <span class="article-hero-video-kicker">Watch</span>
+      {companion.title}
+      {caption && <span class="article-hero-video-note"> · {caption}</span>}
+    </span>
+    <a
+      class="article-hero-caption-credit article-hero-video-out"
+      href={companion.url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {companion.kicker} →
+    </a>
+  </figcaption>
+</figure>
+
+<style>
+  .article-hero {
+    margin: 0 0 56px;
+  }
+  .article-hero-frame {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  .article-hero-caption {
+    max-width: 820px;
+    margin: 16px auto 0;
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  @media (min-width: 768px) {
+    .article-hero-caption {
+      flex-direction: row;
+      gap: 28px;
+      align-items: baseline;
+    }
+  }
+  .article-hero-caption-text {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+    flex: 1;
+  }
+  .article-hero-video-kicker {
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-right: 10px;
+  }
+  .article-hero-video-note {
+    font-style: italic;
+  }
+  .article-hero-caption-credit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .article-hero-video-out {
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-ink, #1A1208);
+    border-bottom-color: rgba(26, 18, 8, 0.25);
+    padding-bottom: 2px;
+  }
+  .article-hero-video-out:hover {
+    color: var(--rust);
+    border-bottom-color: var(--rust);
+  }
+  @media (max-width: 640px) {
+    .article-hero-frame, .article-hero-caption { padding: 0 24px; }
+  }
+</style>
