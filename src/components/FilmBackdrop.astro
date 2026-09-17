@@ -1,0 +1,109 @@
+---
+/**
+ * A silent film behind a whole page, for the single-screen surfaces
+ * that are one decision and nothing else.
+ *
+ * The poster is painted on the container rather than left to the
+ * <video>, so the screen is never empty: no JavaScript, a refused
+ * autoplay, or a stated preference against motion all leave the frame
+ * standing. The source is attached in script rather than declared in
+ * the markup, so a visitor who asked for reduced motion or is saving
+ * data never downloads a film in order to hide it.
+ */
+
+import type { Film } from '../data/films';
+
+interface Props {
+  film: Film;
+}
+
+const { film } = Astro.props;
+---
+
+<div class="film" aria-hidden="true" style={`background-image: url(${film.poster});`}>
+  <video
+    class="film__video"
+    muted
+    loop
+    playsinline
+    preload="none"
+    poster={film.poster}
+    data-src={film.mp4}></video>
+</div>
+
+<script is:inline>
+  (function () {
+    'use strict';
+
+    var video = document.querySelector('.film__video');
+    if (!video) return;
+
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var conn = navigator.connection || {};
+
+    function wanted() {
+      return !reduced.matches && !conn.saveData;
+    }
+
+    /* Autoplay gets refused even for muted inline video — iOS in Low
+       Power Mode is the common case, and that is a real reader. The
+       poster is already up, so nothing looks broken; the first real
+       gesture is one free second chance, then we stop asking. */
+    function play() {
+      var p = video.play();
+      if (!p || !p.catch) return;
+      p.catch(function () {
+        var events = ['pointerdown', 'touchstart', 'keydown'];
+        var retry = function () {
+          events.forEach(function (e) { window.removeEventListener(e, retry); });
+          var again = video.play();
+          if (again && again.catch) again.catch(function () {});
+        };
+        events.forEach(function (e) {
+          window.addEventListener(e, retry, { once: true, passive: true });
+        });
+      });
+    }
+
+    if (wanted()) {
+      var source = document.createElement('source');
+      source.src = video.getAttribute('data-src');
+      source.type = 'video/mp4';
+      video.appendChild(source);
+      video.load();
+      play();
+    }
+  })();
+</script>
+
+<style>
+  .film {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background-color: var(--navy);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  .film__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* A wash over the footage so a card holds on every frame of it,
+     not just on the poster. */
+  .film::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 100% at 50% 50%, rgba(27, 46, 75, 0.28) 0%, rgba(27, 46, 75, 0.66) 100%),
+      linear-gradient(to bottom, rgba(27, 46, 75, 0.58) 0%, rgba(27, 46, 75, 0.2) 42%, rgba(27, 46, 75, 0.62) 100%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .film__video { display: none; }
+  }
+</style>

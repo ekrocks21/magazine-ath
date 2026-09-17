@@ -1,143 +1,243 @@
 ---
 /**
- * /signin — minimal magic-link email page.
+ * /signin — one screen, one thing to do.
  *
- * Standalone surface so the paywall card on gated articles has
- * somewhere to link to for existing subscribers. Shares the main
- * /subscribe page for full plan context and sign-in UI; this page
- * is the short version.
+ * A card over the same film the landing page opens on, with no
+ * masthead and no footer: a reader who came here came to get in, and
+ * everything else is a way to leave without doing it.
  *
- * Because this is a STATIC Astro page, we can't branch server-side on
- * ?sent=1 — that would evaluate at build time, not request time. Both
- * states are rendered, and a tiny inline script flips between them
- * based on `location.search` at load.
+ * This is a STATIC page, so it cannot branch server-side on ?sent=1 —
+ * that would evaluate at build time, not per request. Both states are
+ * rendered and a small script picks one at load.
  */
 
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BareLayout from '../layouts/BareLayout.astro';
+import FilmBackdrop from '../components/FilmBackdrop.astro';
+import { TWIN_LIGHTS } from '../data/films';
 ---
 
-<BaseLayout
+<BareLayout
   title="Sign in — The Local Lookout"
   description="Sign in to The Local Lookout with a magic link."
   ogImage="/og/default.png"
 >
-  <section style="padding: 120px 0; background: var(--navy); color: var(--on-dark-1); min-height: 60vh;">
-    <div class="mag-container-narrow" style="text-align: center;">
-      <div
-        style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand-light); margin-bottom: 24px;"
-      >
-        <span style="color: var(--rust-light);">—</span>&nbsp;&nbsp;Sign in
-      </div>
+  <FilmBackdrop film={TWIN_LIGHTS} />
 
-      <div data-signin-state="sent" hidden>
-        <h1
-          style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); color: #fff; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px;"
-        >
-          Check your email.
-        </h1>
-        <p
-          style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--on-dark-3); max-width: 540px; margin: 0 auto 28px;"
-        >
-          We sent you a sign-in link. It expires in 15 minutes.
-          Close this tab and click the link in your inbox.
-        </p>
-        <p
-          style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand);"
-        >
-          Didn't arrive? Check your spam folder or
-          <a href="/signin" style="color: var(--rust-light); text-decoration: underline;">try again</a>.
-        </p>
-      </div>
+  <!-- Transparent bar: the mark, and nothing to leave by. -->
+  <header class="bar">
+    <a href="/" class="mark" aria-label="The Local Lookout — home">
+      <span class="mark__sup">Above the Hook · Quarterly</span>
+      <span class="mark__main">The Local <em>Lookout</em></span>
+    </a>
+  </header>
 
-      <div data-signin-state="form">
-        <h1
-          style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); color: #fff; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px;"
-        >
-          Sign in with a magic link.
-        </h1>
-        <p
-          style="font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--on-dark-3); max-width: 540px; margin: 0 auto 32px;"
-        >
+  <main class="stage">
+    <div class="card">
+      <!-- After the link is sent -->
+      <section data-signin-state="sent" hidden>
+        <p class="card__kicker">Check your email</p>
+        <h1 class="card__title">The link is on its way.</h1>
+        <p class="card__lede">
+          It expires in fifteen minutes. Close this tab and open the
+          link from your inbox.
+        </p>
+        <p class="card__foot">
+          Didn't arrive? Check your spam folder, or
+          <a href="/signin">try again</a>.
+        </p>
+      </section>
+
+      <!-- Before it is -->
+      <section data-signin-state="form">
+        <p class="card__kicker">Sign in</p>
+        <h1 class="card__title">Sign in with a magic link.</h1>
+        <p class="card__lede">
           Type the email you subscribed with. We'll send a one-click
-          sign-in link — no password, no newsletter.
+          link — no password, and no newsletter.
         </p>
-        <form class="signin-form" method="POST" action="/api/login-request">
+        <form class="signin" method="POST" action="/api/login-request">
           <input
             type="email"
             name="email"
             required
             autocomplete="email"
             placeholder="your@email.com"
-            class="signin-input"
+            class="signin__input"
             aria-label="Email address"
-            autofocus
           />
-          <button type="submit" class="signin-button">
-            Send sign-in link <span class="arrow">→</span>
+          <button type="submit" class="btn btn--primary">
+            Send the link
           </button>
         </form>
-        <p
-          style="margin-top: 20px; font-family: var(--font-body); font-size: 14px; color: var(--on-dark-3);"
-        >
-          Not a subscriber yet? <a href="/subscribe" style="color: var(--rust-light); text-decoration: underline;">Subscribe</a>.
+        <p class="card__foot">
+          Not a subscriber yet? <a href="/subscribe">Subscribe</a>.
         </p>
-      </div>
+      </section>
     </div>
-  </section>
+  </main>
 
   <script is:inline>
     (function () {
-      var params = new URLSearchParams(window.location.search);
-      var isSent = params.get('sent') === '1';
-      var sentEl = document.querySelector('[data-signin-state="sent"]');
-      var formEl = document.querySelector('[data-signin-state="form"]');
-      if (!sentEl || !formEl) return;
-      if (isSent) {
-        sentEl.removeAttribute('hidden');
-        formEl.setAttribute('hidden', '');
-      }
+      if (new URLSearchParams(location.search).get('sent') !== '1') return;
+      var sent = document.querySelector('[data-signin-state="sent"]');
+      var form = document.querySelector('[data-signin-state="form"]');
+      if (!sent || !form) return;
+      sent.hidden = false;
+      form.hidden = true;
     })();
   </script>
-</BaseLayout>
+</BareLayout>
 
 <style>
-  .signin-form {
-    display: flex;
-    gap: 12px;
-    max-width: 520px;
-    margin: 0 auto;
-    flex-wrap: wrap;
+  /* ── Transparent bar: the mark only ───────────────────────────── */
+  .bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 22px 28px;
   }
-  .signin-input {
-    flex: 1;
-    min-width: 220px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    color: #fff;
-    padding: 14px 16px;
-    font-family: var(--font-body);
-    font-size: 15px;
+  .mark {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 3px;
+    text-decoration: none;
   }
-  .signin-input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-  .signin-input:focus {
-    outline: 2px solid var(--rust-light, #C4583E);
-    outline-offset: -1px;
-  }
-  .signin-button {
-    background: var(--rust);
-    color: #fff;
-    border: 0;
-    padding: 14px 24px;
+  .mark__sup {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--on-dark-4);
+  }
+  .mark__main {
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--on-dark-1);
+    line-height: 1;
+  }
+  .mark__main em {
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  /* ── The card, centred on the screen ──────────────────────────── */
+  .stage {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 84px 20px 28px;
+    box-sizing: border-box;
+  }
+  .card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--paper);
+    border: 1px solid rgba(201, 185, 154, 0.5);
+    box-shadow: 0 24px 60px rgba(16, 25, 43, 0.4);
+    padding: 30px 30px 22px;
+    text-align: center;
+    max-height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+  .card__kicker {
+    font-family: var(--font-mono);
+    font-size: 10px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
+    color: var(--rust);
+    margin: 0 0 10px;
+  }
+  .card__title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+  .card__lede {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+  }
+  .card__foot {
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin: 16px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--sand-light);
+  }
+  .card__foot a {
+    color: var(--rust);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ── The form ─────────────────────────────────────────────────── */
+  .signin {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .signin__input {
+    width: 100%;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid var(--sand);
+    color: var(--ink);
+    padding: 13px 14px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    text-align: center;
+  }
+  .signin__input::placeholder {
+    color: var(--muted, #6B6158);
+  }
+  .signin__input:focus {
+    outline: 2px solid var(--rust);
+    outline-offset: -1px;
+  }
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 13px 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border: 0;
     cursor: pointer;
+    box-sizing: border-box;
+  }
+  .btn--primary {
+    background: var(--rust);
+    color: #fff;
     transition: background 0.15s ease-out;
   }
-  .signin-button:hover {
-    background: var(--rust-light, #C4583E);
+  .btn--primary:hover {
+    background: var(--rust-light);
+  }
+
+  @media (max-height: 560px) {
+    .card__lede { display: none; }
+    .card { padding: 22px 24px 16px; }
+    .stage { padding-top: 72px; }
+  }
+  @media (max-width: 420px) {
+    .bar { padding: 16px 18px; }
+    .mark__main { font-size: 18px; }
+    .card { padding: 24px 22px 18px; }
   }
 </style>
