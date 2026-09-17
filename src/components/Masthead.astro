@@ -259,6 +259,10 @@ const links = [
   /* Subscribe is a conversion, Account is a utility, so they are not
      asking for the same amount of attention. */
   .mast__cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    box-sizing: border-box;
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.2em;
@@ -298,6 +302,9 @@ const links = [
     background: none;
     border: 0;
     cursor: pointer;
+    /* 44px of hit area, without 44px of ink. */
+    min-width: 44px;
+    min-height: 44px;
     padding: 10px;
     margin: -10px;
     color: var(--on-dark-2);
@@ -388,6 +395,8 @@ const links = [
     gap: 2px;
   }
   .menu__primary a {
+    display: block;
+    min-height: 44px;
     font-family: var(--font-display);
     font-size: clamp(2rem, 5.4vw, 3.5rem);
     font-weight: 400;
@@ -430,7 +439,7 @@ const links = [
     .menu__bar { padding: 16px 18px; }
     .boxmark { font-size: 15px; letter-spacing: 0.14em; padding: 4px 8px 5px; }
     .mast__end { gap: 12px; }
-    .mast__cta { font-size: 9px; letter-spacing: 0.16em; padding: 7px 9px; }
+    .mast__cta { font-size: 11px; letter-spacing: 0.14em; padding: 9px 10px; }
     .menu__primary { padding: 16px 18px; gap: 0; }
     .menu__foot { padding: 20px 18px 26px; }
   }

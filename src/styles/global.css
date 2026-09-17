@@ -35,7 +35,7 @@
 
   --color-sand: #C9B99A;
   --color-sand-light: #E0D5C0;
-  --color-muted: #7A6F5F;
+  --color-muted: #6E6455;
 
   /* On-dark (navy surfaces) */
   --color-on-dark-1: #FFFFFF;
@@ -72,7 +72,7 @@
   --ink-soft: #3D3020;
   --sand: #C9B99A;
   --sand-light: #E0D5C0;
-  --muted: #7A6F5F;
+  --muted: #6E6455;
   --on-dark-1: #FFFFFF;
   --on-dark-2: #F5F0E8;
   --on-dark-3: #E0D5C0;
@@ -813,6 +813,22 @@ body[data-hero-fullbleed] .mag-masthead.is-solid .mag-rust-rule {
 }
 
 /* Lightbox overlay injected by Gallery's script. */
+/* ── Keyboard focus ──────────────────────────────────────────────
+   A baseline for everything interactive, so a keyboard is never lost.
+   Components on navy override the colour; this covers the rest. Only
+   :focus-visible, so a mouse click never draws a ring. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--rust);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
 .ath-lightbox {
   position: fixed;
   inset: 0;
