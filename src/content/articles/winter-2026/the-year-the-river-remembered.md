@@ -20,7 +20,7 @@ tags:
 hero_image: ./frozen-bay.jpg
 hero_image_alt: "Sandy Hook Bay frozen over, seen from Mount Mitchill, with Manhattan faint on the horizon."
 hero_image_credit: "Eric / Above the Hook"
-publish_date: 2026-03-31
+publish_date: 2026-03-13
 ---
 
 The Navesink froze in January and the whole town went quiet like the river had finally said what it had been thinking for the last ten years.

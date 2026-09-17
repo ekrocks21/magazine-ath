@@ -18,7 +18,7 @@ tags:
 hero_image: ./hook-beach-summer.jpg
 hero_image_alt: "Sandy Hook seen from the Highlands bluff on a summer afternoon — a crowded beach of umbrellas along the spit, blue bay water, and the Manhattan skyline low on the horizon."
 hero_image_credit: "Eric / Above the Hook"
-publish_date: 2026-07-25
+publish_date: 2026-09-15
 ---
 
 There is a morning in early summer when you step out onto the porch with your coffee and the bay is already busy.

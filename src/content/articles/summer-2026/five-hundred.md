@@ -45,7 +45,7 @@ gallery:
     alt: "Painted interpretation of a humpback breaching at sunset, seen across the rooftops of a coastal town."
     caption: "The whales came back to water that spent forty years becoming worth returning to."
     credit: "AI interpretation / Above the Hook"
-publish_date: 2026-07-25
+publish_date: 2026-09-15
 ---
 
 On the last Sunday in July, a humpback lunged through a school of bunker off Sandy Hook with its mouth open and forty feet of the Atlantic came up with it. The boat that saw it was carrying paying passengers out of Belmar. The whale went down, came up again, and did it twice more. It was a Sunday afternoon on one of the busiest stretches of coastline in the country, and there was a whale feeding in it.

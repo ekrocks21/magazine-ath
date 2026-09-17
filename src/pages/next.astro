@@ -2,24 +2,29 @@
 /**
  * /next — The next issue preview page
  *
- * Shows the nearest future issue (ship_date > today). If no future issue
- * exists, we still render a quiet "next issue in progress" page so the link
- * from the masthead never 404s.
+ * Shows the nearest issue that has not come out yet. If none exists, we
+ * still render a quiet "next issue in progress" page so the link from the
+ * masthead never 404s.
+ *
+ * Keyed to publish_date, not ship_date: print goes in the post a couple of
+ * weeks after an issue is out, so an issue can be current and still
+ * unshipped. Sorting on ship_date announced the issue people were already
+ * reading as the one coming next.
  */
 
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CoverImage from '../components/CoverImage.astro';
+import { isForthcoming } from '../utils/current-issue';
 
 const issues = await getCollection('issues');
-const NOW = Date.now();
 
 const futureIssues = issues
-  .filter((i) => (i.data.ship_date?.valueOf() ?? 0) > NOW)
+  .filter((i) => isForthcoming(i.data.publish_date))
   .sort(
     (a, b) =>
-      (a.data.ship_date?.valueOf() ?? 0) -
-      (b.data.ship_date?.valueOf() ?? 0),
+      (a.data.publish_date?.valueOf() ?? 0) -
+      (b.data.publish_date?.valueOf() ?? 0),
   );
 
 const nextIssue = futureIssues[0];
@@ -29,8 +34,8 @@ const nextNumber = data ? String(data.issue_number).padStart(2, '0') : '—';
 const seasonLabel = data
   ? data.season.charAt(0).toUpperCase() + data.season.slice(1)
   : '';
-const publishLabel = data?.ship_date
-  ? data.ship_date.toLocaleDateString('en-US', {
+const publishLabel = data?.publish_date
+  ? data.publish_date.toLocaleDateString('en-US', {
       month: 'long',
       year: 'numeric',
       timeZone: 'UTC',

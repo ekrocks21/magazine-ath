@@ -22,7 +22,7 @@ tags:
   - robert_juet
   - henry_hudson
   - halve_maen
-publication_date: 2026-04-01
+publication_date: 2026-06-14
 companion_to: blog-sandy-hook-geography
 ---
 

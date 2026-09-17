@@ -41,7 +41,7 @@ gallery:
     alt: "The open back of a truck at sunset loaded with full trash bags collected from the beach."
     caption: "Roughly seven hundred pounds, hauled out at dusk."
     credit: "Eric / Above the Hook"
-publish_date: 2026-07-25
+publish_date: 2026-09-15
 ---
 
 A few days before the cleanup, we walked Plum Island at low tide to see what we were getting into.

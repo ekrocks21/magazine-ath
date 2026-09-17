@@ -35,7 +35,7 @@ gallery:
     alt: "Manhattan catching golden hour from Mount Mitchill."
     caption: "Golden hour from Mount Mitchill"
     credit: "Eric / Above the Hook"
-publish_date: 2026-03-31
+publish_date: 2026-03-13
 ---
 
 <figure class="article-video">

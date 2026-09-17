@@ -24,7 +24,7 @@ tags:
   - navesink_river
   - wildlife_recovery
   - ddt
-publication_date: 2026-04-01
+publication_date: 2026-06-14
 ---
 
 # The Pair That Comes Back

@@ -4,8 +4,8 @@ issue_number: 3
 season: summer
 year: 2026
 status: published
-publish_date: 2026-07-25
-ship_date: 2026-08-01
+publish_date: 2026-09-15
+ship_date: 2026-09-30
 theme: "The Season Has Arrived"
 tagline: "Forty-eight tall ships crossing our bay before they saw Manhattan, the water that turned Caribbean blue, five hundred humpbacks counted one tail at a time, seven hundred pounds off Plum Island on a Sunday evening, and the girl who learned to swim at the bottom of our street and then swam the Channel faster than any man had."
 lineup:

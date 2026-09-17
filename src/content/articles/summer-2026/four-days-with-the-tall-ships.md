@@ -51,7 +51,7 @@ gallery:
     alt: "Aerial view along the tip of Sandy Hook with the harbor and the Manhattan skyline beyond."
     caption: "One deepwater approach, and it runs past here."
     credit: "Eric / Above the Hook"
-publish_date: 2026-07-25
+publish_date: 2026-09-15
 ---
 
 We did not watch this on a livestream. We have a livestream. We built it, it points at this exact water, and for four days in July we ignored it, because the only place to be that week was out on the bay with the engine running.

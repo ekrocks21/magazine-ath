@@ -28,7 +28,7 @@ tags:
   - verrazzano_narrows_bridge
   - sandy_hook_pilots
   - ambrose_channel
-publication_date: 2026-04-01
+publication_date: 2026-06-14
 companion_to: video-ferry-best-commute
 ---
 

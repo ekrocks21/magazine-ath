@@ -14,7 +14,7 @@ pillar: editors_letter
 hero_image: ./hilltop-view.jpg
 hero_image_alt: "View from Highlands down the Navesink toward Sandy Hook, with Manhattan on the horizon."
 hero_image_credit: "Eric / Above the Hook"
-publish_date: 2026-03-31
+publish_date: 2026-03-13
 ---
 
 There's a spot on top of Highlands where you can see everything at once.

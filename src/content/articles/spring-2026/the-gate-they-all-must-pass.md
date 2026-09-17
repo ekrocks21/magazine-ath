@@ -55,7 +55,7 @@ gallery:
   - src: ./eagle-under-sail.jpg
     alt: "The Coast Guard barque Eagle under sail, flying the national ensign."
     credit: "Sail4th250"
-publication_date: 2026-04-01
+publication_date: 2026-06-14
 ---
 
 There is a moment, when approaching New York Harbor from the Atlantic, when the coast resolves out of the haze and you know where you are. The hills above Sandy Hook. The lighthouse that has burned there without interruption since 1764. The same mark that Giovanni da Verrazzano described in 1524, that Henry Hudson noted in 1609, that two million immigrants fixed their eyes on as they arrived at Ellis Island. This July, it will be the first thing seen by the crews of some of the most extraordinary sailing vessels on earth.

@@ -51,7 +51,7 @@ gallery:
     alt: "Aerial view today of the Highlands bridge, the Shrewsbury River, and the northern end of Sandy Hook."
     caption: "The same ground now. The house stands at the foot of the ramp."
     credit: "Eric / Above the Hook"
-publish_date: 2026-07-25
+publish_date: 2026-09-15
 ---
 
 There is a house at the foot of the Highlands Bridge that most people barely notice. They drive over the bridge, off the span, down the ramp toward Sandy Hook, the ocean opening up on the left, and they pass within a hundred feet of it without knowing it is there. It stands in the shadow of the ramp, white cedar shake gone gray, windows boarded, a two-story square frame house with a hip roof and a bay front, facing a road that brings you in and out of the park.

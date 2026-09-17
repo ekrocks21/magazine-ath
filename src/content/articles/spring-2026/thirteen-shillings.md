@@ -23,7 +23,7 @@ tags:
   - lenape
   - monmouth_county_history
   - colonial_new_jersey
-publication_date: 2026-04-01
+publication_date: 2026-06-14
 ---
 
 # Thirteen Shillings

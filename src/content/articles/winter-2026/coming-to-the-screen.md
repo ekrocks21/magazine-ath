@@ -21,7 +21,7 @@ tags:
 hero_image: ./twin-lights-sunrise.jpg
 hero_image_alt: "Sunrise over the Twin Lights of Navesink — the first landfall the earliest settlers saw, and the ranging lights that first used electricity in the United States."
 hero_image_credit: "Eric / Above the Hook"
-publish_date: 2026-03-31
+publish_date: 2026-03-13
 ---
 
 Sixty seconds is not enough.

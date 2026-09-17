@@ -50,7 +50,7 @@ gallery:
     alt: "Aerial view at sunset looking down over Highlands and out across Sandy Hook Bay toward the Hook."
     caption: "The sightline from the hill: down Miller Street, into the bay, out to the Hook."
     credit: "Eric / Above the Hook"
-publish_date: 2026-07-25
+publish_date: 2026-09-15
 ---
 
 There is a street in this town that starts at the bay and does not stop. It comes up out of the water at Miller Beach, climbs the hill, crosses the highway, and keeps going under a different name. Our house is on the upper half of it. The lower half is where Trudy Ederle learned to swim.

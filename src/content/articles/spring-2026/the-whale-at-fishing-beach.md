@@ -26,7 +26,7 @@ tags:
   - vessel_strike
   - new_york_bight
   - conservation
-publication_date: 2026-04-01
+publication_date: 2026-06-14
 companion_to: harbor-live
 ---
 

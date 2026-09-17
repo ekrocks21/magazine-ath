@@ -41,7 +41,7 @@ gallery:
     alt: "The long sand spit of Sandy Hook curving into flat blue water under a clear sky."
     caption: "By late summer it had gone back to a workmanlike gray-green."
     credit: "Eric / Above the Hook"
-publish_date: 2026-07-25
+publish_date: 2026-09-15
 ---
 
 There is a specific double-take that happened up and down this coast in May, and if you were here you had it.

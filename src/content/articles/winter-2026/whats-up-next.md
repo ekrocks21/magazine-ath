@@ -14,7 +14,7 @@ pillar: editors_letter
 hero_image: ./spring-preview.jpg
 hero_image_alt: "Late-winter light on the bay, a coastline waking up."
 hero_image_credit: "Eric / Above the Hook"
-publish_date: 2026-03-31
+publish_date: 2026-03-13
 ---
 
 Spring is when this coast wakes up. Here's what we're bringing with it.
