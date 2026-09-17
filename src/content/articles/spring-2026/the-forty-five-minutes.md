@@ -9,6 +9,9 @@ year: 2026
 author: Eric
 byline: "Eric"
 dek: "There is a ferry that leaves Atlantic Highlands every morning and nobody who rides it ever takes it for granted. A round-trip across the most important piece of water in American history — and back."
+hero_image: ./wheelhouse-and-the-bridge.jpg
+hero_image_alt: "The view forward from a ferry's cabin, a suspension bridge crossing the water ahead."
+hero_image_credit: "Above the Hook"
 status: published
 word_count: 1820
 access: free

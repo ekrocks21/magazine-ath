@@ -8,6 +8,9 @@ year: 2026
 author: Eric
 byline: "Eric"
 dek: "In September 1609, an English mariner wrote the first known description of the Navesink Highlands. The land has been answering back ever since."
+hero_image: ./the-hook-from-the-air.jpg
+hero_image_alt: "Sandy Hook and the town below it from the air, the bay opening out past the spit under a clear sky."
+hero_image_credit: "Above the Hook"
 status: published
 word_count: 1640
 access: free

@@ -9,6 +9,9 @@ year: 2026
 author: Eric
 byline: "Eric"
 dek: "Ospreys almost disappeared from this coast. They didn't. Every spring, one pair returns to the same platform at the edge of the Hook and begins, again, the work of making more of themselves."
+hero_image: ./osprey-on-the-nest.jpg
+hero_image_alt: "An osprey standing on a large stick nest built on a piling above the water."
+hero_image_credit: "Above the Hook"
 status: published
 word_count: 1550
 access: free

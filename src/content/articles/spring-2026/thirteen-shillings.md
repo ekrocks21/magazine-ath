@@ -8,6 +8,9 @@ year: 2026
 author: Eric
 byline: "Eric"
 dek: "In 1680, a Quaker merchant from Yorkshire paid less than a pound sterling for Sandy Hook. What he bought, and what he believed he was buying, were two very different things."
+hero_image: ./the-white-house-at-the-bend.jpg
+hero_image_alt: "A white clapboard house set back behind a bare tree and a circular drive."
+hero_image_credit: "Above the Hook"
 status: published
 word_count: 2050
 access: free

@@ -8,6 +8,9 @@ year: 2026
 author: Eric
 byline: "Eric, from the hill"
 dek: ""
+hero_image: ./coast-at-dusk.jpg
+hero_image_alt: "A coastal town seen from the air at dusk, the bay and a long sand point beyond it under low cloud."
+hero_image_credit: "Above the Hook"
 status: published
 word_count: 560
 access: free

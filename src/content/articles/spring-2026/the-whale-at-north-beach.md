@@ -9,6 +9,9 @@ year: 2026
 author: Eric
 byline: "Eric"
 dek: "A young female humpback washed ashore at Sandy Hook on the first of April. I drove out to see her. I did not look."
+hero_image: ./humpback-breaching.jpg
+hero_image_alt: "A humpback whale breaching in flat water off a low shoreline."
+hero_image_credit: "Above the Hook"
 status: published
 word_count: 1740
 access: free
