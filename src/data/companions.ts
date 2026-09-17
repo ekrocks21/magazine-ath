@@ -79,6 +79,15 @@ export const COMPANIONS: Record<string, Companion> = {
     summary: 'The Van Nostrand Ice Boat Challenge, sailed again in 2026.',
   },
 
+  'video-tall-ships-four-days': {
+    title: 'The World Sailed Into Our Backyard',
+    url: 'https://www.youtube.com/watch?v=1W1yvWm06iM',
+    platform: 'youtube',
+    kicker: 'Watch on YouTube',
+    videoId: '1W1yvWm06iM',
+    summary: 'Four days with the tall ships of Sail4th 250.',
+  },
+
   // ─── Harbor Observatory ────────────────────────────────────────
   'harbor-live': {
     title: 'Watch live from the Hook',

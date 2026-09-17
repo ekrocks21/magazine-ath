@@ -11,6 +11,7 @@ status: published
 word_count: 1700
 access: free
 pillar: documentary
+companion_to: video-tall-ships-four-days
 tags:
   - sail4th_250
   - tall_ships
