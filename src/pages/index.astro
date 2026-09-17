@@ -182,7 +182,7 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     {
       currentSection && (
         <a class="hero__jump" href="#current-issue">
-          <span class="hero__issue">{issueName(currentSection.issue)}</span>
+          <h1 class="hero__issue">{issueName(currentSection.issue)}</h1>
           <span class="hero__cue" aria-hidden="true" />
           <span class="sr-only">Skip to the current issue</span>
         </a>
@@ -233,18 +233,6 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     ))
   }
 
-  <!-- ── What this is, after you have seen what is in it ───────── -->
-  <section class="statement">
-    <div class="statement__inner">
-      <p class="statement__kicker">Above the Hook · Quarterly</p>
-      <h1 class="statement__title">The Local <em>Lookout</em></h1>
-      <p class="statement__dek">
-        Four issues a year about this stretch of coast — the harbor, the
-        history, and the people still living it. The current issue is
-        free to read, in full.
-      </p>
-    </div>
-  </section>
 
   <script is:inline>
     (function () {
@@ -365,6 +353,7 @@ function tagFor(a: CollectionEntry<'articles'>): string {
     padding: 0 24px;
   }
   .hero__issue {
+    margin: 0;
     font-family: var(--font-display);
     font-size: clamp(2.4rem, 8vw, 6.4rem);
     font-weight: 700;
@@ -468,8 +457,6 @@ function tagFor(a: CollectionEntry<'articles'>): string {
   }
 
   @media (max-width: 640px) {
-    .statement { padding: 60px 0 68px; }
-    .statement__inner { padding: 0 18px; }
     .issue { padding-top: 44px; scroll-margin-top: 60px; }
     /* Stacked: the cover stops being a column and becomes a plate
        above the lead, at a size that does not eat the screen. */
