@@ -29,7 +29,7 @@ tags:
   - sandy_hook_pilots
   - ambrose_channel
 publication_date: 2026-04-01
-companion_to: video-from-the-hook-to-34th-street
+companion_to: video-ferry-best-commute
 ---
 
 # The Forty-Five Minutes

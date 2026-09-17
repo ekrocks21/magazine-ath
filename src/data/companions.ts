@@ -49,13 +49,6 @@ export interface Companion {
 
 export const COMPANIONS: Record<string, Companion> = {
   // ─── Studios video ─────────────────────────────────────────────
-  'video-from-the-hook-to-34th-street': {
-    title: 'From the Hook to 34th Street',
-    url: 'https://www.youtube.com/@abovethehookstudios',
-    platform: 'youtube',
-    kicker: 'Watch on YouTube',
-  },
-
   'video-highland-beach-last-building': {
     title: 'The Last Building on Sandy Hook\u2019s Lost Beach',
     url: 'https://www.youtube.com/watch?v=ZDJviT1dhao',
@@ -64,6 +57,26 @@ export const COMPANIONS: Record<string, Companion> = {
     videoId: 'ZDJviT1dhao',
     summary:
       'Why the one house the state left standing on the old resort ground is worth keeping.',
+  },
+
+  'video-ferry-best-commute': {
+    title: 'The Best Commute in America is from Jersey to NYC',
+    url: 'https://www.youtube.com/watch?v=lwkiBUg_hPc',
+    platform: 'youtube',
+    kicker: 'Watch on YouTube',
+    videoId: 'lwkiBUg_hPc',
+    summary:
+      'The forty-five minutes from the Highlands dock to 34th Street, run end to end.',
+  },
+
+  'video-iceboat-van-nostrand': {
+    title:
+      'The $100,000 Tiffany Trophy That Sat in a Vault for 135 Years',
+    url: 'https://www.youtube.com/watch?v=CrpCjiu09xs',
+    platform: 'youtube',
+    kicker: 'Watch on YouTube',
+    videoId: 'CrpCjiu09xs',
+    summary: 'The Van Nostrand Ice Boat Challenge, sailed again in 2026.',
   },
 
   // ─── Harbor Observatory ────────────────────────────────────────

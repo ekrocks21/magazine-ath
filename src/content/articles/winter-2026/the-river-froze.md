@@ -11,6 +11,7 @@ status: published
 word_count: 720
 access: free
 pillar: documentary
+companion_to: video-iceboat-van-nostrand
 tags:
   - navesink_river
   - ice_boating
