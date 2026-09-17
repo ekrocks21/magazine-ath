@@ -198,18 +198,6 @@ function tagFor(a: CollectionEntry<'articles'>): string {
         class="issue"
         id={sec === currentSection ? 'current-issue' : undefined}
       >
-        <header class="issue__head">
-          <p class="issue__meta">
-            {sec.forthcoming
-              ? 'Up next'
-              : `Issue ${String(sec.issue.data.issue_number).padStart(2, '0')}`}
-          </p>
-          <h2 class="issue__name">{issueName(sec.issue)}</h2>
-          {sec.issue.data.theme && (
-            <p class="issue__theme">{sec.issue.data.theme}</p>
-          )}
-        </header>
-
         <div class="issue__lead">
           <a class="issue__cover" href={`/issues/${sec.slug}`}>
             {sec.issue.data.cover_image && (
@@ -411,36 +399,22 @@ function tagFor(a: CollectionEntry<'articles'>): string {
   }
 
   /* ── One issue ────────────────────────────────────────────────
-     Its name, then the cover beside the piece the issue is about,
-     then everything else it ran. */
-  .issue__head {
-    padding: 0 28px 26px;
+     The cover beside the piece the issue is about, then everything
+     else it ran. The issue is not titled here: the film overhead
+     names the current one, and the tag on every card carries the
+     issue it ran in. A heading between the two only collided with
+     the mark floating over the page. */
+
+  .issue {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 60px 0 0;
+    /* The bar is fixed over this page, so an anchor landing flush at
+       the top would land underneath it. */
+    scroll-margin-top: 76px;
   }
-  .issue__meta {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--rust-light);
-    margin: 0 0 10px;
-  }
-  .issue__name {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 4.6vw, 3.2rem);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: -0.015em;
-    line-height: 1.02;
-    color: var(--on-dark-1);
-    margin: 0 0 10px;
-  }
-  .issue__theme {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: clamp(1.05rem, 1.9vw, 1.35rem);
-    line-height: 1.4;
-    color: var(--on-dark-3);
-    margin: 0;
+  .issue:last-of-type {
+    padding-bottom: 84px;
   }
 
   /* Cover left, the issue's lead piece right. */
@@ -496,8 +470,7 @@ function tagFor(a: CollectionEntry<'articles'>): string {
   @media (max-width: 640px) {
     .statement { padding: 60px 0 68px; }
     .statement__inner { padding: 0 18px; }
-    .issue { padding-top: 44px; }
-    .issue__head { padding: 0 18px 20px; }
+    .issue { padding-top: 44px; scroll-margin-top: 60px; }
     /* Stacked: the cover stops being a column and becomes a plate
        above the lead, at a size that does not eat the screen. */
     .issue__lead {

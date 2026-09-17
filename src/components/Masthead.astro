@@ -154,6 +154,25 @@ const links = [
     openBtn.addEventListener('click', open);
     closeBtn.addEventListener('click', close);
 
+    /* On a page that opens with full-bleed artwork the bar floats over
+       it, transparent. That only works while the artwork is under it —
+       once the page scrolls on, a transparent bar lies across whatever
+       comes next. So it takes a background as soon as the opening
+       screen is behind you. */
+    const mast = document.querySelector<HTMLElement>('.mast');
+    const opener = document.querySelector<HTMLElement>('main > *');
+    if (mast && opener && document.body.hasAttribute('data-hero-fullbleed')) {
+      const settle = () => {
+        mast.classList.toggle(
+          'is-solid',
+          window.scrollY > opener.offsetHeight - mast.offsetHeight,
+        );
+      };
+      window.addEventListener('scroll', settle, { passive: true });
+      window.addEventListener('resize', settle, { passive: true });
+      settle();
+    }
+
     /* Swap every Subscribe slot for Account once we know there is a
        session — the one in the bar and the one in the menu. Runs on
        load rather than on open, so the menu is right the first time it
@@ -221,6 +240,11 @@ const links = [
     left: 0;
     right: 0;
     background: transparent;
+    transition: background 0.25s ease-out;
+  }
+  /* Past the opening screen it needs ground under it again. */
+  :global(body[data-hero-fullbleed]) .mast.is-solid {
+    background: var(--navy);
   }
 
   .mast__end {
