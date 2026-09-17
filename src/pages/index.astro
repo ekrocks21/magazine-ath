@@ -24,6 +24,7 @@ import ArticleTile from '../components/ArticleTile.astro';
 import StructuredData from '../components/StructuredData.astro';
 import { TWIN_LIGHTS } from '../data/films';
 import { articleRoute } from '../utils/article-route';
+import { getCompanion } from '../data/companions';
 import { siteWebSite, siteOrganization } from '../utils/structured-data';
 
 /**
@@ -145,6 +146,12 @@ const issueSections = orderedIssues.map((issue) => {
  */
 const currentSection = issueSections.find((sec) => !sec.forthcoming) ?? null;
 
+/** True when a piece opens on a film, so its card can say so. */
+function hasVideo(a: CollectionEntry<'articles'>): boolean {
+  const c = getCompanion(a.data.companion_to);
+  return !!(c && c.platform === 'youtube' && c.videoId);
+}
+
 /** The tag under a tile: section, then the issue it ran in. */
 function tagFor(a: CollectionEntry<'articles'>): string {
   const section = SECTION_LABEL[a.data.type] ?? a.data.type;
@@ -227,7 +234,7 @@ function tagFor(a: CollectionEntry<'articles'>): string {
           </a>
 
           {sec.lead ? (
-            <ArticleTile article={sec.lead} tag={tagFor(sec.lead)} lead />
+            <ArticleTile article={sec.lead} tag={tagFor(sec.lead)} hasVideo={hasVideo(sec.lead)} lead />
           ) : (
             <p class="issue__soon">
               {sec.issue.data.tagline ?? 'Still being made.'}
@@ -238,7 +245,7 @@ function tagFor(a: CollectionEntry<'articles'>): string {
         {sec.rest.length > 0 && (
           <div class="issue__grid">
             {sec.rest.map((a) => (
-              <ArticleTile article={a} tag={tagFor(a)} />
+              <ArticleTile article={a} tag={tagFor(a)} hasVideo={hasVideo(a)} />
             ))}
           </div>
         )}

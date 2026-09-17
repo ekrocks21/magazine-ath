@@ -19,6 +19,7 @@ import Gallery from '../../../components/Gallery.astro';
 import CompanionCallout from '../../../components/CompanionCallout.astro';
 import StructuredData from '../../../components/StructuredData.astro';
 import { articleRoute } from '../../../utils/article-route';
+import { readingTimeFor } from '../../../utils/reading-time';
 import { getCompanion } from '../../../data/companions';
 import { articleSchema, breadcrumbSchema } from '../../../utils/structured-data';
 
@@ -60,9 +61,7 @@ const siblings = (await getCollection('articles'))
   .slice(0, 3);
 
 // ── Reading time ──────────────────────────────────────────────────────
-const readingTime = data.word_count
-  ? `${Math.max(1, Math.round(data.word_count / 220))} min read`
-  : undefined;
+const readingTime = readingTimeFor(data.word_count);
 
 // ── Drop-cap heuristic ────────────────────────────────────────────────
 // Turn drop-cap on for long features; skip editor's letters and short pieces.
