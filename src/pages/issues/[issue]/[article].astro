@@ -11,6 +11,9 @@ import ArticleHeader from '../../../components/ArticleHeader.astro';
 import ArticleHeroImage from '../../../components/ArticleHeroImage.astro';
 import ArticleHeroPlaceholder from '../../../components/ArticleHeroPlaceholder.astro';
 import ArticleHeroVideo from '../../../components/ArticleHeroVideo.astro';
+import ReadingProgress from '../../../components/ReadingProgress.astro';
+import InlineSubscribe from '../../../components/InlineSubscribe.astro';
+import ArticleShare from '../../../components/ArticleShare.astro';
 import SmallCapsLabel from '../../../components/SmallCapsLabel.astro';
 import Gallery from '../../../components/Gallery.astro';
 import CompanionCallout from '../../../components/CompanionCallout.astro';
@@ -158,6 +161,7 @@ const jsonLd = [
   dataArticleIssue={data.issue}
 >
   <StructuredData data={jsonLd} slot="head" />
+  <ReadingProgress />
   <article>
     <!-- Breadcrumb: Issue → Article -->
     <nav
@@ -209,6 +213,8 @@ const jsonLd = [
         <Content />
       </div>
 
+      {access === 'free' && <InlineSubscribe />}
+
       {data.gallery && data.gallery.length > 0 && (
         <Gallery items={data.gallery} title={data.gallery_title ?? 'From the day'} />
       )}
@@ -220,6 +226,8 @@ const jsonLd = [
     <footer
       class="max-w-3xl mx-auto px-6 md:px-10 pb-24 border-t border-[var(--color-ink)]/10 pt-10"
     >
+      <ArticleShare title={data.title} />
+
       {
         data.tags.length > 0 && (
           <div class="flex flex-wrap gap-2 mb-12">

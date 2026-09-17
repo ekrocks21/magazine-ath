@@ -1,0 +1,93 @@
+---
+/**
+ * Share controls, without a third party.
+ *
+ * Uses the system share sheet where there is one — which is where a
+ * phone reader expects it — and falls back to copying the link. No
+ * network share buttons: they cost a script each and hand every reader
+ * to a tracker on the way out.
+ */
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<div class="article-share" data-share data-share-title={title}>
+  <span class="article-share__label">Share</span>
+  <button type="button" class="article-share__btn" data-share-native hidden>
+    Share this story
+  </button>
+  <button type="button" class="article-share__btn" data-share-copy>
+    <span data-share-copy-label>Copy link</span>
+  </button>
+</div>
+
+<script>
+  (function () {
+    if (typeof document === 'undefined') return;
+    const root = document.querySelector<HTMLElement>('[data-share]');
+    if (!root) return;
+    const title = root.getAttribute('data-share-title') || document.title;
+    const nativeBtn = root.querySelector<HTMLButtonElement>('[data-share-native]');
+    const copyBtn = root.querySelector<HTMLButtonElement>('[data-share-copy]');
+    const copyLabel = root.querySelector<HTMLElement>('[data-share-copy-label]');
+
+    if (nativeBtn && typeof (navigator as any).share === 'function') {
+      nativeBtn.hidden = false;
+      nativeBtn.addEventListener('click', () => {
+        (navigator as any)
+          .share({ title, url: location.href })
+          .catch(() => {});
+      });
+    }
+
+    copyBtn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        if (copyLabel) {
+          copyLabel.textContent = 'Link copied';
+          setTimeout(() => { copyLabel.textContent = 'Copy link'; }, 2200);
+        }
+      } catch {
+        // Clipboard can be refused; say so rather than pretending.
+        if (copyLabel) copyLabel.textContent = 'Press ⌘C to copy';
+      }
+    });
+  })();
+</script>
+
+<style>
+  .article-share {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0 0 40px;
+  }
+  .article-share__label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .article-share__btn {
+    min-height: 44px;
+    padding: 0 16px;
+    background: transparent;
+    border: 1px solid var(--sand);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.15s ease-out, color 0.15s ease-out;
+  }
+  .article-share__btn:hover {
+    border-color: var(--rust);
+    color: var(--rust);
+  }
+</style>

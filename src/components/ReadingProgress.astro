@@ -1,0 +1,78 @@
+---
+/**
+ * How far through the piece you are.
+ *
+ * Measured against the prose rather than the document, so the footer,
+ * the tags and the related rail do not count as reading. Hidden
+ * entirely under a reduced-motion preference — a bar that tracks the
+ * scroll is exactly the kind of movement that setting asks to stop.
+ */
+---
+
+<div
+  class="reading-progress"
+  data-reading-progress
+  role="progressbar"
+  aria-label="Article progress"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="0"
+>
+  <span class="reading-progress__fill" data-reading-progress-fill></span>
+</div>
+
+<script>
+  (function () {
+    if (typeof document === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const bar = document.querySelector<HTMLElement>('[data-reading-progress]');
+    const fill = document.querySelector<HTMLElement>('[data-reading-progress-fill]');
+    const prose = document.querySelector<HTMLElement>('.article-prose');
+    if (!bar || !fill || !prose) return;
+
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const rect = prose.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      // A piece shorter than the window has no progress to report.
+      if (total <= 0) { fill.style.width = '0%'; return; }
+      const done = Math.min(Math.max(-rect.top, 0), total);
+      const pct = Math.round((done / total) * 100);
+      fill.style.width = pct + '%';
+      bar.setAttribute('aria-valuenow', String(pct));
+    };
+
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  })();
+</script>
+
+<style>
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 50;
+    background: transparent;
+    pointer-events: none;
+  }
+  .reading-progress__fill {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--rust);
+    transition: width 0.08s linear;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reading-progress { display: none; }
+  }
+</style>

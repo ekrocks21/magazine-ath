@@ -1,0 +1,86 @@
+---
+/**
+ * A subscribe prompt set into the middle of a free article.
+ *
+ * Only on pieces that read free — a gated one already meets the
+ * paywall card, and asking twice is nagging. It carries
+ * data-cta="anon", so the masthead's existing /api/me swap hides it
+ * from anyone already signed in; no second request, and a subscriber
+ * is never sold what they have.
+ *
+ * Placement is done in script because the body is Markdown: it lands
+ * after the paragraph nearest two thirds through, which is late enough
+ * that the reader is committed and early enough that they have not
+ * finished.
+ */
+---
+
+<aside class="inline-subscribe" data-cta="anon" data-inline-subscribe hidden>
+  <p class="inline-subscribe__kicker">Keep reading the coast</p>
+  <p class="inline-subscribe__body">
+    This issue is free to read. The printed magazine — four issues a
+    year, mailed from Highlands — and everything we have published
+    before is for subscribers.
+  </p>
+  <a class="inline-subscribe__cta" href="/subscribe">Get the print edition →</a>
+</aside>
+
+<script>
+  (function () {
+    if (typeof document === 'undefined') return;
+    const block = document.querySelector<HTMLElement>('[data-inline-subscribe]');
+    const prose = document.querySelector<HTMLElement>('.article-prose');
+    if (!block || !prose) return;
+
+    const paras = Array.from(prose.querySelectorAll(':scope > p'));
+    // Too short a piece has no middle worth interrupting.
+    if (paras.length < 8) return;
+
+    const target = paras[Math.floor(paras.length * 0.66)];
+    if (!target) return;
+
+    target.insertAdjacentElement('afterend', block);
+    // The masthead hides this again if /api/me reports a session.
+    block.hidden = false;
+  })();
+</script>
+
+<style>
+  .inline-subscribe {
+    margin: 44px 0;
+    padding: 26px 28px;
+    background: var(--navy);
+    border-left: 2px solid var(--rust);
+    color: var(--on-dark-1);
+  }
+  .inline-subscribe__kicker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rust-on-dark);
+    margin: 0 0 12px;
+  }
+  .inline-subscribe__body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--on-dark-3);
+    margin: 0 0 18px;
+  }
+  .inline-subscribe__cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    background: var(--rust);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.15s ease-out;
+  }
+  .inline-subscribe__cta:hover { background: var(--rust-light); }
+</style>
