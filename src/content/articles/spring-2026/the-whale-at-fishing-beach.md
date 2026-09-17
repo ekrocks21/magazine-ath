@@ -1,9 +1,10 @@
 ---
-title: "The Whale at North Beach"
-slug: the-whale-at-north-beach
+title: "The Whale at Fishing Beach"
+slug: the-whale-at-fishing-beach
 type: essay
 issue: spring-2026
 issue_number: 2
+order: 7
 season: spring
 year: 2026
 author: Eric
@@ -29,7 +30,7 @@ publication_date: 2026-04-01
 companion_to: harbor-live
 ---
 
-# The Whale at North Beach
+# The Whale at Fishing Beach
 
 *A young female humpback washed ashore at Sandy Hook on the first of April. I drove out to see her. I did not look.*
 

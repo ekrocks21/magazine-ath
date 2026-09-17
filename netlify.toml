@@ -28,3 +28,12 @@
 
 [context.branch-deploy.environment]
   PUBLIC_INCLUDE_DRAFTS = "true"
+
+# The whale piece was retitled to match the printed issue, which calls
+# it Fishing Beach. Its old path was live, so it is kept pointing at
+# the new one rather than left to 404.
+[[redirects]]
+  from = "/issues/spring-2026/the-whale-at-north-beach/"
+  to = "/issues/spring-2026/the-whale-at-fishing-beach/"
+  status = 301
+  force = true

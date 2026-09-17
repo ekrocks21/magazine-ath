@@ -4,6 +4,7 @@ slug: the-pair-that-comes-back
 type: essay
 issue: spring-2026
 issue_number: 2
+order: 5
 season: spring
 year: 2026
 author: Eric

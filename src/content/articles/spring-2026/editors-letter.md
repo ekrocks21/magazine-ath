@@ -3,6 +3,7 @@ title: "Return"
 type: editors_letter
 issue: "Spring 2026"
 issue_number: 2
+order: 1
 season: spring
 year: 2026
 author: Eric

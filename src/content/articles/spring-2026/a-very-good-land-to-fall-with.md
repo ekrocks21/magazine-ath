@@ -3,6 +3,7 @@ title: "A Very Good Land to Fall With"
 type: feature
 issue: "Spring 2026"
 issue_number: 2
+order: 2
 season: spring
 year: 2026
 author: Eric

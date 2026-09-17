@@ -3,6 +3,7 @@ title: "Thirteen Shillings"
 type: feature
 issue: "Spring 2026"
 issue_number: 2
+order: 3
 season: spring
 year: 2026
 author: Eric

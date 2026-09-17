@@ -4,6 +4,7 @@ slug: the-gate-they-all-must-pass
 type: feature
 issue: spring-2026
 issue_number: 2
+order: 4
 season: spring
 year: 2026
 author: "Eric and Mary"
@@ -11,7 +12,7 @@ byline: "Eric and Mary"
 dek: "Nineteen nations. Nineteen ships. Every one of them will aim for Sandy Hook Bay before they see Manhattan. We will be watching from the bluff."
 hero_image: ./eagle-past-liberty.jpg
 hero_image_alt: "The Coast Guard barque Eagle under sail in the harbor, the Statue of Liberty on the shore behind her."
-hero_image_credit: "Above the Hook"
+hero_image_credit: "Sail4th250"
 status: published
 word_count: 480
 access: free
@@ -22,6 +23,38 @@ tags:
   - sandy_hook
   - new_york_harbor
   - highlands
+gallery_title: "Nineteen vessels, nineteen stories"
+gallery:
+  - src: ./sails-with-red-crosses.jpg
+    alt: "A square-rigger under sail with red crosses on her sails, hills rising behind her."
+    credit: "Sail4th250"
+  - src: ./under-sail-off-the-point.jpg
+    alt: "A white-hulled sailing ship under way, a small sloop passing close by."
+    credit: "Sail4th250"
+  - src: ./dark-hull-in-green-water.jpg
+    alt: "A dark-hulled square-rigger under sail in green water, small boats gathered around her."
+    credit: "Sail4th250"
+  - src: ./amerigo-vespucci.jpg
+    alt: "The Amerigo Vespucci under sail, her black hull banded with two white stripes."
+    credit: "Sail4th250"
+  - src: ./bow-on-under-full-sail.jpg
+    alt: "A full-rigged ship seen bow-on under full sail, her ensign streaming."
+    credit: "Sail4th250"
+  - src: ./white-hull-open-water.jpg
+    alt: "A white-hulled ship under sail in open blue water under a high sky."
+    credit: "Sail4th250"
+  - src: ./rafted-at-the-dock.jpg
+    alt: "Tall ships rafted at a dock, masts crowded together above the waterfront."
+    credit: "Sail4th250"
+  - src: ./full-rigged-under-way.jpg
+    alt: "A full-rigged ship under way, sail set on all three masts."
+    credit: "Sail4th250"
+  - src: ./moored-bow-high.jpg
+    alt: "A tall ship moored bow-high, her rigging standing against a pale sky."
+    credit: "Sail4th250"
+  - src: ./eagle-under-sail.jpg
+    alt: "The Coast Guard barque Eagle under sail, flying the national ensign."
+    credit: "Sail4th250"
 publication_date: 2026-04-01
 ---
 
