@@ -11,6 +11,7 @@ status: published
 word_count: 2750
 access: free
 pillar: historical_storytelling
+companion_to: video-highland-beach-last-building
 tags:
   - highland_beach
   - sandlass_family

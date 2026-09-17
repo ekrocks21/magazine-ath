@@ -41,6 +41,10 @@ export interface Companion {
   duration?: string;
   /** Optional one-line description. Shown under the title if set. */
   summary?: string;
+  /** YouTube id. When set on a `youtube` companion the callout plays
+   *  the video in place rather than only linking out to it. Leave it
+   *  off for entries that point at a channel rather than one video. */
+  videoId?: string;
 }
 
 export const COMPANIONS: Record<string, Companion> = {
@@ -50,6 +54,16 @@ export const COMPANIONS: Record<string, Companion> = {
     url: 'https://www.youtube.com/@abovethehookstudios',
     platform: 'youtube',
     kicker: 'Watch on YouTube',
+  },
+
+  'video-highland-beach-last-building': {
+    title: 'The Last Building on Sandy Hook\u2019s Lost Beach',
+    url: 'https://www.youtube.com/watch?v=ZDJviT1dhao',
+    platform: 'youtube',
+    kicker: 'Watch on YouTube',
+    videoId: 'ZDJviT1dhao',
+    summary:
+      'Why the one house the state left standing on the old resort ground is worth keeping.',
   },
 
   // ─── Harbor Observatory ────────────────────────────────────────
