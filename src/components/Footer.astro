@@ -5,10 +5,14 @@
  * Matches the prototype footer.
  */
 
+import { currentIssueHref } from '../utils/current-issue';
+
 const year = new Date().getFullYear();
 
+// Asked for rather than written down: the hardcoded slug here went
+// stale the day Summer published and pointed at Spring for months.
 const magazineLinks = [
-  { label: 'Current Issue', href: '/issues/spring-2026' },
+  { label: 'Current Issue', href: await currentIssueHref() },
   { label: 'The Archive', href: '/archive' },
   { label: 'Subscribe', href: '/subscribe' },
   { label: 'Next Issue', href: '/next' },

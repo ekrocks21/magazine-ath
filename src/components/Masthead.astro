@@ -12,26 +12,14 @@
  * that do this are dark the whole way down.
  */
 
-import { getCollection } from 'astro:content';
-
-const NOW = Date.now();
-const allIssues = await getCollection('issues');
+import { getCurrentIssue, issueLabel, issueSlug } from '../utils/current-issue';
 
 // The issue that is out now drives the first menu item, so it reads
 // "Summer Issue" today and "Fall Issue" the day Fall publishes.
-const currentIssue = allIssues
-  .filter((i) => (i.data.publish_date?.valueOf() ?? 0) <= NOW)
-  .sort(
-    (a, b) =>
-      (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0),
-  )[0];
+const currentIssue = await getCurrentIssue();
 
-const currentIssueHref = currentIssue
-  ? `/issues/${currentIssue.id.replace(/\.md$/, '')}`
-  : '/archive';
-const currentIssueLabel = currentIssue
-  ? `${currentIssue.data.season.charAt(0).toUpperCase()}${currentIssue.data.season.slice(1)} Issue`
-  : 'Current Issue';
+const currentIssueHref = currentIssue ? `/issues/${issueSlug(currentIssue)}` : '/archive';
+const currentIssueLabel = currentIssue ? issueLabel(currentIssue) : 'Current Issue';
 
 const currentPath = Astro.url.pathname;
 const isActive = (href: string) =>
