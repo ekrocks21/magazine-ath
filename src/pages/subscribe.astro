@@ -122,6 +122,10 @@ const { title: issueTitle, cover_image, cover_image_alt } = current.data;
 
           <button type="submit" class="btn btn--primary">Continue to payment</button>
         </form>
+
+        <p class="card__foot">
+          Already subscribed? <a href="/signin">Sign in</a>
+        </p>
       </section>
     </div>
   </main>
@@ -183,7 +187,7 @@ const { title: issueTitle, cover_image, cover_image_alt } = current.data;
     height: 100%;
     display: grid;
     place-items: center;
-    padding: 84px 20px 28px;
+    padding: 72px 20px 22px;
     box-sizing: border-box;
   }
   .card {
@@ -211,9 +215,9 @@ const { title: issueTitle, cover_image, cover_image_alt } = current.data;
   }
   .card__cover {
     display: block;
-    width: 148px;
+    width: 132px;
     height: auto;
-    margin: 0 auto 18px;
+    margin: 0 auto 14px;
     box-shadow: 0 8px 22px rgba(16, 25, 43, 0.28);
   }
   .card__kicker {
@@ -238,8 +242,23 @@ const { title: issueTitle, cover_image, cover_image_alt } = current.data;
     font-size: 14px;
     line-height: 1.55;
     color: var(--ink-soft);
-    margin: 0 0 15px;
+    margin: 0 0 12px;
   }
+  .card__foot {
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    margin: 14px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--sand-light);
+  }
+  .card__foot a {
+    color: var(--rust);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
   /* ── Buttons ──────────────────────────────────────────────────── */
   .btn {
     display: block;
@@ -354,9 +373,14 @@ const { title: issueTitle, cover_image, cover_image_alt } = current.data;
 
   /* ── Short screens: the cover is the first thing to go ─────────── */
   @media (max-height: 720px) {
-    .card__cover { width: 104px; margin-bottom: 10px; }
+    .card__cover { width: 88px; margin-bottom: 10px; }
     .card__title { font-size: 25px; margin-bottom: 8px; }
-    .card__lede { margin-bottom: 12px; }
+    .card__lede { margin-bottom: 10px; }
+    /* The options carry the most height on this card, so they give up
+       a little padding before the copy gives up any words. */
+    .opt { padding: 10px 12px; margin-bottom: 7px; }
+    .opt:has(input:checked) { padding: 9px 11px; }
+    .card__foot { margin-top: 10px; padding-top: 10px; }
     .stage { padding: 72px 20px 20px; }
   }
   @media (max-height: 600px) {
@@ -382,6 +406,7 @@ const { title: issueTitle, cover_image, cover_image_alt } = current.data;
     .btn { padding: 10px 14px; }
     .pick .btn--primary { margin-top: 9px; }
     .btn--quiet { margin-top: 5px; }
+    .card__foot { margin-top: 8px; padding-top: 8px; font-size: 12px; }
   }
 
   @media (max-width: 420px) {
